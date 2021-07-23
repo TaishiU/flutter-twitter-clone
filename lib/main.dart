@@ -1,31 +1,34 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Screens/FeedScreen.dart';
+import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
+      theme: ThemeData.light(),
+      home: getScreenId(),
     );
   }
-}
 
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('MyHomePage'),
-      ),
-    );
+  Widget getScreenId() {
+    return StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.hasData) {
+            return FeedScreen(currentUserId: snapshot.data!.uid);
+          } else {
+            return WelcomeScreen();
+          }
+        });
   }
 }
