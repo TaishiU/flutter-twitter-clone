@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Firebase/Auth.dart';
 
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
@@ -16,6 +17,14 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('HomeScreen'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Auth().logout();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
     );
   }

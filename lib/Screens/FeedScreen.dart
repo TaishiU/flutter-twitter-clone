@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
 import 'package:twitter_clone/Screens/NotificationsScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -20,22 +21,6 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   title: Text('FeedScreen'),
-      //   actions: [
-      //     ElevatedButton(
-      //       child: Icon(Icons.logout),
-      //       onPressed: () async {
-      //         await Auth().logout;
-      //         Navigator.pushReplacement(
-      //           context,
-      //           MaterialPageRoute(builder: (context) => WelcomeScreen()),
-      //         );
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: [
         HomeScreen(
           currentUserId: widget.currentUserId,
@@ -63,7 +48,27 @@ class _FeedScreenState extends State<FeedScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home)),
           BottomNavigationBarItem(icon: Icon(Icons.search)),
           BottomNavigationBarItem(icon: Icon(Icons.notifications)),
-          BottomNavigationBarItem(icon: Icon(Icons.person)),
+          BottomNavigationBarItem(
+            icon: Container(
+              child: StreamBuilder(
+                stream: usersRef.doc(widget.currentUserId).snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircleAvatar(
+                      radius: 20,
+                      backgroundColor: TwitterColor,
+                      backgroundImage: null,
+                    );
+                  }
+                  User user = User.fromDoc(snapshot.data);
+                  return CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(user.profileImage),
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );

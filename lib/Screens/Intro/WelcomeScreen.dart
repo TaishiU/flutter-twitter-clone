@@ -12,16 +12,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   title: Text('WelcomeScreen'),
-      // ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,9 +29,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     width: 200,
                     height: 200,
                   ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
                   Text(
                     'See what’s happening in the world right now',
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),

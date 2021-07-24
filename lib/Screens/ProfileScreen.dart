@@ -52,8 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: FutureBuilder(
-        future: usersRef.doc(widget.visitedUserUserId).get(),
+      body: StreamBuilder(
+        stream: usersRef.doc(widget.visitedUserUserId).snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -145,7 +145,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => EditProfileScreen()),
+                                  builder: (context) =>
+                                      EditProfileScreen(user: user)),
                             );
                           },
                           child: Container(
@@ -184,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      user.id,
+                      user.bio,
                       style: TextStyle(
                         fontSize: 15,
                       ),

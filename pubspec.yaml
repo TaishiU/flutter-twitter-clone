@@ -21,10 +21,11 @@ dependencies:
   firebase_auth: ^3.0.1
   cloud_firestore: ^2.4.0
   firebase_storage: ^10.0.1
-  image_picker: ^0.8.2
+  image_picker: ^0.8.1+1
   flutter_image_compress: ^1.0.0
   path_provider: ^2.0.2
   uuid: ^3.0.4
+  xfile: ^1.1.0
 
 dev_dependencies:
   flutter_test:
