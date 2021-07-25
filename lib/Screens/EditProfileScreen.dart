@@ -85,16 +85,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_profileImage == null) {
         profileImageUrl = widget.user.profileImage;
       } else {
-        profileImageUrl =
-            await Storage().uploadProfileImage(widget.user.id, _profileImage!);
-        print('プロフィール画像ダウンロードURLを受け取ったよ');
+        profileImageUrl = await Storage().uploadProfileImage(
+            userId: widget.user.id, imageFile: _profileImage!);
       }
       if (_coverImage == null) {
         coverImageUrl = widget.user.coverImage;
       } else {
-        coverImageUrl =
-            await Storage().uploadCoverImage(widget.user.id, _coverImage!);
-        print('カバー画像ダウンロードURLを受け取ったよ');
+        coverImageUrl = await Storage()
+            .uploadCoverImage(userId: widget.user.id, imageFile: _coverImage!);
       }
 
       User user = User(
@@ -105,7 +103,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         profileImage: profileImageUrl,
         coverImage: coverImageUrl,
       );
-      await Firestore().updateUserData(user);
+      await Firestore().updateUserData(user: user);
       setState(() {
         _isLoading = true;
       });
