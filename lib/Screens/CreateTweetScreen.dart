@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Firebase/Firestore.dart';
+import 'package:twitter_clone/Firebase/Storage.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 
@@ -34,6 +38,37 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
       }
     } catch (e) {
       print('image_pickerエラー： ${e}');
+    }
+  }
+
+  handleTweet() async {
+    _formKey.currentState!.save();
+    if (_formKey.currentState!.validate() && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+      String tweetImageUrl;
+      if (_tweetImage == null) {
+        tweetImageUrl = '';
+      } else {
+        tweetImageUrl = await Storage().uploadTweetImage(
+            userId: widget.currentUserId, imageFile: _tweetImage!);
+      }
+
+      Tweet tweet = Tweet(
+        authorName: widget.user.name,
+        authorId: widget.user.id,
+        text: _tweetText,
+        image: tweetImageUrl,
+        timestamp: Timestamp.fromDate(DateTime.now()),
+        likes: 0,
+        reTweets: 0,
+      );
+      Firestore().createTweet(tweet);
+      Navigator.of(context).pop();
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -118,8 +153,12 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                 SizedBox(height: 20),
                 RoundedButton(
                   btnText: 'Tweet',
-                  onBtnPressed: () {},
+                  onBtnPressed: () {
+                    handleTweet();
+                  },
                 ),
+                SizedBox(height: 5),
+                _isLoading ? CircularProgressIndicator() : SizedBox.shrink(),
               ],
             ),
           ),

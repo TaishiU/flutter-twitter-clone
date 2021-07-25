@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Tweet {
-  String id;
+  String? tweetId;
   String authorName;
   String authorId;
   String text;
@@ -11,7 +11,7 @@ class Tweet {
   int reTweets;
 
   Tweet({
-    required this.id,
+    this.tweetId,
     required this.authorName,
     required this.authorId,
     required this.text,
@@ -23,7 +23,7 @@ class Tweet {
 
   factory Tweet.fromDoc(DocumentSnapshot doc) {
     return Tweet(
-      id: doc.id,
+      tweetId: doc.id,
       authorName: doc['authorName'],
       authorId: doc['authorId'],
       text: doc['text'],
