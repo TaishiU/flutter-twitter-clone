@@ -46,4 +46,16 @@ class Firestore {
       'reTweets': tweet.reTweets,
     });
   }
+
+  Future<List<Tweet>> getUserTweets({required String userId}) async {
+    QuerySnapshot userTweetsSnap = await tweetRef
+        .doc(userId)
+        .collection('allUserTweets')
+        .orderBy('timestamp', descending: true)
+        .get();
+
+    List<Tweet> allUserTweets =
+        userTweetsSnap.docs.map((doc) => Tweet.fromDoc(doc)).toList();
+    return allUserTweets;
+  }
 }
