@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
@@ -25,6 +27,23 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.logout),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Image.asset(
+          'assets/images/TweetLogo.png',
+          fit: BoxFit.contain,
+        ),
+        //backgroundColor: Colors.white,
+        backgroundColor: TwitterColor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  CreateTweetScreen(currentUserId: widget.currentUserId),
+            ),
+          );
+        },
       ),
     );
   }
