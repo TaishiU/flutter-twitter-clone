@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:twitter_clone/Firebase/Firestore.dart';
 
 class Auth {
   final _auth = FirebaseAuth.instance;
@@ -18,14 +19,12 @@ class Auth {
       User? signedInUser = authResult.user;
 
       if (signedInUser != null) {
-        await _firestore.collection('users').doc(signedInUser.uid).set({
-          'name': name,
-          'email': email,
-          'password': password,
-          'profileImage': '',
-          'coverImage': '',
-          'bio': '',
-        });
+        Firestore().registerUser(
+          userId: signedInUser.uid,
+          name: name,
+          email: email,
+          password: password,
+        );
         return true;
       }
       return false;

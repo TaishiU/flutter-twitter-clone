@@ -4,8 +4,26 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 
 class Firestore {
+  Future<void> registerUser({
+    required String userId,
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    DocumentReference usersReference = usersRef.doc(userId);
+    await usersReference.set({
+      'userId': usersReference.id,
+      'name': name,
+      'email': email,
+      'password': password,
+      'profileImage': '',
+      'coverImage': '',
+      'bio': '',
+    });
+  }
+
   Future<void> updateUserData({required User user}) async {
-    await FirebaseFirestore.instance.collection('users').doc(user.id).update({
+    await usersRef.doc(user.userId).update({
       'name': user.name,
       'bio': user.bio,
       'profileImage': user.profileImage,
@@ -17,7 +35,7 @@ class Firestore {
     tweetRef.doc(tweet.authorId).set({'timestamp': tweet.timestamp});
     DocumentReference tweetReference =
         tweetRef.doc(tweet.authorId).collection('allUserTweets').doc();
-    tweetReference.set({
+    await tweetReference.set({
       'tweetId': tweetReference.id,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  String id;
+  String userId;
   String name;
   String email;
   String bio;
@@ -9,7 +9,7 @@ class User {
   String coverImage;
 
   User({
-    required this.id,
+    required this.userId,
     required this.name,
     required this.email,
     required this.bio,
@@ -19,7 +19,7 @@ class User {
 
   factory User.fromDoc(DocumentSnapshot doc) {
     return User(
-      id: doc.id,
+      userId: doc.id,
       name: doc['name'],
       email: doc['email'],
       bio: doc['bio'],

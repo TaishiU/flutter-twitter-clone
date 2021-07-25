@@ -10,7 +10,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  //final GlobalKey _formkey = GlobalKey();
+  final _formkey = GlobalKey<FormState>();
   late String _name;
   late String _email;
   late String _password;
@@ -32,72 +32,91 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Name',
-              ),
-              onChanged: (value) {
-                _name = value;
-              },
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formkey,
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      icon: Icon(Icons.person),
+                    ),
+                    onChanged: (value) {
+                      _name = value;
+                    },
+                    validator: (String? input) {
+                      if (input!.isEmpty) {
+                        return 'Enter your Name';
+                      }
+                      return null;
+                    }),
+                SizedBox(height: 30),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    icon: Icon(Icons.email_outlined),
+                  ),
+                  onChanged: (value) {
+                    _email = value;
+                  },
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (String? input) {
+                    if (input!.isEmpty) {
+                      return 'Enter your Email';
+                    }
+                    if (input.isNotEmpty && !input.contains('@')) {
+                      return 'You need to check \'@\' mark';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 30),
+                TextFormField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    icon: Icon(Icons.vpn_key),
+                  ),
+                  onChanged: (value) {
+                    _password = value;
+                  },
+                  keyboardType: TextInputType.visiblePassword,
+                  validator: (String? input) {
+                    if (input!.isEmpty) {
+                      return 'Enter Password';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                RoundedButton(
+                  btnText: 'Create account',
+                  onBtnPressed: () async {
+                    _formkey.currentState!.save();
+                    if (_formkey.currentState!.validate()) {
+                      bool isValid = await Auth().signUp(
+                        name: _name,
+                        email: _email,
+                        password: _password,
+                      );
+                      if (isValid) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );
+                      } else {
+                        print('Registration problem');
+                      }
+                    }
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 30),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Email',
-              ),
-              onChanged: (value) {
-                _email = value;
-              },
-              keyboardType: TextInputType.emailAddress,
-              // validator: (String? value) {
-              //   if (value!.isEmpty) {
-              //     return 'Enter Email';
-              //   }
-              //   return null;
-              // },
-            ),
-            SizedBox(height: 30),
-            TextFormField(
-              obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'Password',
-              ),
-              onChanged: (value) {
-                _password = value;
-              },
-              keyboardType: TextInputType.visiblePassword,
-              // validator: (String? value) {
-              //   if (value!.isEmpty) {
-              //     return 'Enter Password';
-              //   }
-              //   return null;
-              // },
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            RoundedButton(
-              btnText: 'Create account',
-              onBtnPressed: () async {
-                bool isValid = await Auth().signUp(
-                  name: _name,
-                  email: _email,
-                  password: _password,
-                );
-                if (isValid) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyApp()),
-                  );
-                } else {
-                  print('Registration problem');
-                }
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

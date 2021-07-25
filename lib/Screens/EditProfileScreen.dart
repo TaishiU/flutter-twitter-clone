@@ -86,17 +86,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         profileImageUrl = widget.user.profileImage;
       } else {
         profileImageUrl = await Storage().uploadProfileImage(
-            userId: widget.user.id, imageFile: _profileImage!);
+            userId: widget.user.userId, imageFile: _profileImage!);
       }
       if (_coverImage == null) {
         coverImageUrl = widget.user.coverImage;
       } else {
-        coverImageUrl = await Storage()
-            .uploadCoverImage(userId: widget.user.id, imageFile: _coverImage!);
+        coverImageUrl = await Storage().uploadCoverImage(
+            userId: widget.user.userId, imageFile: _coverImage!);
       }
 
       User user = User(
-        id: widget.user.id,
+        userId: widget.user.userId,
         name: _name,
         email: widget.user.email,
         bio: _bio,

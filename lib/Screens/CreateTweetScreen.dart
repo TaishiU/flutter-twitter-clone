@@ -57,7 +57,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
 
       Tweet tweet = Tweet(
         authorName: widget.user.name,
-        authorId: widget.user.id,
+        authorId: widget.user.userId,
         text: _tweetText,
         image: tweetImageUrl,
         timestamp: Timestamp.fromDate(DateTime.now()),
