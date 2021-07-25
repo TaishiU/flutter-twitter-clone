@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class CreateTweetScreen extends StatefulWidget {
   final String currentUserId;
+  final User user;
 
-  CreateTweetScreen({Key? key, required this.currentUserId}) : super(key: key);
+  CreateTweetScreen({Key? key, required this.currentUserId, required this.user})
+      : super(key: key);
 
   @override
   _CreateTweetScreenState createState() => _CreateTweetScreenState();
