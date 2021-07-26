@@ -23,6 +23,7 @@ class _FeedScreenState extends State<FeedScreen> {
       body: [
         HomeScreen(
           currentUserId: widget.currentUserId,
+          visitedUserId: widget.currentUserId,
         ),
         SearchScreen(
           currentUserId: widget.currentUserId,

@@ -89,7 +89,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Tweet tweet = Tweet.fromDoc(userTweets);
                 return TweetContainer(
                   currentUserId: widget.currentUserId,
-                  user: user,
                   tweet: tweet,
                 );
               }).toList(),
@@ -135,7 +134,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Tweet tweet = Tweet.fromDoc(userTweet);
                 return TweetContainer(
                   currentUserId: widget.currentUserId,
-                  user: user,
                   tweet: tweet,
                 );
               }).toList(),
@@ -350,7 +348,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: CupertinoSlidingSegmentedControl(
                         groupValue: _profileSegmentedValue,
                         thumbColor: TwitterColor,
-                        //backgroundColor: Colors.grey.shade400,
                         backgroundColor: Colors.transparent,
                         children: _profileTabs,
                         onValueChanged: (index) {

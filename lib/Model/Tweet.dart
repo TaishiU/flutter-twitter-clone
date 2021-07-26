@@ -4,6 +4,7 @@ class Tweet {
   String? tweetId;
   String authorName;
   String authorId;
+  String authorProfileImage;
   String text;
   String image;
   bool hasImage;
@@ -15,6 +16,7 @@ class Tweet {
     this.tweetId,
     required this.authorName,
     required this.authorId,
+    required this.authorProfileImage,
     required this.text,
     required this.image,
     required this.hasImage,
@@ -23,17 +25,18 @@ class Tweet {
     required this.reTweets,
   });
 
-  factory Tweet.fromDoc(DocumentSnapshot doc) {
+  factory Tweet.fromDoc(DocumentSnapshot postDoc) {
     return Tweet(
-      tweetId: doc.id,
-      authorName: doc['authorName'],
-      authorId: doc['authorId'],
-      text: doc['text'],
-      image: doc['image'],
-      hasImage: doc['hasImage'],
-      timestamp: doc['timestamp'],
-      likes: doc['likes'],
-      reTweets: doc['reTweets'],
+      tweetId: postDoc.id,
+      authorName: postDoc['authorName'],
+      authorId: postDoc['authorId'],
+      authorProfileImage: postDoc['authorProfileImage'],
+      text: postDoc['text'],
+      image: postDoc['image'],
+      hasImage: postDoc['hasImage'],
+      timestamp: postDoc['timestamp'],
+      likes: postDoc['likes'],
+      reTweets: postDoc['reTweets'],
     );
   }
 }

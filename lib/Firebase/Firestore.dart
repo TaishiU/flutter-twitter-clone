@@ -22,6 +22,13 @@ class Firestore {
     });
   }
 
+  Future<DocumentSnapshot> getUserProfile({
+    required String userId,
+  }) async {
+    DocumentSnapshot userProfileDoc = await usersRef.doc(userId).get();
+    return userProfileDoc;
+  }
+
   Future<void> updateUserData({required User user}) async {
     await usersRef.doc(user.userId).update({
       'name': user.name,
@@ -38,6 +45,21 @@ class Firestore {
       'tweetId': tweetReference.id,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
+      'authorProfileImage': tweet.authorProfileImage,
+      'text': tweet.text,
+      'image': tweet.image,
+      'hasImage': tweet.hasImage,
+      'timestamp': tweet.timestamp,
+      'likes': tweet.likes,
+      'reTweets': tweet.reTweets,
+    });
+
+    DocumentReference allTweetsReference = allTweetsRef.doc();
+    await allTweetsReference.set({
+      'tweetId': allTweetsReference.id,
+      'authorName': tweet.authorName,
+      'authorId': tweet.authorId,
+      'authorProfileImage': tweet.authorProfileImage,
       'text': tweet.text,
       'image': tweet.image,
       'hasImage': tweet.hasImage,

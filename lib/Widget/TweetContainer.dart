@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class TweetContainer extends StatefulWidget {
   final String currentUserId;
-  final User user;
   final Tweet tweet;
 
-  TweetContainer(
-      {Key? key,
-      required this.currentUserId,
-      required this.user,
-      required this.tweet})
+  TweetContainer({Key? key, required this.currentUserId, required this.tweet})
       : super(key: key);
 
   @override
@@ -54,49 +49,64 @@ class _TweetContainerState extends State<TweetContainer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    /*tweet型の中にはユーザーのprofileImageが含まれていないため、user型からprofileImageを取得する*/
-                    radius: 20,
-                    backgroundColor: TwitterColor,
-                    backgroundImage: widget.user.profileImage.isEmpty
-                        ? null
-                        : NetworkImage(widget.user.profileImage),
-                  ),
-                  SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(
+                        currentUserId: widget.currentUserId,
+                        visitedUserUserId: widget.tweet.authorId,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  color: Colors.yellow,
+                  child: Row(
                     children: [
-                      Row(
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundColor: TwitterColor,
+                        backgroundImage: widget.tweet.authorProfileImage.isEmpty
+                            ? null
+                            : NetworkImage(widget.tweet.authorProfileImage),
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            children: [
+                              Text(
+                                widget.tweet.authorName,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            ],
+                          ),
                           Text(
-                            widget.tweet.authorName,
+                            'tweetId: ${widget.tweet.tweetId.toString()}',
                             style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              //fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Text(
-                            '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          )
                         ],
-                      ),
-                      Text(
-                        'tweetId: ${widget.tweet.tweetId.toString()}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          //fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      )
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
               _isOwner
                   ? IconButton(

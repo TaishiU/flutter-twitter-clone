@@ -58,9 +58,14 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         hasImage = true;
       }
 
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+
       Tweet tweet = Tweet(
         authorName: widget.user.name,
         authorId: widget.user.userId,
+        authorProfileImage: user.profileImage,
         text: _tweetText,
         image: tweetImageUrl,
         hasImage: hasImage,
