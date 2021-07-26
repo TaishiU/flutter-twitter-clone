@@ -48,11 +48,14 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         _isLoading = true;
       });
       String tweetImageUrl;
+      bool hasImage;
       if (_tweetImage == null) {
         tweetImageUrl = '';
+        hasImage = false;
       } else {
         tweetImageUrl = await Storage().uploadTweetImage(
             userId: widget.currentUserId, imageFile: _tweetImage!);
+        hasImage = true;
       }
 
       Tweet tweet = Tweet(
@@ -60,6 +63,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         authorId: widget.user.userId,
         text: _tweetText,
         image: tweetImageUrl,
+        hasImage: hasImage,
         timestamp: Timestamp.fromDate(DateTime.now()),
         likes: 0,
         reTweets: 0,

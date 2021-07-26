@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
@@ -23,24 +24,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _profileSegmentedValue = 0;
-  List<Tweet> _allTweets = [];
-  List<Tweet> _mediaTweets = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getAllTweets();
-  }
-
-  getAllTweets() async {
-    List<Tweet> allUserTweets =
-        await Firestore().getUserTweets(userId: widget.currentUserId);
-    if (mounted) {
-      _allTweets = allUserTweets;
-      _mediaTweets =
-          _allTweets.where((element) => element.image.isNotEmpty).toList();
-    }
-  }
 
   Map<int, Widget> _profileTabs = <int, Widget>{
     0: Padding(
@@ -70,50 +53,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildProfileWidget({required User user}) {
     switch (_profileSegmentedValue) {
       case 0:
-        // return StreamBuilder(
-        //   stream: tweetRef
-        //       .doc(user.userId)
-        //       .collection('allUserTweets')
-        //       .doc()
-        //       .snapshots(),
-        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //     if (!snapshot.hasData) {
-        //       return Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     }
-        //     print('snapshot data: ${snapshot.data}');
-        //     Tweet tweet = Tweet.fromDoc(snapshot.data);
-        //     return TweetContainer(
-        //       currentUserId: widget.currentUserId,
-        //       user: user,
-        //       tweet: tweet,
-        //     );
-        //   },
-        // );
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: _allTweets.length,
-          itemBuilder: (context, index) {
-            return TweetContainer(
-              currentUserId: widget.currentUserId,
-              user: user,
-              tweet: _allTweets[index],
+        return StreamBuilder<QuerySnapshot>(
+          stream: tweetRef
+              .doc(user.userId)
+              .collection('allUserTweets')
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
+            if (allUserTweets.length == 0) {
+              return Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 50),
+                    Text(
+                      'There is no tweet...',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: allUserTweets.map((userTweets) {
+                Tweet tweet = Tweet.fromDoc(userTweets);
+                return TweetContainer(
+                  currentUserId: widget.currentUserId,
+                  user: user,
+                  tweet: tweet,
+                );
+              }).toList(),
             );
           },
         );
         break;
       case 1:
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: _mediaTweets.length,
-          itemBuilder: (context, index) {
-            return TweetContainer(
-              currentUserId: widget.currentUserId,
-              user: user,
-              tweet: _mediaTweets[index],
+        return StreamBuilder<QuerySnapshot>(
+          stream: tweetRef
+              .doc(user.userId)
+              .collection('allUserTweets')
+              .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            List<DocumentSnapshot> allUserMediaTweets = snapshot.data!.docs;
+            if (allUserMediaTweets.length == 0) {
+              return Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 50),
+                    Text(
+                      'There is no media...',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: allUserMediaTweets.map((userTweet) {
+                Tweet tweet = Tweet.fromDoc(userTweet);
+                return TweetContainer(
+                  currentUserId: widget.currentUserId,
+                  user: user,
+                  tweet: tweet,
+                );
+              }).toList(),
             );
           },
         );
@@ -344,6 +369,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           );
         },
+      ),
+      floatingActionButton: Container(
+        child: StreamBuilder(
+          stream: usersRef.doc(widget.currentUserId).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return SizedBox.shrink();
+            }
+            User user = User.fromDoc(snapshot.data);
+            return FloatingActionButton(
+              backgroundColor: TwitterColor,
+              child: Image.asset(
+                'assets/images/TweetLogo.png',
+                fit: BoxFit.cover,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateTweetScreen(
+                      currentUserId: widget.currentUserId,
+                      user: user,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

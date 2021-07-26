@@ -32,7 +32,6 @@ class Firestore {
   }
 
   Future<void> createTweet(Tweet tweet) async {
-    tweetRef.doc(tweet.authorId).set({'timestamp': tweet.timestamp});
     DocumentReference tweetReference =
         tweetRef.doc(tweet.authorId).collection('allUserTweets').doc();
     await tweetReference.set({
@@ -41,21 +40,15 @@ class Firestore {
       'authorId': tweet.authorId,
       'text': tweet.text,
       'image': tweet.image,
+      'hasImage': tweet.hasImage,
       'timestamp': tweet.timestamp,
       'likes': tweet.likes,
       'reTweets': tweet.reTweets,
     });
   }
 
-  Future<List<Tweet>> getUserTweets({required String userId}) async {
-    QuerySnapshot userTweetsSnap = await tweetRef
-        .doc(userId)
-        .collection('allUserTweets')
-        .orderBy('timestamp', descending: true)
-        .get();
-
-    List<Tweet> allUserTweets =
-        userTweetsSnap.docs.map((doc) => Tweet.fromDoc(doc)).toList();
-    return allUserTweets;
+  Future<void> deleteTweet(
+      {required String userId, required String postId}) async {
+    await tweetRef.doc(userId).collection('allUserTweets').doc(postId).delete();
   }
 }

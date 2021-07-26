@@ -6,6 +6,7 @@ class Tweet {
   String authorId;
   String text;
   String image;
+  bool hasImage;
   Timestamp timestamp;
   int likes;
   int reTweets;
@@ -16,6 +17,7 @@ class Tweet {
     required this.authorId,
     required this.text,
     required this.image,
+    required this.hasImage,
     required this.timestamp,
     required this.likes,
     required this.reTweets,
@@ -28,6 +30,7 @@ class Tweet {
       authorId: doc['authorId'],
       text: doc['text'],
       image: doc['image'],
+      hasImage: doc['hasImage'],
       timestamp: doc['timestamp'],
       likes: doc['likes'],
       reTweets: doc['reTweets'],

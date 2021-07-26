@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 
@@ -43,8 +44,9 @@ class _TweetContainerState extends State<TweetContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final _isOwner = widget.currentUserId == widget.tweet.authorId;
+
     return Container(
-      //color: Colors.red,
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,22 +65,53 @@ class _TweetContainerState extends State<TweetContainer> {
                         : NetworkImage(widget.user.profileImage),
                   ),
                   SizedBox(width: 10),
-                  Text(
-                    widget.tweet.authorName,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            widget.tweet.authorName,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(
+                        'tweetId: ${widget.tweet.tweetId.toString()}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
-              Text(
-                '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              )
+              _isOwner
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        Firestore().deleteTweet(
+                          userId: widget.tweet.authorId,
+                          postId: widget.tweet.tweetId!,
+                        );
+                      },
+                    )
+                  : SizedBox.shrink()
             ],
           ),
           SizedBox(height: 15),
