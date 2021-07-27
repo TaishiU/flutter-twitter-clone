@@ -4,6 +4,7 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
+import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetContainer extends StatefulWidget {
   final String currentUserId;
@@ -174,16 +175,30 @@ class _TweetContainerState extends State<TweetContainer> {
                         SizedBox(height: 15),
                         widget.tweet.image.isEmpty
                             ? SizedBox.shrink()
-                            : Container(
-                                height: 180,
-                                width: MediaQuery.of(context).size.width * 0.73,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      widget.tweet.image,
+                            : GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TweetImageView(
+                                        tappedImageIndex: 0,
+                                        image: widget.tweet.image,
+                                      ),
                                     ),
-                                    fit: BoxFit.cover,
+                                  );
+                                },
+                                child: Container(
+                                  height: 180,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.73,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        widget.tweet.image,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),

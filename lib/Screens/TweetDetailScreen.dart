@@ -3,6 +3,7 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
+import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetDetailScreen extends StatefulWidget {
   final String currentUserId;
@@ -150,15 +151,28 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                   SizedBox(height: 15),
                   widget.tweet.image.isEmpty
                       ? SizedBox.shrink()
-                      : Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                widget.tweet.image,
+                      : GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TweetImageView(
+                                  tappedImageIndex: 0,
+                                  image: widget.tweet.image,
+                                ),
                               ),
-                              fit: BoxFit.cover,
+                            );
+                          },
+                          child: Container(
+                            height: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  widget.tweet.image,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
