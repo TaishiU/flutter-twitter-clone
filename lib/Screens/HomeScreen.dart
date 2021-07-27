@@ -24,9 +24,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
         centerTitle: true,
-        title: Text('HomeScreen'),
+        leading: Image.asset(
+          'assets/images/TwitterLogo.png',
+          width: 10,
+          height: 10,
+        ),
+        title: Text(
+          'Twitter',
+          style: TextStyle(
+            color: TwitterColor,
+          ),
+        ),
         actions: [
           PopupMenuButton(
             icon: Icon(
