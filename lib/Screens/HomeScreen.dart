@@ -5,6 +5,7 @@ import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
+import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,12 +28,33 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         title: Text('HomeScreen'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Auth().logout();
+          PopupMenuButton(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.white,
+              size: 30,
+            ),
+            itemBuilder: (_) {
+              return <PopupMenuItem<String>>[
+                PopupMenuItem(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Logout'),
+                    ],
+                  ),
+                  value: 'logout',
+                )
+              ];
             },
-            icon: Icon(Icons.logout),
-          ),
+            onSelected: (selectedItem) {
+              if (selectedItem == 'logout') {
+                Auth().logout();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => WelcomeScreen()));
+              }
+            },
+          )
         ],
       ),
       body: Padding(

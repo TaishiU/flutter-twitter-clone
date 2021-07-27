@@ -54,9 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     switch (_profileSegmentedValue) {
       case 0:
         return StreamBuilder<QuerySnapshot>(
-          stream: tweetRef
+          stream: usersRef
               .doc(user.userId)
-              .collection('allUserTweets')
+              .collection('tweets')
               .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
@@ -98,9 +98,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         break;
       case 1:
         return StreamBuilder<QuerySnapshot>(
-          stream: tweetRef
+          stream: usersRef
               .doc(user.userId)
-              .collection('allUserTweets')
+              .collection('tweets')
               .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
               .orderBy('timestamp', descending: true)
               .snapshots(),
@@ -199,7 +199,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               itemBuilder: (_) {
                                 return <PopupMenuItem<String>>[
                                   PopupMenuItem(
-                                    child: Text('Logout'),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Logout'),
+                                      ],
+                                    ),
                                     value: 'logout',
                                   )
                                 ];
@@ -362,7 +368,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              // buildProfileWidget(user: user),
             ],
           );
         },

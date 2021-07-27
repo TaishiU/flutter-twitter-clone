@@ -42,41 +42,59 @@ class _TweetContainerState extends State<TweetContainer> {
     final _isOwner = widget.currentUserId == widget.tweet.authorId;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(
-                        currentUserId: widget.currentUserId,
-                        visitedUserUserId: widget.tweet.authorId,
-                      ),
+              Column(
+                children: [
+                  SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfileScreen(
+                            currentUserId: widget.currentUserId,
+                            visitedUserUserId: widget.tweet.authorId,
+                          ),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 23,
+                      backgroundColor: TwitterColor,
+                      backgroundImage: widget.tweet.authorProfileImage.isEmpty
+                          ? null
+                          : NetworkImage(widget.tweet.authorProfileImage),
                     ),
-                  );
-                },
-                child: Container(
-                  color: Colors.yellow,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: TwitterColor,
-                        backgroundImage: widget.tweet.authorProfileImage.isEmpty
-                            ? null
-                            : NetworkImage(widget.tweet.authorProfileImage),
-                      ),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                  ),
+                ],
+              ),
+              SizedBox(width: 10),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.73,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileScreen(
+                                  currentUserId: widget.currentUserId,
+                                  visitedUserUserId: widget.tweet.authorId,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
                             children: [
                               Text(
                                 widget.tweet.authorName,
@@ -92,75 +110,102 @@ class _TweetContainerState extends State<TweetContainer> {
                                   fontSize: 12,
                                   color: Colors.grey,
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                          Text(
-                            'tweetId: ${widget.tweet.tweetId.toString()}',
-                            style: TextStyle(
-                              fontSize: 13,
-                              //fontWeight: FontWeight.bold,
+                        ),
+                        PopupMenuButton(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Colors.grey.shade500,
+                            size: 25,
+                          ),
+                          itemBuilder: (_) {
+                            return <PopupMenuItem<String>>[
+                              PopupMenuItem(
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.redAccent,
+                                      ),
+                                      Text('Delete'),
+                                    ],
+                                  ),
+                                ),
+                                value: 'Delete',
+                              )
+                            ];
+                          },
+                          onSelected: (selectedItem) {
+                            if (selectedItem == 'Delete') {
+                              Firestore().deleteTweet(
+                                userId: widget.currentUserId,
+                                postId: widget.tweet.tweetId!,
+                              );
+                            }
+                          },
+                        )
+                      ],
+                    ),
+                    Text(
+                      widget.tweet.text,
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    widget.tweet.image.isEmpty
+                        ? SizedBox.shrink()
+                        : Container(
+                            height: 180,
+                            width: MediaQuery.of(context).size.width * 0.73,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  widget.tweet.image,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              _isOwner
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        Firestore().deleteTweet(
-                          userId: widget.tweet.authorId,
-                          postId: widget.tweet.tweetId!,
-                        );
-                      },
-                    )
-                  : SizedBox.shrink()
-            ],
-          ),
-          SizedBox(height: 15),
-          Text(
-            widget.tweet.text,
-            style: TextStyle(
-              fontSize: 15,
-            ),
-          ),
-          SizedBox(height: 15),
-          widget.tweet.image.isEmpty
-              ? SizedBox.shrink()
-              : Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        widget.tweet.image,
-                      ),
-                      fit: BoxFit.cover,
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.mode_comment_outlined,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
+                        ),
+                        SizedBox(width: 10),
+                        IconButton(
+                          icon: Icon(Icons.repeat),
+                          onPressed: () {},
+                        ),
+                        SizedBox(width: 10),
+                        IconButton(
+                          icon: _isLiked
+                              ? Icon(Icons.favorite)
+                              : Icon(Icons.favorite_border),
+                          color: _isLiked ? Colors.red : Colors.black,
+                          onPressed: () {
+                            likeTweet();
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.share),
+                          onPressed: () {},
+                        ),
+                      ],
                     ),
-                  ),
+                    // Divider(),
+                  ],
                 ),
-          Row(
-            children: [
-              IconButton(
-                icon: _isLiked
-                    ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border),
-                color: _isLiked ? Colors.red : Colors.black,
-                onPressed: () {
-                  likeTweet();
-                },
-              ),
-              SizedBox(width: 10),
-              IconButton(
-                icon: Icon(Icons.repeat),
-                onPressed: () {},
               ),
             ],
           ),

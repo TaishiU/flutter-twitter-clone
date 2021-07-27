@@ -40,7 +40,7 @@ class Firestore {
 
   Future<void> createTweet(Tweet tweet) async {
     DocumentReference tweetReference =
-        tweetRef.doc(tweet.authorId).collection('allUserTweets').doc();
+        usersRef.doc(tweet.authorId).collection('tweets').doc();
     await tweetReference.set({
       'tweetId': tweetReference.id,
       'authorName': tweet.authorName,
@@ -54,9 +54,11 @@ class Firestore {
       'reTweets': tweet.reTweets,
     });
 
-    DocumentReference allTweetsReference = allTweetsRef.doc();
+    String tweetReferenceId = tweetReference.id;
+
+    DocumentReference allTweetsReference = allTweetsRef.doc(tweetReferenceId);
     await allTweetsReference.set({
-      'tweetId': allTweetsReference.id,
+      'tweetId': tweetReferenceId,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
       'authorProfileImage': tweet.authorProfileImage,
@@ -71,6 +73,7 @@ class Firestore {
 
   Future<void> deleteTweet(
       {required String userId, required String postId}) async {
-    await tweetRef.doc(userId).collection('allUserTweets').doc(postId).delete();
+    await usersRef.doc(userId).collection('tweets').doc(postId).delete();
+    await allTweetsRef.doc(postId).delete();
   }
 }
