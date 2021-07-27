@@ -87,11 +87,15 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: TwitterColor,
+        elevation: 0.5,
+        backgroundColor: Colors.white,
+        leading: BackButton(
+          color: TwitterColor,
+        ),
         title: Text(
           'Tweet',
           style: TextStyle(
-            color: Colors.white,
+            color: TwitterColor,
             fontSize: 20,
           ),
         ),

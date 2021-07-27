@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         leading: Image.asset(
           'assets/images/TwitterLogo.png',
-          width: 10,
-          height: 10,
+          width: 45,
+          height: 45,
         ),
         title: Text(
           'Twitter',
@@ -44,8 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
           PopupMenuButton(
             icon: Icon(
               Icons.logout,
-              color: Colors.white,
-              size: 30,
+              color: TwitterColor,
+              size: 25,
             ),
             itemBuilder: (_) {
               return <PopupMenuItem<String>>[

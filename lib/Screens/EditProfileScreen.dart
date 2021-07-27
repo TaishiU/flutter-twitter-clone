@@ -114,10 +114,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: TwitterColor,
+        elevation: 0,
+        backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text(widget.user.name),
+        leading: BackButton(
+          color: TwitterColor,
+        ),
+        title: Text(
+          widget.user.name,
+          style: TextStyle(
+            color: TwitterColor,
+          ),
+        ),
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(

@@ -154,10 +154,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isOwner = widget.currentUserId == widget.visitedUserUserId;
+    final _isOwner = widget.currentUserId == widget.visitedUserUserId;
 
     return Scaffold(
       backgroundColor: Colors.white,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Image.asset(
+          'assets/images/TwitterLogo.png',
+          width: 45,
+          height: 45,
+        ),
+      ),
       body: StreamBuilder(
         stream: usersRef.doc(widget.visitedUserUserId).snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -189,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      isOwner
+                      _isOwner
                           ? PopupMenuButton(
                               icon: Icon(
                                 Icons.more_horiz,
@@ -227,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Container(
-                transform: Matrix4.translationValues(0, -45, 0),
+                transform: Matrix4.translationValues(0, -40, 0),
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,39 +263,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditProfileScreen(user: user)),
-                            );
-                          },
-                          child: Container(
-                            width: 100,
-                            height: 35,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: TwitterColor,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Edit',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: TwitterColor,
-                                  fontWeight: FontWeight.bold,
+                        _isOwner
+                            ? OutlinedButton(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
+                                  child: Text(
+                                    'Edit',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: TwitterColor,
+                                    ),
+                                  ),
                                 ),
+                                style: OutlinedButton.styleFrom(
+                                  primary: Colors.black,
+                                  shape: StadiumBorder(),
+                                  side:
+                                      BorderSide(color: TwitterColor, width: 2),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditProfileScreen(user: user),
+                                    ),
+                                  );
+                                },
+                              )
+                            : ElevatedButton(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text(
+                                    'Follow',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: TwitterColor,
+                                  onPrimary: Colors.black,
+                                  shape: StadiumBorder(),
+                                ),
+                                onPressed: () {},
                               ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                     SizedBox(height: 10),

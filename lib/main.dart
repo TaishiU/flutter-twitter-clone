@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Screens/FeedScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 
@@ -15,7 +16,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
+      //theme: ThemeData.light(),
+      theme: ThemeData(
+        primaryColor: TwitterColor,
+      ),
       home: getScreenId(),
     );
   }
