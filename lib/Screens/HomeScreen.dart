@@ -72,34 +72,47 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: StreamBuilder<QuerySnapshot>(
-          stream:
-              allTweetsRef.orderBy('timestamp', descending: true).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        child: StreamBuilder(
+          stream: usersRef.doc(widget.currentUserId).snapshots(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
               );
             }
-            List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
-            if (allUserTweets.length == 0) {
-              return Center(
-                child: Text('There is no tweet...'),
-              );
-            }
-            return ListView(
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              children: allUserTweets.map((allTweets) {
-                Tweet tweet = Tweet.fromDoc(allTweets);
-                return TweetContainer(
-                  currentUserId: widget.currentUserId,
-                  tweet: tweet,
+            User user = User.fromDoc(snapshot.data);
+            return StreamBuilder<QuerySnapshot>(
+              stream: allTweetsRef
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
+                if (allUserTweets.length == 0) {
+                  return Center(
+                    child: Text('There is no tweet...'),
+                  );
+                }
+                return ListView(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  children: allUserTweets.map((allTweets) {
+                    Tweet tweet = Tweet.fromDoc(allTweets);
+                    return TweetContainer(
+                      currentUserId: widget.currentUserId,
+                      tweet: tweet,
+                      user: user,
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             );
           },
         ),

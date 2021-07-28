@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
@@ -9,9 +11,14 @@ import 'package:twitter_clone/Widget/TweetImageView.dart';
 class TweetContainer extends StatefulWidget {
   final String currentUserId;
   final Tweet tweet;
+  final User user;
 
-  TweetContainer({Key? key, required this.currentUserId, required this.tweet})
-      : super(key: key);
+  TweetContainer({
+    Key? key,
+    required this.currentUserId,
+    required this.tweet,
+    required this.user,
+  }) : super(key: key);
 
   @override
   _TweetContainerState createState() => _TweetContainerState();
@@ -52,6 +59,7 @@ class _TweetContainerState extends State<TweetContainer> {
                   builder: (context) => TweetDetailScreen(
                     currentUserId: widget.currentUserId,
                     tweet: widget.tweet,
+                    user: widget.user,
                   ),
                 ),
               );
@@ -165,7 +173,7 @@ class _TweetContainerState extends State<TweetContainer> {
                             )
                           ],
                         ),
-                        Text('tweetId: ${widget.tweet.tweetId.toString()}'),
+                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(
@@ -204,12 +212,47 @@ class _TweetContainerState extends State<TweetContainer> {
                               ),
                         Row(
                           children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.mode_comment_outlined,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.mode_comment_outlined,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => TweetDetailScreen(
+                                          currentUserId: widget.currentUserId,
+                                          tweet: widget.tweet,
+                                          user: widget.user,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                Container(
+                                  child: StreamBuilder(
+                                    stream: usersRef
+                                        .doc(widget.tweet.authorId)
+                                        .collection('tweets')
+                                        .doc(widget.tweet.tweetId)
+                                        .collection('comments')
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return SizedBox.shrink();
+                                      }
+                                      return Text(
+                                        snapshot.data!.size.toString(),
+                                        /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                             SizedBox(width: 10),
                             IconButton(

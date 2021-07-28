@@ -73,7 +73,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         likes: 0,
         reTweets: 0,
       );
-      Firestore().createTweet(tweet);
+      Firestore().createTweet(tweet: tweet);
       Navigator.of(context).pop();
       setState(() {
         _isLoading = false;
