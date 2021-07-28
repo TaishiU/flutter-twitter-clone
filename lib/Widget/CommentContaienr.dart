@@ -33,68 +33,6 @@ class _CommentContainerState extends State<CommentContainer> {
     }
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(
-  //     child: GestureDetector(
-  //       onTap: () {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => ProfileScreen(
-  //               currentUserId: widget.currentUserId,
-  //               visitedUserUserId: widget.comment.commentUserId,
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //       child: Column(
-  //         children: [
-  //           Row(
-  //             children: [
-  //               CircleAvatar(
-  //                 radius: 20,
-  //                 backgroundColor: TwitterColor,
-  //                 backgroundImage: widget
-  //                         .comment.commentUserProfileImage.isEmpty
-  //                     ? null
-  //                     : NetworkImage(widget.comment.commentUserProfileImage),
-  //               ),
-  //               SizedBox(width: 10),
-  //               Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Row(
-  //                     children: [
-  //                       Text(
-  //                         widget.comment.commentUserName,
-  //                         style: TextStyle(
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                       SizedBox(width: 10),
-  //                       Text(
-  //                         '${widget.comment.timestamp.toDate().month.toString()}/${widget.comment.timestamp.toDate().day.toString()}',
-  //                         style: TextStyle(
-  //                           fontSize: 12,
-  //                           color: Colors.grey,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   Text(
-  //                     widget.comment.commentText,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //           Divider(),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -211,7 +149,7 @@ class _CommentContainerState extends State<CommentContainer> {
                           )
                         ],
                       ),
-                      //Text('commentId: ${widget.comment.commentId.toString()}'),
+                      Text('commentId: ${widget.comment.commentId.toString()}'),
                       Text(
                         widget.comment.commentText,
                         style: TextStyle(
@@ -219,34 +157,6 @@ class _CommentContainerState extends State<CommentContainer> {
                         ),
                       ),
                       SizedBox(height: 15),
-                      // widget.tweet.image.isEmpty
-                      //     ? SizedBox.shrink()
-                      //     : GestureDetector(
-                      //         onTap: () {
-                      //           Navigator.push(
-                      //             context,
-                      //             MaterialPageRoute(
-                      //               builder: (context) => TweetImageView(
-                      //                 tappedImageIndex: 0,
-                      //                 image: widget.tweet.image,
-                      //               ),
-                      //             ),
-                      //           );
-                      //         },
-                      //         child: Container(
-                      //           height: 180,
-                      //           width: MediaQuery.of(context).size.width * 0.73,
-                      //           decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(20),
-                      //             image: DecorationImage(
-                      //               image: NetworkImage(
-                      //                 widget.tweet.image,
-                      //               ),
-                      //               fit: BoxFit.cover,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
                       Row(
                         children: [
                           IconButton(

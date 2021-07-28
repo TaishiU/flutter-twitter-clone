@@ -72,9 +72,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         elevation: 0.5,
         backgroundColor: Colors.white,
         centerTitle: true,
-        leading: BackButton(
-          color: TwitterColor,
-        ),
         title: Text(
           'Thread',
           style: TextStyle(
