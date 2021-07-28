@@ -229,34 +229,34 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               ],
                             ),
                             SizedBox(width: 20),
-                            Row(
-                              children: [
-                                Container(
-                                  child: StreamBuilder(
-                                    stream: usersRef
-                                        .doc(widget.tweet.authorId)
-                                        .collection('tweets')
-                                        .doc(widget.tweet.tweetId)
-                                        .collection('comments')
-                                        .snapshots(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return SizedBox.shrink();
-                                      }
-                                      return Text(
-                                        snapshot.data!.size.toString(),
-                                        /*Firestoreコレクションの要素数はsizeで取得できる*/
-
+                            Container(
+                              child: StreamBuilder(
+                                stream: usersRef
+                                    .doc(widget.tweet.authorId)
+                                    .collection('tweets')
+                                    .doc(widget.tweet.tweetId)
+                                    .collection('comments')
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return SizedBox.shrink();
+                                  }
+                                  List<DocumentSnapshot> commentListForTweet =
+                                      snapshot.data!.docs;
+                                  return Row(
+                                    children: [
+                                      Text(
+                                        commentListForTweet.length.toString(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Text(' Comments'),
-                              ],
+                                      ),
+                                      Text(' Comments'),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

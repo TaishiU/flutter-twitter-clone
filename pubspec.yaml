@@ -25,12 +25,16 @@ dependencies:
   flutter_image_compress: ^1.0.0
   path_provider: ^2.0.2
   uuid: ^3.0.4
-  xfile: ^1.1.0
+  flutter_launcher_icons: ^0.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/TwitterLogo.png"
 
 flutter:
 
