@@ -181,6 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
           User user = User.fromDoc(snapshot.data);
           return ListView(
+            //shrinkWrap: true,
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),

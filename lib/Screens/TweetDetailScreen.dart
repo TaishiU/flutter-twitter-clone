@@ -7,6 +7,7 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/CommentContaienr.dart';
+import 'package:twitter_clone/Widget/CommentUser.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetDetailScreen extends StatefulWidget {
@@ -236,6 +237,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                     .collection('tweets')
                                     .doc(widget.tweet.tweetId)
                                     .collection('comments')
+                                    .orderBy('timestamp', descending: true)
                                     .snapshots(),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -244,16 +246,30 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   }
                                   List<DocumentSnapshot> commentListForTweet =
                                       snapshot.data!.docs;
-                                  return Row(
-                                    children: [
-                                      Text(
-                                        commentListForTweet.length.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CommentUser(
+                                              currentUserId:
+                                                  widget.currentUserId,
+                                              commentListForTweet:
+                                                  commentListForTweet),
                                         ),
-                                      ),
-                                      Text(' Comments'),
-                                    ],
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          commentListForTweet.length.toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(' Comments'),
+                                      ],
+                                    ),
                                   );
                                 },
                               ),

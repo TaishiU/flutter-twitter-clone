@@ -25,14 +25,7 @@ class TweetContainer extends StatefulWidget {
 }
 
 class _TweetContainerState extends State<TweetContainer> {
-  int _likesCount = 0;
   bool _isLiked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _likesCount = widget.tweet.likes;
-  }
 
   likeTweet() {
     if (_isLiked) {

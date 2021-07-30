@@ -25,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late String _imagePickedType;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   initState() {
@@ -70,7 +69,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
       }
     } catch (e) {
-      print('image_pickerエラー： ${e}');
+      print('image_pickerエラー');
     }
   }
 

@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 return ListView(
-                  shrinkWrap: true,
+                  //shrinkWrap: true,
                   physics: BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
