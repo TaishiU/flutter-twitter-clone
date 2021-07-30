@@ -34,58 +34,6 @@ class _CommentUserState extends State<CommentUser> {
           ),
         ),
       ),
-      // body: ListView(
-      //   physics: BouncingScrollPhysics(
-      //     parent: AlwaysScrollableScrollPhysics(),
-      //   ),
-      //   children: widget.commentListForTweet.map((commentForTweet) {
-      //     Comment comment = Comment.fromDoc(commentForTweet);
-      //     return GestureDetector(
-      //       onTap: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //             builder: (context) => ProfileScreen(
-      //               currentUserId: widget.currentUserId,
-      //               visitedUserUserId: comment.commentUserId,
-      //             ),
-      //           ),
-      //         );
-      //       },
-      //       child: Container(
-      //         color: Colors.transparent,
-      //         child: Column(
-      //           children: [
-      //             Padding(
-      //               padding: EdgeInsets.symmetric(horizontal: 20),
-      //               child: Row(
-      //                 children: [
-      //                   CircleAvatar(
-      //                     radius: 23,
-      //                     backgroundColor: TwitterColor,
-      //                     backgroundImage: comment
-      //                             .commentUserProfileImage.isEmpty
-      //                         ? null
-      //                         : NetworkImage(comment.commentUserProfileImage),
-      //                   ),
-      //                   SizedBox(width: 15),
-      //                   Text(
-      //                     comment.commentUserName,
-      //                     style: TextStyle(
-      //                       fontSize: 17,
-      //                       fontWeight: FontWeight.bold,
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //             Divider(),
-      //           ],
-      //         ),
-      //       ),
-      //     );
-      //   }).toList(),
-      // ),
       body: Column(
         children: [
           Container(
