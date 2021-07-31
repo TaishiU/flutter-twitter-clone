@@ -1,26 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/ListUser.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class CommentUser extends StatefulWidget {
+class ListUserContainer extends StatefulWidget {
   final String title;
   final String currentUserId;
-  final List<DocumentSnapshot> commentListForTweet;
+  final List<DocumentSnapshot> ListUserDocumentSnap;
 
-  CommentUser({
+  ListUserContainer({
     Key? key,
     required this.title,
     required this.currentUserId,
-    required this.commentListForTweet,
+    required this.ListUserDocumentSnap,
   }) : super(key: key);
 
   @override
-  _CommentUserState createState() => _CommentUserState();
+  _ListUserContainerState createState() => _ListUserContainerState();
 }
 
-class _CommentUserState extends State<CommentUser> {
+class _ListUserContainerState extends State<ListUserContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +47,8 @@ class _CommentUserState extends State<CommentUser> {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: widget.commentListForTweet.map((commentForTweet) {
-              Comment comment = Comment.fromDoc(commentForTweet);
+            children: widget.ListUserDocumentSnap.map((ListUserSnap) {
+              ListUser listUser = ListUser.fromDoc(ListUserSnap);
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -56,7 +56,7 @@ class _CommentUserState extends State<CommentUser> {
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
                         currentUserId: widget.currentUserId,
-                        visitedUserUserId: comment.commentUserId,
+                        visitedUserUserId: listUser.userId!,
                       ),
                     ),
                   );
@@ -72,25 +72,23 @@ class _CommentUserState extends State<CommentUser> {
                             CircleAvatar(
                               radius: 23,
                               backgroundColor: TwitterColor,
-                              backgroundImage:
-                                  comment.commentUserProfileImage.isEmpty
-                                      ? null
-                                      : NetworkImage(
-                                          comment.commentUserProfileImage),
+                              backgroundImage: listUser.profileImage.isEmpty
+                                  ? null
+                                  : NetworkImage(listUser.profileImage),
                             ),
                             SizedBox(width: 15),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  comment.commentUserName,
+                                  listUser.name,
                                   style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  '@${comment.commentUserBio}',
+                                  '@${listUser.bio}',
                                   style: TextStyle(
                                     color: Colors.grey,
                                   ),

@@ -5,6 +5,7 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 
 class Firestore {
+  /*プロフィール関連*/
   Future<void> registerUser({
     required String userId,
     required String name,
@@ -39,6 +40,36 @@ class Firestore {
     });
   }
 
+  Future<void> followUser(
+      {required User followingUser, required User followersUser}) async {
+    /*フォローする側*/
+    DocumentReference followingReference = usersRef
+        .doc(followingUser.userId)
+        .collection('following')
+        .doc(followersUser.userId);
+    await followingReference.set({
+      'id': followersUser.userId,
+      'name': followersUser.name,
+      'profileImage': followersUser.profileImage,
+      'bio': followersUser.bio,
+      'timestamp': Timestamp.fromDate(DateTime.now()),
+    });
+
+    /*フォローされる側*/
+    DocumentReference followersReference = usersRef
+        .doc(followersUser.userId)
+        .collection('followers')
+        .doc(followingUser.userId);
+    await followersReference.set({
+      'id': followingUser.userId,
+      'name': followingUser.name,
+      'profileImage': followingUser.profileImage,
+      'bio': followingUser.bio,
+      'timestamp': Timestamp.fromDate(DateTime.now()),
+    });
+  }
+
+  /*ツイート関連*/
   Future<void> createTweet({required Tweet tweet}) async {
     DocumentReference tweetReference =
         usersRef.doc(tweet.authorId).collection('tweets').doc();
@@ -90,6 +121,7 @@ class Firestore {
       'commentUserId': comment.commentUserId,
       'commentUserName': comment.commentUserName,
       'commentUserProfileImage': comment.commentUserProfileImage,
+      'commentUserBio': comment.commentUserBio,
       'commentText': comment.commentText,
       'timestamp': comment.timestamp,
     });
@@ -107,6 +139,7 @@ class Firestore {
       'commentUserId': comment.commentUserId,
       'commentUserName': comment.commentUserName,
       'commentUserProfileImage': comment.commentUserProfileImage,
+      'commentUserBio': comment.commentUserBio,
       'commentText': comment.commentText,
       'timestamp': comment.timestamp,
     });

@@ -3,11 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
+import 'package:twitter_clone/Widget/ListUserContainer.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _profileSegmentedValue = 0;
+  bool _isFollowing = false;
 
   Map<int, Widget> _profileTabs = <int, Widget>{
     0: Padding(
@@ -154,6 +157,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  followUser({required User followersUser}) async {
+    setState(() {
+      _isFollowing = true;
+    });
+    DocumentSnapshot followingUserSnap =
+        await Firestore().getUserProfile(userId: widget.currentUserId);
+    User followingUser = User.fromDoc(followingUserSnap);
+
+    await Firestore().followUser(
+      followingUser: followingUser,
+      followersUser: followersUser,
+    );
+  }
+
+  unFollowUser() {
+    setState(() {
+      _isFollowing = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _isOwner = widget.currentUserId == widget.visitedUserUserId;
@@ -282,8 +305,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: OutlinedButton.styleFrom(
                                   primary: Colors.black,
                                   shape: StadiumBorder(),
-                                  side:
-                                      BorderSide(color: TwitterColor, width: 2),
+                                  side: BorderSide(
+                                    color: TwitterColor,
+                                    width: 2,
+                                  ),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
@@ -295,25 +320,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   );
                                 },
                               )
-                            : ElevatedButton(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    'Follow',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                            : _isFollowing
+                                ? ElevatedButton(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'Following',
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: TwitterColor,
+                                      onPrimary: Colors.black,
+                                      shape: StadiumBorder(),
+                                    ),
+                                    onPressed: () {
+                                      unFollowUser();
+                                    },
+                                  )
+                                : OutlinedButton(
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 15),
+                                      child: Text(
+                                        'Follow',
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: TwitterColor,
+                                        ),
+                                      ),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      primary: Colors.black,
+                                      shape: StadiumBorder(),
+                                      side: BorderSide(
+                                        color: TwitterColor,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      followUser(followersUser: user);
+                                    },
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  primary: TwitterColor,
-                                  onPrimary: Colors.black,
-                                  shape: StadiumBorder(),
-                                ),
-                                onPressed: () {},
-                              ),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -334,47 +388,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 20),
                     Row(
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              '324',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Following',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                                //fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        Container(
+                          child: StreamBuilder(
+                            stream: usersRef
+                                .doc(widget.visitedUserUserId)
+                                .collection('following')
+                                .orderBy('timestamp', descending: true)
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return SizedBox.shrink();
+                              }
+                              List<DocumentSnapshot> followingUserList =
+                                  snapshot.data!.docs;
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ListUserContainer(
+                                        title: 'Following User',
+                                        currentUserId: widget.currentUserId,
+                                        ListUserDocumentSnap: followingUserList,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      followingUserList.length.toString(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Following',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        //fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                         SizedBox(width: 20),
-                        Row(
-                          children: [
-                            Text(
-                              '352',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Followers',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                                //fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        Container(
+                          child: StreamBuilder(
+                            stream: usersRef
+                                .doc(widget.visitedUserUserId)
+                                .collection('followers')
+                                .orderBy('timestamp', descending: true)
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return SizedBox.shrink();
+                              }
+                              List<DocumentSnapshot> followersUserList =
+                                  snapshot.data!.docs;
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ListUserContainer(
+                                        title: 'Followers',
+                                        currentUserId: widget.currentUserId,
+                                        ListUserDocumentSnap: followersUserList,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      followersUserList.length.toString(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Followers',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                        //fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
+                        // Row(
+                        //   children: [
+                        //     Text(
+                        //       '352',
+                        //       style: TextStyle(
+                        //         fontSize: 16,
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //     SizedBox(width: 5),
+                        //     Text(
+                        //       'Followers',
+                        //       style: TextStyle(
+                        //         fontSize: 16,
+                        //         color: Colors.grey,
+                        //         //fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                     SizedBox(height: 20),

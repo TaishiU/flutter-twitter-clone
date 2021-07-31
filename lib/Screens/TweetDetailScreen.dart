@@ -53,6 +53,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         commentUserId: widget.currentUserId,
         commentUserName: user.name,
         commentUserProfileImage: user.profileImage,
+        commentUserBio: user.bio,
         commentText: _comment,
         timestamp: Timestamp.fromDate(DateTime.now()),
       );
@@ -246,12 +247,14 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   }
                                   List<DocumentSnapshot> commentListForTweet =
                                       snapshot.data!.docs;
+                                  //commentListForTweet.shuffle(); /*リストをシャッフル*/
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => CommentUser(
+                                              title: 'User',
                                               currentUserId:
                                                   widget.currentUserId,
                                               commentListForTweet:
@@ -263,6 +266,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                       children: [
                                         Text(
                                           commentListForTweet.length.toString(),
+                                          //'${commentListForTweet.first.get('commentUserName')}さん、他${commentListForTweet.length - 1}人',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),

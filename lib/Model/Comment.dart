@@ -5,6 +5,7 @@ class Comment {
   String commentUserId;
   String commentUserName;
   String commentUserProfileImage;
+  String commentUserBio;
   String commentText;
   Timestamp timestamp;
 
@@ -13,6 +14,7 @@ class Comment {
     required this.commentUserId,
     required this.commentUserName,
     required this.commentUserProfileImage,
+    required this.commentUserBio,
     required this.commentText,
     required this.timestamp,
   });
@@ -23,6 +25,7 @@ class Comment {
       commentUserId: commentDoc['commentUserId'],
       commentUserName: commentDoc['commentUserName'],
       commentUserProfileImage: commentDoc['commentUserProfileImage'],
+      commentUserBio: commentDoc['commentUserBio'],
       commentText: commentDoc['commentText'],
       timestamp: commentDoc['timestamp'],
     );
