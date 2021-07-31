@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -27,6 +28,19 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _profileSegmentedValue = 0;
   bool _isFollowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getIsFollowingPrefs();
+  }
+
+  getIsFollowingPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFollowing = prefs.getBool('isFollowing') ?? false;
+    });
+  }
 
   Map<int, Widget> _profileTabs = <int, Widget>{
     0: Padding(
@@ -160,6 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   followUser({required User followersUser}) async {
     setState(() {
       _isFollowing = true;
+      setFollowPref();
     });
     DocumentSnapshot followingUserSnap =
         await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -171,10 +186,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  unFollowUser() {
+  unFollowUser({required User unFollowersUser}) async {
     setState(() {
       _isFollowing = false;
+      setUnFollowPref();
     });
+    DocumentSnapshot unFollowingUserSnap =
+        await Firestore().getUserProfile(userId: widget.currentUserId);
+    User unFollowingUser = User.fromDoc(unFollowingUserSnap);
+
+    await Firestore().unFollowUser(
+      unFollowingUser: unFollowingUser,
+      unFollowersUser: unFollowersUser,
+    );
+  }
+
+  setFollowPref() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isFollowing', true);
+  }
+
+  setUnFollowPref() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isFollowing', false);
   }
 
   @override
@@ -340,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       shape: StadiumBorder(),
                                     ),
                                     onPressed: () {
-                                      unFollowUser();
+                                      unFollowUser(unFollowersUser: user);
                                     },
                                   )
                                 : OutlinedButton(
@@ -380,9 +414,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      user.bio,
+                      '@${user.bio}',
                       style: TextStyle(
                         fontSize: 15,
+                        color: Colors.grey,
                       ),
                     ),
                     SizedBox(height: 20),

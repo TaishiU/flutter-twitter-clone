@@ -69,6 +69,23 @@ class Firestore {
     });
   }
 
+  Future<void> unFollowUser(
+      {required User unFollowingUser, required User unFollowersUser}) async {
+    /*フォローしている側*/
+    DocumentReference followingReference = usersRef
+        .doc(unFollowingUser.userId)
+        .collection('following')
+        .doc(unFollowersUser.userId);
+    followingReference.delete();
+
+    /*フォローされる側*/
+    DocumentReference followersReference = usersRef
+        .doc(unFollowersUser.userId)
+        .collection('followers')
+        .doc(unFollowingUser.userId);
+    followersReference.delete();
+  }
+
   /*ツイート関連*/
   Future<void> createTweet({required Tweet tweet}) async {
     DocumentReference tweetReference =
