@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Comment.dart';
@@ -33,14 +34,25 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
   late String _comment;
   final _formkey = GlobalKey<FormState>();
 
-  likeTweet() async {
-    if (_isLiked) {
-      setState(() {
-        _isLiked = false;
-      });
-    } else {
+  @override
+  void initState() {
+    super.initState();
+    getIsLikedPrefs();
+  }
+
+  getIsLikedPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isLiked = prefs.getBool('isLiked') ?? false;
+    });
+  }
+
+  likeOrUnLikeTweet() async {
+    if (!_isLiked) {
+      /*いいねされていない時*/
       setState(() {
         _isLiked = true;
+        setLikesPref();
       });
       DocumentSnapshot userProfileDoc =
           await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -57,7 +69,30 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         postId: widget.tweet.tweetId!,
         postUserId: widget.tweet.authorId,
       );
+    } else if (_isLiked) {
+      /*いいねされている時*/
+      setState(() {
+        _isLiked = false;
+        setUnLikesPref();
+      });
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+      Firestore().unLikesForTweet(
+        tweet: widget.tweet,
+        unlikesUser: user,
+      );
     }
+  }
+
+  setLikesPref() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLiked', true);
+  }
+
+  setUnLikesPref() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLiked', false);
   }
 
   handleComment() async {
@@ -356,9 +391,10 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   : Icon(Icons.favorite_border),
                               color: _isLiked ? Colors.red : Colors.black,
                               onPressed: () {
-                                likeTweet();
+                                likeOrUnLikeTweet();
                               },
                             ),
+                            SizedBox(width: 10),
                             IconButton(
                               icon: Icon(Icons.share),
                               onPressed: () {},

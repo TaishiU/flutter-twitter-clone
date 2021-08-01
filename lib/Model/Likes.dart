@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Likes {
-  String? likesId;
   String likesUserId;
   String likesUserName;
   String likesUserProfileImage;
@@ -9,7 +8,6 @@ class Likes {
   Timestamp timestamp;
 
   Likes({
-    this.likesId,
     required this.likesUserId,
     required this.likesUserName,
     required this.likesUserProfileImage,
@@ -19,7 +17,6 @@ class Likes {
 
   factory Likes.fromDoc(DocumentSnapshot likesDoc) {
     return Likes(
-      likesId: likesDoc.id,
       likesUserId: likesDoc['likesUserId'],
       likesUserName: likesDoc['likesUserName'],
       likesUserProfileImage: likesDoc['likesUserProfileImage'],

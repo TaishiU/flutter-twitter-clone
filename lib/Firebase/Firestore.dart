@@ -133,32 +133,47 @@ class Firestore {
     required String postUserId,
   }) async {
     DocumentReference likestReferenceInAllTweets =
-        allTweetsRef.doc(postId).collection('likes').doc();
+        allTweetsRef.doc(postId).collection('likes').doc(likes.likesUserId);
     await likestReferenceInAllTweets.set({
-      'likesId': likestReferenceInAllTweets.id,
       'likesUserId': likes.likesUserId,
       'likesUserName': likes.likesUserName,
       'likesUserProfileImage': likes.likesUserProfileImage,
       'likesUserBio': likes.likesUserBio,
       'timestamp': likes.timestamp,
     });
-
-    String likestReferenceId = likestReferenceInAllTweets.id;
 
     DocumentReference likestReferenceInUser = usersRef
         .doc(postUserId)
         .collection('tweets')
         .doc(postId)
         .collection('likes')
-        .doc(likestReferenceId);
+        .doc(likes.likesUserId);
     await likestReferenceInUser.set({
-      'likesId': likestReferenceId,
       'likesUserId': likes.likesUserId,
       'likesUserName': likes.likesUserName,
       'likesUserProfileImage': likes.likesUserProfileImage,
       'likesUserBio': likes.likesUserBio,
       'timestamp': likes.timestamp,
     });
+  }
+
+  Future<void> unLikesForTweet({
+    required Tweet tweet,
+    required User unlikesUser,
+  }) async {
+    DocumentReference unLikesTweetReferenceInUser = usersRef
+        .doc(tweet.authorId)
+        .collection('tweets')
+        .doc(tweet.tweetId)
+        .collection('likes')
+        .doc(unlikesUser.userId);
+    await unLikesTweetReferenceInUser.delete();
+
+    DocumentReference unLikesTweetReferenceInAllTweets = allTweetsRef
+        .doc(tweet.tweetId)
+        .collection('likes')
+        .doc(unlikesUser.userId);
+    await unLikesTweetReferenceInAllTweets.delete();
   }
 
   Future<void> commentForTweet({
