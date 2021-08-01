@@ -207,12 +207,8 @@ class _TweetContainerState extends State<TweetContainer> {
                           children: [
                             Row(
                               children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.mode_comment_outlined,
-                                    color: Colors.black,
-                                  ),
-                                  onPressed: () {
+                                GestureDetector(
+                                  onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -224,7 +220,12 @@ class _TweetContainerState extends State<TweetContainer> {
                                       ),
                                     );
                                   },
+                                  child: Icon(
+                                    Icons.mode_comment_outlined,
+                                    color: Colors.black,
+                                  ),
                                 ),
+                                SizedBox(width: 8),
                                 Container(
                                   child: StreamBuilder(
                                     stream: usersRef
@@ -253,15 +254,52 @@ class _TweetContainerState extends State<TweetContainer> {
                               onPressed: () {},
                             ),
                             SizedBox(width: 10),
-                            IconButton(
-                              icon: _isLiked
-                                  ? Icon(Icons.favorite)
-                                  : Icon(Icons.favorite_border),
-                              color: _isLiked ? Colors.red : Colors.black,
-                              onPressed: () {
-                                likeTweet();
-                              },
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => TweetDetailScreen(
+                                          currentUserId: widget.currentUserId,
+                                          tweet: widget.tweet,
+                                          user: widget.user,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Container(
+                                  child: StreamBuilder(
+                                      stream: usersRef
+                                          .doc(widget.tweet.authorId)
+                                          .collection('tweets')
+                                          .doc(widget.tweet.tweetId)
+                                          .collection('likes')
+                                          .orderBy('timestamp',
+                                              descending: true)
+                                          .snapshots(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return SizedBox.shrink();
+                                        }
+                                        return Text(
+                                          snapshot.data!.size.toString(),
+                                          /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                        );
+                                      }),
+                                ),
+                              ],
                             ),
+                            SizedBox(width: 10),
                             IconButton(
                               icon: Icon(Icons.share),
                               onPressed: () {},
