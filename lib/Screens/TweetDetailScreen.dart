@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/CommentContaienr.dart';
 import 'package:twitter_clone/Widget/CommentUser.dart';
+import 'package:twitter_clone/Widget/LikesUserContainer.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetDetailScreen extends StatefulWidget {
@@ -31,7 +33,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
   late String _comment;
   final _formkey = GlobalKey<FormState>();
 
-  likeTweet() {
+  likeTweet() async {
     if (_isLiked) {
       setState(() {
         _isLiked = false;
@@ -40,6 +42,21 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
       setState(() {
         _isLiked = true;
       });
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+      Likes likes = Likes(
+        likesUserId: widget.currentUserId,
+        likesUserName: user.name,
+        likesUserProfileImage: user.profileImage,
+        likesUserBio: user.bio,
+        timestamp: Timestamp.fromDate(DateTime.now()),
+      );
+      Firestore().likesForTweet(
+        likes: likes,
+        postId: widget.tweet.tweetId!,
+        postUserId: widget.tweet.authorId,
+      );
     }
   }
 
@@ -171,7 +188,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           ],
                         ),
                         SizedBox(height: 15),
-                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
+                        Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(
@@ -216,22 +233,59 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                         ),
                         SizedBox(height: 5),
                         Divider(),
-                        SizedBox(height: 5),
                         Row(
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '31',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(' Likes'),
-                              ],
+                            Container(
+                              padding: EdgeInsets.all(6),
+                              child: StreamBuilder(
+                                stream: usersRef
+                                    .doc(widget.tweet.authorId)
+                                    .collection('tweets')
+                                    .doc(widget.tweet.tweetId)
+                                    .collection('likes')
+                                    .orderBy('timestamp', descending: true)
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return SizedBox.shrink();
+                                  }
+                                  List<DocumentSnapshot> likesListForTweet =
+                                      snapshot.data!.docs;
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              LikesUserContainer(
+                                            title: 'User',
+                                            currentUserId: widget.currentUserId,
+                                            likesListForTweet:
+                                                likesListForTweet,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          likesListForTweet.length.toString(),
+                                          //'${likesListForTweet.first.get('likesUserName')}さん、他${likesListForTweet.length - 1}人',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(' Likes'),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                             SizedBox(width: 20),
                             Container(
+                              padding: EdgeInsets.all(6),
                               child: StreamBuilder(
                                 stream: usersRef
                                     .doc(widget.tweet.authorId)
@@ -280,7 +334,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 5),
                         Divider(),
                         Row(
                           children: [

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 
@@ -48,7 +49,7 @@ class Firestore {
         .collection('following')
         .doc(followersUser.userId);
     await followingReference.set({
-      'id': followersUser.userId,
+      'userId': followersUser.userId,
       'name': followersUser.name,
       'profileImage': followersUser.profileImage,
       'bio': followersUser.bio,
@@ -61,7 +62,7 @@ class Firestore {
         .collection('followers')
         .doc(followingUser.userId);
     await followersReference.set({
-      'id': followingUser.userId,
+      'userId': followingUser.userId,
       'name': followingUser.name,
       'profileImage': followingUser.profileImage,
       'bio': followingUser.bio,
@@ -78,7 +79,7 @@ class Firestore {
         .doc(unFollowersUser.userId);
     followingReference.delete();
 
-    /*フォローされる側*/
+    /*フォローされている側*/
     DocumentReference followersReference = usersRef
         .doc(unFollowersUser.userId)
         .collection('followers')
@@ -124,6 +125,40 @@ class Firestore {
       {required String userId, required String postId}) async {
     await usersRef.doc(userId).collection('tweets').doc(postId).delete();
     await allTweetsRef.doc(postId).delete();
+  }
+
+  Future<void> likesForTweet({
+    required Likes likes,
+    required String postId,
+    required String postUserId,
+  }) async {
+    DocumentReference likestReferenceInAllTweets =
+        allTweetsRef.doc(postId).collection('likes').doc();
+    await likestReferenceInAllTweets.set({
+      'likesId': likestReferenceInAllTweets.id,
+      'likesUserId': likes.likesUserId,
+      'likesUserName': likes.likesUserName,
+      'likesUserProfileImage': likes.likesUserProfileImage,
+      'likesUserBio': likes.likesUserBio,
+      'timestamp': likes.timestamp,
+    });
+
+    String likestReferenceId = likestReferenceInAllTweets.id;
+
+    DocumentReference likestReferenceInUser = usersRef
+        .doc(postUserId)
+        .collection('tweets')
+        .doc(postId)
+        .collection('likes')
+        .doc(likestReferenceId);
+    await likestReferenceInUser.set({
+      'likesId': likestReferenceId,
+      'likesUserId': likes.likesUserId,
+      'likesUserName': likes.likesUserName,
+      'likesUserProfileImage': likes.likesUserProfileImage,
+      'likesUserBio': likes.likesUserBio,
+      'timestamp': likes.timestamp,
+    });
   }
 
   Future<void> commentForTweet({
