@@ -41,6 +41,14 @@ class Firestore {
     });
   }
 
+  Future<QuerySnapshot> searchUsers({required String name}) async {
+    QuerySnapshot users = await usersRef
+        .where('name', isGreaterThanOrEqualTo: name)
+        .where('name', isLessThan: name + 'z')
+        .get();
+    return users;
+  }
+
   Future<void> followUser(
       {required User followingUser, required User followersUser}) async {
     /*フォローする側*/
