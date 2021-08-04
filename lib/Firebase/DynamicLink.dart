@@ -5,6 +5,7 @@ class DynamicLink {
     required String tweetId,
     required String tweetAuthorId,
     required String tweetText,
+    required String imageUrl,
   }) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://fluttertwitterclone.page.link',
@@ -14,7 +15,7 @@ class DynamicLink {
         title: 'Twitter_clone',
         description: tweetText,
         imageUrl: Uri.parse(
-          'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+          imageUrl,
         ),
       ),
       androidParameters: AndroidParameters(

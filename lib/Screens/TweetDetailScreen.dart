@@ -404,6 +404,9 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   tweetId: widget.tweet.tweetId!,
                                   tweetAuthorId: widget.tweet.authorId,
                                   tweetText: widget.tweet.text,
+                                  imageUrl: widget.tweet.hasImage
+                                      ? widget.tweet.image
+                                      : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
                                 ),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
