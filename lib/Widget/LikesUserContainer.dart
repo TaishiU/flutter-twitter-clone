@@ -4,7 +4,7 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class LikesUserContainer extends StatefulWidget {
+class LikesUserContainer extends StatelessWidget {
   final String title;
   final String currentUserId;
   final List<DocumentSnapshot> likesListForTweet;
@@ -17,11 +17,6 @@ class LikesUserContainer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _LikesUserContainerState createState() => _LikesUserContainerState();
-}
-
-class _LikesUserContainerState extends State<LikesUserContainer> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,7 +25,7 @@ class _LikesUserContainerState extends State<LikesUserContainer> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          widget.title,
+          title,
           style: TextStyle(
             color: TwitterColor,
           ),
@@ -47,7 +42,7 @@ class _LikesUserContainerState extends State<LikesUserContainer> {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: widget.likesListForTweet.map((likesForTweet) {
+            children: likesListForTweet.map((likesForTweet) {
               Likes likes = Likes.fromDoc(likesForTweet);
               return GestureDetector(
                 onTap: () {
@@ -55,7 +50,7 @@ class _LikesUserContainerState extends State<LikesUserContainer> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
-                        currentUserId: widget.currentUserId,
+                        currentUserId: currentUserId,
                         visitedUserUserId: likes.likesUserId,
                       ),
                     ),

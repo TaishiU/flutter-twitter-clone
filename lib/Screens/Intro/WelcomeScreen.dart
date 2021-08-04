@@ -3,12 +3,9 @@ import 'package:twitter_clone/Screens/Intro/LoginScreen.dart';
 import 'package:twitter_clone/Screens/Intro/RegistrationScreen.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
-}
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

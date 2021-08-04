@@ -8,7 +8,7 @@ import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   final String currentUserId;
   final String visitedUserId;
 
@@ -16,11 +16,6 @@ class HomeScreen extends StatefulWidget {
       {Key? key, required this.currentUserId, required this.visitedUserId})
       : super(key: key);
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: StreamBuilder(
-          stream: usersRef.doc(widget.currentUserId).snapshots(),
+          stream: usersRef.doc(currentUserId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
               return Center(
@@ -106,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: allUserTweets.map((allTweets) {
                     Tweet tweet = Tweet.fromDoc(allTweets);
                     return TweetContainer(
-                      currentUserId: widget.currentUserId,
+                      currentUserId: currentUserId,
                       tweet: tweet,
                       user: user,
                     );
@@ -119,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: Container(
         child: StreamBuilder(
-          stream: usersRef.doc(widget.currentUserId).snapshots(),
+          stream: usersRef.doc(currentUserId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
               return SizedBox.shrink();
@@ -136,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CreateTweetScreen(
-                      currentUserId: widget.currentUserId,
+                      currentUserId: currentUserId,
                       user: user,
                     ),
                   ),

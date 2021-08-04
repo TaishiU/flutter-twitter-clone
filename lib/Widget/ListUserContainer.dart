@@ -4,7 +4,7 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/ListUser.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class ListUserContainer extends StatefulWidget {
+class ListUserContainer extends StatelessWidget {
   final String title;
   final String currentUserId;
   final List<DocumentSnapshot> ListUserDocumentSnap;
@@ -17,11 +17,6 @@ class ListUserContainer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ListUserContainerState createState() => _ListUserContainerState();
-}
-
-class _ListUserContainerState extends State<ListUserContainer> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,7 +25,7 @@ class _ListUserContainerState extends State<ListUserContainer> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          widget.title,
+          title,
           style: TextStyle(
             color: TwitterColor,
           ),
@@ -47,7 +42,7 @@ class _ListUserContainerState extends State<ListUserContainer> {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: widget.ListUserDocumentSnap.map((ListUserSnap) {
+            children: ListUserDocumentSnap.map((ListUserSnap) {
               ListUser listUser = ListUser.fromDoc(ListUserSnap);
               return GestureDetector(
                 onTap: () {
@@ -55,7 +50,7 @@ class _ListUserContainerState extends State<ListUserContainer> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
-                        currentUserId: widget.currentUserId,
+                        currentUserId: currentUserId,
                         visitedUserUserId: listUser.userId!,
                       ),
                     ),

@@ -4,7 +4,7 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class CommentUser extends StatefulWidget {
+class CommentUser extends StatelessWidget {
   final String title;
   final String currentUserId;
   final List<DocumentSnapshot> commentListForTweet;
@@ -17,11 +17,6 @@ class CommentUser extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CommentUserState createState() => _CommentUserState();
-}
-
-class _CommentUserState extends State<CommentUser> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,7 +25,7 @@ class _CommentUserState extends State<CommentUser> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          widget.title,
+          title,
           style: TextStyle(
             color: TwitterColor,
           ),
@@ -47,7 +42,7 @@ class _CommentUserState extends State<CommentUser> {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: widget.commentListForTweet.map((commentForTweet) {
+            children: commentListForTweet.map((commentForTweet) {
               Comment comment = Comment.fromDoc(commentForTweet);
               return GestureDetector(
                 onTap: () {
@@ -55,7 +50,7 @@ class _CommentUserState extends State<CommentUser> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
-                        currentUserId: widget.currentUserId,
+                        currentUserId: currentUserId,
                         visitedUserUserId: comment.commentUserId,
                       ),
                     ),
