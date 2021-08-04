@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -397,7 +398,9 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                             SizedBox(width: 10),
                             IconButton(
                               icon: Icon(Icons.share),
-                              onPressed: () {},
+                              onPressed: () {
+                                Share.share(widget.tweet.text);
+                              },
                             ),
                           ],
                         ),

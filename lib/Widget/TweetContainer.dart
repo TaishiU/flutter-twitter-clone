@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
@@ -302,7 +303,9 @@ class _TweetContainerState extends State<TweetContainer> {
                             SizedBox(width: 10),
                             IconButton(
                               icon: Icon(Icons.share),
-                              onPressed: () {},
+                              onPressed: () {
+                                Share.share(widget.tweet.text);
+                              },
                             ),
                           ],
                         ),
