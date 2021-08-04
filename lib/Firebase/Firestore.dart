@@ -219,4 +219,15 @@ class Firestore {
       'timestamp': comment.timestamp,
     });
   }
+
+  /*シェア関連*/
+  Future<DocumentSnapshot> getTweetForShare(
+      {required String tweetId, required String tweetAuthorId}) async {
+    DocumentSnapshot tweetSnap = await usersRef
+        .doc(tweetAuthorId)
+        .collection('tweets')
+        .doc(tweetId)
+        .get();
+    return tweetSnap;
+  }
 }

@@ -7,13 +7,13 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 class ListUserContainer extends StatelessWidget {
   final String title;
   final String currentUserId;
-  final List<DocumentSnapshot> ListUserDocumentSnap;
+  final List<DocumentSnapshot> listUserDocumentSnap;
 
   ListUserContainer({
     Key? key,
     required this.title,
     required this.currentUserId,
-    required this.ListUserDocumentSnap,
+    required this.listUserDocumentSnap,
   }) : super(key: key);
 
   @override
@@ -42,8 +42,8 @@ class ListUserContainer extends StatelessWidget {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: ListUserDocumentSnap.map((ListUserSnap) {
-              ListUser listUser = ListUser.fromDoc(ListUserSnap);
+            children: listUserDocumentSnap.map((listUserSnap) {
+              ListUser listUser = ListUser.fromDoc(listUserSnap);
               return GestureDetector(
                 onTap: () {
                   Navigator.push(

@@ -401,7 +401,10 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                             Container(
                               child: FutureBuilder<Uri>(
                                 future: dynamicLink.createDynamicLink(
-                                    tweetText: widget.tweet.text),
+                                  tweetId: widget.tweet.tweetId!,
+                                  tweetAuthorId: widget.tweet.authorId,
+                                  tweetText: widget.tweet.text,
+                                ),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
                                     return IconButton(

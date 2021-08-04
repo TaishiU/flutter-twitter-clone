@@ -1,10 +1,15 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 class DynamicLink {
-  Future<Uri> createDynamicLink({required String tweetText}) async {
+  Future<Uri> createDynamicLink({
+    required String tweetId,
+    required String tweetAuthorId,
+    required String tweetText,
+  }) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://fluttertwitterclone.page.link',
-      link: Uri.parse('https://fluttertwitterclone.page.link/twitter_clone'),
+      link: Uri.parse(
+          'https://fluttertwitterclone.page.link.com/?tweetId=$tweetId&tweetAuthorId=$tweetAuthorId'),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: 'Twitter_clone',
         description: tweetText,

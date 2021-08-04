@@ -445,7 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       builder: (context) => ListUserContainer(
                                         title: 'Following User',
                                         currentUserId: widget.currentUserId,
-                                        ListUserDocumentSnap: followingUserList,
+                                        listUserDocumentSnap: followingUserList,
                                       ),
                                     ),
                                   );
@@ -497,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
                                         currentUserId: widget.currentUserId,
-                                        ListUserDocumentSnap: followersUserList,
+                                        listUserDocumentSnap: followersUserList,
                                       ),
                                     ),
                                   );
