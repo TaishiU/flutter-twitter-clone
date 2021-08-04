@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Firebase/DynamicLink.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Model/Likes.dart';
@@ -34,6 +35,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
   bool _isLiked = false;
   late String _comment;
   final _formkey = GlobalKey<FormState>();
+  final DynamicLink dynamicLink = DynamicLink();
 
   @override
   void initState() {
@@ -396,11 +398,30 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               },
                             ),
                             SizedBox(width: 10),
-                            IconButton(
-                              icon: Icon(Icons.share),
-                              onPressed: () {
-                                Share.share(widget.tweet.text);
-                              },
+                            Container(
+                              child: FutureBuilder<Uri>(
+                                future: dynamicLink.createDynamicLink(
+                                    tweetText: widget.tweet.text),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return IconButton(
+                                      icon: Icon(Icons.share),
+                                      onPressed: () {
+                                        //Share.share(widget.tweet.text);
+                                      },
+                                    );
+                                  }
+                                  Uri uri = snapshot.data!;
+                                  return IconButton(
+                                    icon: Icon(Icons.share),
+                                    onPressed: () {
+                                      Share.share(
+                                        '${widget.tweet.text}\n\n${uri.toString()}',
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
