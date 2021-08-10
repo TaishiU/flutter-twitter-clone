@@ -6,6 +6,7 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
+import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -66,7 +67,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
         child: StreamBuilder(
           stream: usersRef.doc(currentUserId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -98,14 +99,80 @@ class HomeScreen extends StatelessWidget {
                   physics: BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
-                  children: allUserTweets.map((allTweets) {
-                    Tweet tweet = Tweet.fromDoc(allTweets);
-                    return TweetContainer(
-                      currentUserId: currentUserId,
-                      tweet: tweet,
-                      user: user,
-                    );
-                  }).toList(),
+                  children: [
+                    Container(
+                      height: 70,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: usersRef.snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) {
+                            return SizedBox.shrink();
+                          }
+                          List<DocumentSnapshot> listSnap = snapshot.data!.docs;
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: listSnap.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                            currentUserId: currentUserId,
+                                            visitedUserUserId:
+                                                listSnap[index].get('userId')),
+                                      ),
+                                    );
+                                  },
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Container(
+                                        height: 55,
+                                        width: 55,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.yellow,
+                                          gradient: LinearGradient(
+                                            begin: FractionalOffset.bottomLeft,
+                                            end: FractionalOffset.topRight,
+                                            colors: [
+                                              Colors.red,
+                                              Colors.yellow,
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: NetworkImage(
+                                          listSnap[index].get('profileImage'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    Column(
+                      children: allUserTweets.map((allTweets) {
+                        Tweet tweet = Tweet.fromDoc(allTweets);
+                        return TweetContainer(
+                          currentUserId: currentUserId,
+                          tweet: tweet,
+                          user: user,
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 );
               },
             );
