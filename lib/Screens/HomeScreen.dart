@@ -149,6 +149,7 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                       CircleAvatar(
                                         radius: 25,
+                                        backgroundColor: TwitterColor,
                                         backgroundImage: NetworkImage(
                                           listSnap[index].get('profileImage'),
                                         ),
