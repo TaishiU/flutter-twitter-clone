@@ -255,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Container(
                 transform: Matrix4.translationValues(0, -40, 0),
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -149,7 +149,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
               parent: AlwaysScrollableScrollPhysics(),
             ),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: Column(
                 children: [
                   Container(

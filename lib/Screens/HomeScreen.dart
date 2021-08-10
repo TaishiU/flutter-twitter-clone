@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: StreamBuilder(
           stream: usersRef.doc(currentUserId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {

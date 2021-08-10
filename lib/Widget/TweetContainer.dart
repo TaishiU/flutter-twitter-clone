@@ -93,7 +93,7 @@ class _TweetContainerState extends State<TweetContainer> {
                   ),
                   SizedBox(width: 10),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.73,
+                    width: MediaQuery.of(context).size.width * 0.76,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -194,7 +194,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                 child: Container(
                                   height: 180,
                                   width:
-                                      MediaQuery.of(context).size.width * 0.73,
+                                      MediaQuery.of(context).size.width * 0.76,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     image: DecorationImage(
