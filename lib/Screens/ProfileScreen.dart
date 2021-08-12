@@ -572,35 +572,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         },
       ),
-      floatingActionButton: Container(
-        child: StreamBuilder(
-          stream: usersRef.doc(widget.currentUserId).snapshots(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return SizedBox.shrink();
-            }
-            User user = User.fromDoc(snapshot.data);
-            return FloatingActionButton(
-              backgroundColor: TwitterColor,
-              child: Image.asset(
-                'assets/images/TweetLogo.png',
-                fit: BoxFit.cover,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateTweetScreen(
-                      currentUserId: widget.currentUserId,
-                      user: user,
+      floatingActionButton: _isOwner
+          ? Container(
+              child: StreamBuilder(
+                stream: usersRef.doc(widget.currentUserId).snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return SizedBox.shrink();
+                  }
+                  User user = User.fromDoc(snapshot.data);
+                  return FloatingActionButton(
+                    backgroundColor: TwitterColor,
+                    child: Image.asset(
+                      'assets/images/TweetLogo.png',
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateTweetScreen(
+                            currentUserId: widget.currentUserId,
+                            user: user,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 }
