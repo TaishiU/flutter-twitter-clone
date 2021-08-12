@@ -49,6 +49,8 @@ app.*.map.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 functions/
+.firebaserc
+firebase.json
 
 # Algolia related
 .env

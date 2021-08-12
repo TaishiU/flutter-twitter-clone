@@ -11,7 +11,7 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('NotificationsScreen'),
+        title: Text('NotificationsScreen1'),
       ),
     );
   }
