@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: StreamBuilder(
           stream: usersRef.doc(currentUserId).snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -101,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   children: [
                     Container(
-                      height: 70,
+                      height: 100,
                       child: StreamBuilder<QuerySnapshot>(
                         stream: usersRef.snapshots(),
                         builder: (BuildContext context,
@@ -111,11 +111,15 @@ class HomeScreen extends StatelessWidget {
                           }
                           List<DocumentSnapshot> listSnap = snapshot.data!.docs;
                           return ListView.builder(
+                            physics: BouncingScrollPhysics(
+                              parent: AlwaysScrollableScrollPhysics(),
+                            ),
                             scrollDirection: Axis.horizontal,
                             itemCount: listSnap.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 10),
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -128,32 +132,40 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  child: Stack(
-                                    alignment: Alignment.center,
+                                  child: Column(
                                     children: [
-                                      Container(
-                                        height: 55,
-                                        width: 55,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.yellow,
-                                          gradient: LinearGradient(
-                                            begin: FractionalOffset.bottomLeft,
-                                            end: FractionalOffset.topRight,
-                                            colors: [
-                                              Colors.red,
-                                              Colors.yellow,
-                                            ],
+                                      Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            height: 55,
+                                            width: 55,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.yellow,
+                                              gradient: LinearGradient(
+                                                begin:
+                                                    FractionalOffset.bottomLeft,
+                                                end: FractionalOffset.topRight,
+                                                colors: [
+                                                  Colors.red,
+                                                  Colors.yellow,
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor: TwitterColor,
+                                            backgroundImage: NetworkImage(
+                                              listSnap[index]
+                                                  .get('profileImage'),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor: TwitterColor,
-                                        backgroundImage: NetworkImage(
-                                          listSnap[index].get('profileImage'),
-                                        ),
-                                      ),
+                                      SizedBox(height: 5),
+                                      Text(listSnap[index].get('name')),
                                     ],
                                   ),
                                 ),
@@ -163,15 +175,22 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    Column(
-                      children: allUserTweets.map((allTweets) {
-                        Tweet tweet = Tweet.fromDoc(allTweets);
-                        return TweetContainer(
-                          currentUserId: currentUserId,
-                          tweet: tweet,
-                          user: user,
-                        );
-                      }).toList(),
+                    Container(
+                      height: 5,
+                      color: Colors.grey.shade300,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: allUserTweets.map((allTweets) {
+                          Tweet tweet = Tweet.fromDoc(allTweets);
+                          return TweetContainer(
+                            currentUserId: currentUserId,
+                            tweet: tweet,
+                            user: user,
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ],
                 );
