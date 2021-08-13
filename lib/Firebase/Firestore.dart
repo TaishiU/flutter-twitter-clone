@@ -95,6 +95,18 @@ class Firestore {
     followersReference.delete();
   }
 
+  Future<bool> isFollowingUser({
+    required String currentUserId,
+    required String visitedUserId,
+  }) async {
+    DocumentSnapshot isFollowingUsrSnap = await usersRef
+        .doc(currentUserId)
+        .collection('following')
+        .doc(visitedUserId)
+        .get();
+    return isFollowingUsrSnap.exists;
+  }
+
   /*ツイート関連*/
   Future<void> createTweet({required Tweet tweet}) async {
     DocumentReference tweetReference =

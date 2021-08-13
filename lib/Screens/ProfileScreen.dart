@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -33,14 +32,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getIsFollowingPrefs();
+    setupIsFollowing();
   }
 
-  getIsFollowingPrefs() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isFollowing = prefs.getBool('isFollowing') ?? false;
-    });
+  /*ユーザーをフォローしているか判断するメソッド*/
+  setupIsFollowing() async {
+    bool isFollowingUser = await Firestore().isFollowingUser(
+      currentUserId: widget.currentUserId,
+      visitedUserId: widget.visitedUserUserId,
+    );
+    if (mounted) {
+      if (isFollowingUser == true) {
+        setState(() {
+          _isFollowing = true;
+        });
+      } else {
+        setState(() {
+          _isFollowing = false;
+        });
+      }
+    }
   }
 
   Map<int, Widget> _profileTabs = <int, Widget>{
@@ -175,7 +186,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   followUser({required User followersUser}) async {
     setState(() {
       _isFollowing = true;
-      setFollowPref();
     });
     DocumentSnapshot followingUserSnap =
         await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -190,7 +200,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   unFollowUser({required User unFollowersUser}) async {
     setState(() {
       _isFollowing = false;
-      setUnFollowPref();
     });
     DocumentSnapshot unFollowingUserSnap =
         await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -200,16 +209,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       unFollowingUser: unFollowingUser,
       unFollowersUser: unFollowersUser,
     );
-  }
-
-  setFollowPref() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFollowing', true);
-  }
-
-  setUnFollowPref() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isFollowing', false);
   }
 
   @override
