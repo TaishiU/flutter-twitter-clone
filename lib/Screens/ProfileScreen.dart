@@ -11,6 +11,7 @@ import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
+import 'package:twitter_clone/Widget/ProfileImageView.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -243,57 +244,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
               parent: AlwaysScrollableScrollPhysics(),
             ),
             children: [
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: TwitterColor,
-                  image: user.coverImage.isEmpty
-                      ? null
-                      : DecorationImage(
-                          image: NetworkImage(user.coverImage),
-                          fit: BoxFit.cover,
-                        ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _isOwner
-                          ? PopupMenuButton(
-                              icon: Icon(
-                                Icons.more_horiz,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                              itemBuilder: (_) {
-                                return <PopupMenuItem<String>>[
-                                  PopupMenuItem(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text('Logout'),
-                                      ],
-                                    ),
-                                    value: 'logout',
-                                  )
-                                ];
-                              },
-                              onSelected: (selectedItem) {
-                                if (selectedItem == 'logout') {
-                                  Auth().logout();
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              WelcomeScreen()));
-                                }
-                              },
-                            )
-                          : SizedBox.shrink(),
-                    ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileImageView(
+                        tappedImageIndex: 0,
+                        image: user.coverImage,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: TwitterColor,
+                    image: user.coverImage.isEmpty
+                        ? null
+                        : DecorationImage(
+                            image: NetworkImage(user.coverImage),
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _isOwner
+                            ? PopupMenuButton(
+                                icon: Icon(
+                                  Icons.more_horiz,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                                itemBuilder: (_) {
+                                  return <PopupMenuItem<String>>[
+                                    PopupMenuItem(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text('Logout'),
+                                        ],
+                                      ),
+                                      value: 'logout',
+                                    )
+                                  ];
+                                },
+                                onSelected: (selectedItem) {
+                                  if (selectedItem == 'logout') {
+                                    Auth().logout();
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                WelcomeScreen()));
+                                  }
+                                },
+                              )
+                            : SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -307,21 +321,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 45,
-                              backgroundColor: Colors.white,
-                            ),
-                            CircleAvatar(
-                              radius: 42,
-                              backgroundImage: user.profileImage.isEmpty
-                                  ? null
-                                  : NetworkImage(user.profileImage),
-                              backgroundColor: TwitterColor,
-                            ),
-                          ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileImageView(
+                                  tappedImageIndex: 0,
+                                  image: user.profileImage,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 45,
+                                backgroundColor: Colors.white,
+                              ),
+                              CircleAvatar(
+                                radius: 42,
+                                backgroundImage: user.profileImage.isEmpty
+                                    ? null
+                                    : NetworkImage(user.profileImage),
+                                backgroundColor: TwitterColor,
+                              ),
+                            ],
+                          ),
                         ),
                         _isOwner
                             ? OutlinedButton(
