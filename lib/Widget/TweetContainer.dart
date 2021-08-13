@@ -4,6 +4,7 @@ import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -30,15 +31,65 @@ class _TweetContainerState extends State<TweetContainer> {
   bool _isLiked = false;
   final DynamicLink dynamicLink = DynamicLink();
 
-  likeTweet() {
-    if (_isLiked) {
-      setState(() {
-        _isLiked = false;
-      });
-    } else {
+  @override
+  void initState() {
+    super.initState();
+    setupIsLiked();
+  }
+
+  /*ツイートにいいねをしているか判断するメソッド*/
+  setupIsLiked() async {
+    bool isLikedTweet = await Firestore().isLikedTweet(
+      currentUserId: widget.currentUserId,
+      tweetAuthorId: widget.tweet.authorId,
+      tweetId: widget.tweet.tweetId!,
+    );
+    if (mounted) {
+      if (isLikedTweet == true) {
+        setState(() {
+          _isLiked = true;
+        });
+      } else {
+        setState(() {
+          _isLiked = false;
+        });
+      }
+    }
+  }
+
+  likeOrUnLikeTweet() async {
+    if (!_isLiked) {
+      /*いいねされていない時*/
       setState(() {
         _isLiked = true;
       });
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+      Likes likes = Likes(
+        likesUserId: widget.currentUserId,
+        likesUserName: user.name,
+        likesUserProfileImage: user.profileImage,
+        likesUserBio: user.bio,
+        timestamp: Timestamp.fromDate(DateTime.now()),
+      );
+      Firestore().likesForTweet(
+        likes: likes,
+        postId: widget.tweet.tweetId!,
+        postUserId: widget.tweet.authorId,
+      );
+    } else if (_isLiked) {
+      /*いいねされている時*/
+      setState(() {
+        _isLiked = false;
+      });
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+      Firestore().unLikesForTweet(
+        tweet: widget.tweet,
+        unlikesUser: user,
+      );
     }
   }
 
@@ -261,21 +312,17 @@ class _TweetContainerState extends State<TweetContainer> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TweetDetailScreen(
-                                          currentUserId: widget.currentUserId,
-                                          tweet: widget.tweet,
-                                          user: widget.user,
-                                        ),
-                                      ),
-                                    );
+                                    likeOrUnLikeTweet();
                                   },
-                                  child: Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.black,
-                                  ),
+                                  child: _isLiked
+                                      ? Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.favorite_border,
+                                          color: Colors.black,
+                                        ),
                                 ),
                                 SizedBox(width: 8),
                                 Container(

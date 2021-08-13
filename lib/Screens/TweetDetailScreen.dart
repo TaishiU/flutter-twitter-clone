@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -41,14 +40,27 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
   @override
   void initState() {
     super.initState();
-    getIsLikedPrefs();
+    setupIsLiked();
   }
 
-  getIsLikedPrefs() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLiked = prefs.getBool('isLiked') ?? false;
-    });
+  /*ツイートにいいねをしているか判断するメソッド*/
+  setupIsLiked() async {
+    bool isLikedTweet = await Firestore().isLikedTweet(
+      currentUserId: widget.currentUserId,
+      tweetAuthorId: widget.tweet.authorId,
+      tweetId: widget.tweet.tweetId!,
+    );
+    if (mounted) {
+      if (isLikedTweet == true) {
+        setState(() {
+          _isLiked = true;
+        });
+      } else {
+        setState(() {
+          _isLiked = false;
+        });
+      }
+    }
   }
 
   likeOrUnLikeTweet() async {
@@ -56,7 +68,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
       /*いいねされていない時*/
       setState(() {
         _isLiked = true;
-        setLikesPref();
       });
       DocumentSnapshot userProfileDoc =
           await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -77,7 +88,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
       /*いいねされている時*/
       setState(() {
         _isLiked = false;
-        setUnLikesPref();
       });
       DocumentSnapshot userProfileDoc =
           await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -87,16 +97,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         unlikesUser: user,
       );
     }
-  }
-
-  setLikesPref() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLiked', true);
-  }
-
-  setUnLikesPref() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLiked', false);
   }
 
   handleComment() async {

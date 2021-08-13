@@ -196,6 +196,21 @@ class Firestore {
     await unLikesTweetReferenceInAllTweets.delete();
   }
 
+  Future<bool> isLikedTweet({
+    required String currentUserId,
+    required String tweetAuthorId,
+    required String tweetId,
+  }) async {
+    DocumentSnapshot isLikedTweetSnap = await usersRef
+        .doc(tweetAuthorId)
+        .collection('tweets')
+        .doc(tweetId)
+        .collection('likes')
+        .doc(currentUserId)
+        .get();
+    return isLikedTweetSnap.exists;
+  }
+
   Future<void> commentForTweet({
     required Comment comment,
     required String postId,

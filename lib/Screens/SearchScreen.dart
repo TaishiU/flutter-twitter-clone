@@ -69,7 +69,6 @@ class _SearchScreenState extends State<SearchScreen> {
           return Center(
             child: Text(
               'Item $index',
-              style: Theme.of(context).textTheme.headline,
             ),
           );
         }),

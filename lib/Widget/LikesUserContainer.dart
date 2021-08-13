@@ -34,7 +34,7 @@ class LikesUserContainer extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            color: Colors.red,
+            color: Colors.transparent,
             height: 7,
           ),
           ListView(
