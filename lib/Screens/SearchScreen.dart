@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/SearchUserScreen.dart';
+import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 
 class SearchScreen extends StatefulWidget {
   final String currentUserId;
@@ -63,15 +68,81 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 3,
-        children: List.generate(100, (index) {
-          return Center(
-            child: Text(
-              'Item $index',
-            ),
+      body: StreamBuilder(
+        stream: usersRef.doc(widget.currentUserId).snapshots(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          User user = User.fromDoc(snapshot.data);
+          return StreamBuilder(
+            stream: allTweetsRef
+                .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
+              if (allImageTweets.length == 0) {
+                return Center(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 50),
+                      Text(
+                        'There is no media...',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return GridView.count(
+                crossAxisCount: 3,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                children: allImageTweets.map((imageTweet) {
+                  Tweet tweet = Tweet.fromDoc(imageTweet);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TweetDetailScreen(
+                            currentUserId: widget.currentUserId,
+                            tweet: tweet,
+                            user: user,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        //borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            tweet.image,
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           );
-        }),
+        },
       ),
     );
   }
