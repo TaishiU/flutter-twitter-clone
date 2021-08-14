@@ -119,7 +119,7 @@ class HomeScreen extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 10),
+                                    horizontal: 5, vertical: 10),
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -138,8 +138,8 @@ class HomeScreen extends StatelessWidget {
                                         alignment: Alignment.center,
                                         children: [
                                           Container(
-                                            height: 55,
-                                            width: 55,
+                                            height: 57,
+                                            width: 57,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: Colors.yellow,
@@ -153,6 +153,10 @@ class HomeScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
+                                          ),
+                                          CircleAvatar(
+                                            radius: 27,
+                                            backgroundColor: Colors.white,
                                           ),
                                           CircleAvatar(
                                             radius: 25,

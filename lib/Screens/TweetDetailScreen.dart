@@ -232,7 +232,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           ],
                         ),
                         SizedBox(height: 15),
-                        Text('tweetId: ${widget.tweet.tweetId.toString()}'),
+                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(
@@ -489,7 +489,15 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+              ),
               child: Padding(
                 padding:
                     EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 10),
@@ -505,6 +513,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           controller: _commentController,
                           decoration: InputDecoration(
                             hintText: 'Comment for tweet',
+                            hintStyle: TextStyle(color: Colors.grey),
                             contentPadding: EdgeInsets.only(bottom: 11),
                           ),
                           validator: (String? input) {

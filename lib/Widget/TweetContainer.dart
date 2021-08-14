@@ -220,7 +220,7 @@ class _TweetContainerState extends State<TweetContainer> {
                             )
                           ],
                         ),
-                        Text('tweetId: ${widget.tweet.tweetId.toString()}'),
+                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(

@@ -149,7 +149,7 @@ class _CommentContainerState extends State<CommentContainer> {
                           )
                         ],
                       ),
-                      Text('commentId: ${widget.comment.commentId.toString()}'),
+                      //Text('commentId: ${widget.comment.commentId.toString()}'),
                       Text(
                         widget.comment.commentText,
                         style: TextStyle(
