@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
@@ -92,26 +93,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
               List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
               if (allImageTweets.length == 0) {
-                return Center(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 50),
-                      Text(
-                        'There is no media...',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return Container();
               }
-              return GridView.count(
+              return StaggeredGridView.countBuilder(
                 crossAxisCount: 3,
                 mainAxisSpacing: 4,
                 crossAxisSpacing: 4,
-                children: allImageTweets.map((imageTweet) {
-                  Tweet tweet = Tweet.fromDoc(imageTweet);
+                itemCount: allImageTweets.length,
+                itemBuilder: (context, index) {
+                  Tweet tweet = Tweet.fromDoc(allImageTweets[index]);
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -127,8 +117,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        //borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
                           image: NetworkImage(
                             tweet.image,
@@ -138,7 +126,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                   );
-                }).toList(),
+                },
+                staggeredTileBuilder: (index) => StaggeredTile.count(
+                    /*横の比率が2:1, 縦の比率が2:1*/
+                    (index % 7 == 0) ? 2 : 1,
+                    (index % 7 == 0) ? 2 : 1),
               );
             },
           );
