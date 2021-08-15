@@ -6,6 +6,7 @@ class Activity {
   Timestamp timestamp;
   bool follow;
   bool likes;
+  bool comment;
 
   Activity({
     required this.id,
@@ -13,6 +14,7 @@ class Activity {
     required this.timestamp,
     required this.follow,
     required this.likes,
+    required this.comment,
   });
 
   factory Activity.fromDoc(DocumentSnapshot doc) {
@@ -22,6 +24,7 @@ class Activity {
       timestamp: doc['timestamp'],
       follow: doc['follow'],
       likes: doc['likes'],
+      comment: doc['comment'],
     );
   }
 }

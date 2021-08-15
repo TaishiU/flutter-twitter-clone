@@ -56,7 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           children: [
             Container(
               color: Colors.transparent,
-              height: 7,
+              height: 8,
             ),
             ListView.builder(
               shrinkWrap: true,
@@ -75,71 +75,109 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     User user = User.fromDoc(snapshot.data);
                     return Column(
                       children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                        Container(
+                          margin: EdgeInsets.only(left: 15),
                           child: Row(
-                            //crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              activity.follow == true
-                                  ? Icon(
-                                      Icons.person,
-                                      color: TwitterColor,
-                                    )
-                                  : Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                    ),
+                              if (activity.follow == true)
+                                Icon(
+                                  Icons.person,
+                                  color: TwitterColor,
+                                ),
+                              if (activity.likes == true)
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
+                              if (activity.comment == true)
+                                Icon(
+                                  Icons.comment,
+                                  color: Colors.green,
+                                ),
                               SizedBox(width: 20),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: TwitterColor,
-                                    backgroundImage: user.profileImage.isEmpty
-                                        ? null
-                                        : NetworkImage(user.profileImage),
-                                  ),
-                                  SizedBox(height: 5),
-                                  activity.follow == true
-                                      ? Row(
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.83,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           children: [
+                                            CircleAvatar(
+                                              backgroundColor: TwitterColor,
+                                              backgroundImage:
+                                                  user.profileImage.isEmpty
+                                                      ? null
+                                                      : NetworkImage(
+                                                          user.profileImage),
+                                            ),
+                                            SizedBox(width: 10),
                                             Text(
-                                              '${user.name}',
+                                              '${activity.timestamp.toDate().month.toString()}/${activity.timestamp.toDate().day.toString()}',
                                               style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                                color: Colors.grey,
                                               ),
                                             ),
-                                            Text(' follows you.'),
-                                          ],
-                                        )
-                                      : Row(
-                                          children: [
-                                            Text(
-                                              '${user.name}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(' likes your tweet!'),
                                           ],
                                         ),
-                                ],
+                                        SizedBox(height: 5),
+                                        if (activity.follow == true)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '${user.name}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(' follows you.'),
+                                            ],
+                                          ),
+                                        if (activity.likes == true)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '${user.name}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(' likes your tweet!'),
+                                            ],
+                                          ),
+                                        if (activity.comment == true)
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '${user.name}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text(' comments your tweet!'),
+                                            ],
+                                          ),
+                                      ],
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.more_vert,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        // ListTile(
-                        //   leading: CircleAvatar(
-                        //     backgroundColor: TwitterColor,
-                        //     backgroundImage: user.profileImage.isEmpty
-                        //         ? null
-                        //         : NetworkImage(user.profileImage),
-                        //   ),
-                        //   title: activity.follow == true
-                        //       ? Text('${user.name} follows you')
-                        //       : Text('${user.name} likes your tweet!'),
-                        // ),
                         Divider(),
                       ],
                     );

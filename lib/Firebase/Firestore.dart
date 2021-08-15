@@ -83,6 +83,8 @@ class Firestore {
       followedUserId: followersUser.userId,
       tweetAuthorId: null,
       follow: true,
+      likes: false,
+      comment: false,
     );
   }
 
@@ -190,6 +192,8 @@ class Firestore {
       followedUserId: null,
       tweetAuthorId: postUserId,
       follow: false,
+      likes: true,
+      comment: false,
     );
   }
 
@@ -261,6 +265,15 @@ class Firestore {
       'commentText': comment.commentText,
       'timestamp': comment.timestamp,
     });
+
+    addActivity(
+      currentUserId: comment.commentUserId,
+      followedUserId: null,
+      tweetAuthorId: postUserId,
+      follow: false,
+      likes: false,
+      comment: true,
+    );
   }
 
   /*シェア関連*/
@@ -280,21 +293,35 @@ class Firestore {
     required String? followedUserId,
     required String? tweetAuthorId,
     required bool follow,
+    required bool likes,
+    required bool comment,
   }) async {
     if (follow == true) {
+      //follow
       activitiesRef.doc(followedUserId).collection('userActivities').add({
         'fromUserId': currentUserId,
         'timestamp': Timestamp.fromDate(DateTime.now()),
         'follow': true,
         'likes': false,
+        'comment': false,
       });
-    } else {
+    } else if (likes == true) {
       //like
       activitiesRef.doc(tweetAuthorId).collection('userActivities').add({
         'fromUserId': currentUserId,
         'timestamp': Timestamp.fromDate(DateTime.now()),
         'follow': false,
         'likes': true,
+        'comment': false,
+      });
+    } else if (comment == true) {
+      //comment
+      activitiesRef.doc(tweetAuthorId).collection('userActivities').add({
+        'fromUserId': currentUserId,
+        'timestamp': Timestamp.fromDate(DateTime.now()),
+        'follow': false,
+        'likes': false,
+        'comment': true,
       });
     }
   }
