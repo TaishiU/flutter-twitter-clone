@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
@@ -58,14 +59,13 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-            ),
-            onPressed: () {},
+          SvgPicture.asset(
+            'assets/images/SettingLogo.svg',
+            width: 23,
+            height: 23,
           ),
           Container(
-            width: 5,
+            width: 15,
           ),
         ],
       ),

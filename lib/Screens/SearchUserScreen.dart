@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/User.dart';
@@ -68,6 +69,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextFormField(
+            autofocus: true,
             //controller: textEditingController,
             decoration: InputDecoration(
               hintText: 'Search...',
@@ -88,14 +90,13 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-            ),
-            onPressed: () {},
+          SvgPicture.asset(
+            'assets/images/SettingLogo.svg',
+            width: 23,
+            height: 23,
           ),
           Container(
-            width: 5,
+            width: 15,
           ),
         ],
       ),
