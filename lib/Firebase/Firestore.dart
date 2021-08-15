@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
@@ -76,6 +77,13 @@ class Firestore {
       'bio': followingUser.bio,
       'timestamp': Timestamp.fromDate(DateTime.now()),
     });
+
+    addActivity(
+      currentUserId: followingUser.userId,
+      followedUserId: followersUser.userId,
+      tweetAuthorId: null,
+      follow: true,
+    );
   }
 
   Future<void> unFollowUser(
@@ -95,6 +103,7 @@ class Firestore {
     followersReference.delete();
   }
 
+  /*ユーザーをフォローしているか判断するメソッド*/
   Future<bool> isFollowingUser({
     required String currentUserId,
     required String visitedUserId,
@@ -175,6 +184,13 @@ class Firestore {
       'likesUserBio': likes.likesUserBio,
       'timestamp': likes.timestamp,
     });
+
+    addActivity(
+      currentUserId: likes.likesUserId,
+      followedUserId: null,
+      tweetAuthorId: postUserId,
+      follow: false,
+    );
   }
 
   Future<void> unLikesForTweet({
@@ -256,5 +272,43 @@ class Firestore {
         .doc(tweetId)
         .get();
     return tweetSnap;
+  }
+
+  /*通知関連*/
+  static void addActivity({
+    required String currentUserId,
+    required String? followedUserId,
+    required String? tweetAuthorId,
+    required bool follow,
+  }) async {
+    if (follow == true) {
+      activitiesRef.doc(followedUserId).collection('userActivities').add({
+        'fromUserId': currentUserId,
+        'timestamp': Timestamp.fromDate(DateTime.now()),
+        'follow': true,
+        'likes': false,
+      });
+    } else {
+      //like
+      activitiesRef.doc(tweetAuthorId).collection('userActivities').add({
+        'fromUserId': currentUserId,
+        'timestamp': Timestamp.fromDate(DateTime.now()),
+        'follow': false,
+        'likes': true,
+      });
+    }
+  }
+
+  Future<List<Activity>> getActivity({required String currentUserid}) async {
+    QuerySnapshot userActivitiesSnapshot = await activitiesRef
+        .doc(currentUserid)
+        .collection('userActivities')
+        .orderBy('timestamp', descending: true)
+        .get();
+    List<Activity> activities =
+        userActivitiesSnapshot.docs.map((userActivitiesSnap) {
+      return Activity.fromDoc(userActivitiesSnap);
+    }).toList();
+    return activities;
   }
 }
