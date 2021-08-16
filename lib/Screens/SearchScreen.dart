@@ -110,7 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           builder: (context) => TweetDetailScreen(
                             currentUserId: widget.currentUserId,
                             tweet: tweet,
-                            user: user,
+                            //user: user,
                           ),
                         ),
                       );

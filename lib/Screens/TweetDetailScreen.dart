@@ -17,13 +17,13 @@ import 'package:twitter_clone/Widget/TweetImageView.dart';
 class TweetDetailScreen extends StatefulWidget {
   final String currentUserId;
   final Tweet tweet;
-  final User user;
+  //final User user;
 
   TweetDetailScreen({
     Key? key,
     required this.currentUserId,
     required this.tweet,
-    required this.user,
+    // required this.user,
   }) : super(key: key);
 
   @override

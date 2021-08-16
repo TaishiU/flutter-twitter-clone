@@ -85,6 +85,7 @@ class Firestore {
       follow: true,
       likes: false,
       comment: false,
+      tweetId: '',
     );
   }
 
@@ -152,6 +153,16 @@ class Firestore {
     });
   }
 
+  Future<DocumentSnapshot> getTweet(
+      {required String tweetId, required String tweetAuthorId}) async {
+    DocumentSnapshot tweetSnap = await usersRef
+        .doc(tweetAuthorId)
+        .collection('tweets')
+        .doc(tweetId)
+        .get();
+    return tweetSnap;
+  }
+
   Future<void> deleteTweet(
       {required String userId, required String postId}) async {
     await usersRef.doc(userId).collection('tweets').doc(postId).delete();
@@ -194,6 +205,7 @@ class Firestore {
       follow: false,
       likes: true,
       comment: false,
+      tweetId: postId,
     );
   }
 
@@ -273,18 +285,8 @@ class Firestore {
       follow: false,
       likes: false,
       comment: true,
+      tweetId: postId,
     );
-  }
-
-  /*シェア関連*/
-  Future<DocumentSnapshot> getTweetForShare(
-      {required String tweetId, required String tweetAuthorId}) async {
-    DocumentSnapshot tweetSnap = await usersRef
-        .doc(tweetAuthorId)
-        .collection('tweets')
-        .doc(tweetId)
-        .get();
-    return tweetSnap;
   }
 
   /*通知関連*/
@@ -295,33 +297,46 @@ class Firestore {
     required bool follow,
     required bool likes,
     required bool comment,
+    required String tweetId,
   }) async {
     if (follow == true) {
       //follow
-      activitiesRef.doc(followedUserId).collection('userActivities').add({
+      DocumentReference activitiesReference =
+          activitiesRef.doc(followedUserId).collection('userActivities').doc();
+      activitiesReference.set({
+        'activityId': activitiesReference.id,
         'fromUserId': currentUserId,
         'timestamp': Timestamp.fromDate(DateTime.now()),
         'follow': true,
         'likes': false,
         'comment': false,
+        'tweetId': '',
       });
     } else if (likes == true) {
       //like
-      activitiesRef.doc(tweetAuthorId).collection('userActivities').add({
+      DocumentReference activitiesReference =
+          activitiesRef.doc(tweetAuthorId).collection('userActivities').doc();
+      activitiesReference.set({
+        'activityId': activitiesReference.id,
         'fromUserId': currentUserId,
         'timestamp': Timestamp.fromDate(DateTime.now()),
         'follow': false,
         'likes': true,
         'comment': false,
+        'tweetId': tweetId,
       });
     } else if (comment == true) {
       //comment
-      activitiesRef.doc(tweetAuthorId).collection('userActivities').add({
+      DocumentReference activitiesReference =
+          activitiesRef.doc(tweetAuthorId).collection('userActivities').doc();
+      activitiesReference.set({
+        'activityId': activitiesReference.id,
         'fromUserId': currentUserId,
         'timestamp': Timestamp.fromDate(DateTime.now()),
         'follow': false,
         'likes': false,
         'comment': true,
+        'tweetId': tweetId,
       });
     }
   }

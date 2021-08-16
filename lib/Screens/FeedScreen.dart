@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
 import 'package:twitter_clone/Screens/NotificationsScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -53,13 +52,13 @@ class _FeedScreenState extends State<FeedScreen> {
       String? tweetId = deepLink.queryParameters['tweetId'];
       String? tweetAuthorId = deepLink.queryParameters['tweetAuthorId'];
 
-      DocumentSnapshot userProfile =
-          await Firestore().getUserProfile(userId: widget.currentUserId);
-      DocumentSnapshot tweetSnap = await Firestore().getTweetForShare(
+      // DocumentSnapshot userProfile =
+      //     await Firestore().getUserProfile(userId: widget.currentUserId);
+      DocumentSnapshot tweetSnap = await Firestore().getTweet(
         tweetId: tweetId!,
         tweetAuthorId: tweetAuthorId!,
       );
-      User user = User.fromDoc(userProfile);
+      //User user = User.fromDoc(userProfile);
       Tweet tweet = Tweet.fromDoc(tweetSnap);
       Navigator.push(
         context,
@@ -67,7 +66,7 @@ class _FeedScreenState extends State<FeedScreen> {
           builder: (context) => TweetDetailScreen(
             currentUserId: widget.currentUserId,
             tweet: tweet,
-            user: user,
+            //user: user,
           ),
         ),
       );

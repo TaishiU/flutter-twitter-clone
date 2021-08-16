@@ -106,7 +106,7 @@ class _TweetContainerState extends State<TweetContainer> {
                   builder: (context) => TweetDetailScreen(
                     currentUserId: widget.currentUserId,
                     tweet: widget.tweet,
-                    user: widget.user,
+                    //user: widget.user,
                   ),
                 ),
               );
@@ -269,7 +269,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                         builder: (context) => TweetDetailScreen(
                                           currentUserId: widget.currentUserId,
                                           tweet: widget.tweet,
-                                          user: widget.user,
+                                          //user: widget.user,
                                         ),
                                       ),
                                     );
