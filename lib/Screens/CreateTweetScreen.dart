@@ -12,10 +12,8 @@ import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class CreateTweetScreen extends StatefulWidget {
   final String currentUserId;
-  final User user;
 
-  CreateTweetScreen({Key? key, required this.currentUserId, required this.user})
-      : super(key: key);
+  CreateTweetScreen({Key? key, required this.currentUserId}) : super(key: key);
 
   @override
   _CreateTweetScreenState createState() => _CreateTweetScreenState();
@@ -63,8 +61,8 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
       User user = User.fromDoc(userProfileDoc);
 
       Tweet tweet = Tweet(
-        authorName: widget.user.name,
-        authorId: widget.user.userId,
+        authorName: user.name,
+        authorId: user.userId,
         authorProfileImage: user.profileImage,
         text: _tweetText,
         image: tweetImageUrl,

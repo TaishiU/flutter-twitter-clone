@@ -290,17 +290,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ],
                                       ),
                                       value: 'logout',
-                                    )
+                                    ),
                                   ];
                                 },
                                 onSelected: (selectedItem) {
                                   if (selectedItem == 'logout') {
                                     Auth().logout();
                                     Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                WelcomeScreen()));
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => WelcomeScreen(),
+                                      ),
+                                    );
                                   }
                                 },
                               )
@@ -552,26 +553,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                         ),
-                        // Row(
-                        //   children: [
-                        //     Text(
-                        //       '352',
-                        //       style: TextStyle(
-                        //         fontSize: 16,
-                        //         fontWeight: FontWeight.w500,
-                        //       ),
-                        //     ),
-                        //     SizedBox(width: 5),
-                        //     Text(
-                        //       'Followers',
-                        //       style: TextStyle(
-                        //         fontSize: 16,
-                        //         color: Colors.grey,
-                        //         //fontWeight: FontWeight.w500,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                       ],
                     ),
                     SizedBox(height: 20),
@@ -599,34 +580,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
       floatingActionButton: _isOwner
-          ? Container(
-              child: StreamBuilder(
-                stream: usersRef.doc(widget.currentUserId).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (!snapshot.hasData) {
-                    return SizedBox.shrink();
-                  }
-                  User user = User.fromDoc(snapshot.data);
-                  return FloatingActionButton(
-                    backgroundColor: TwitterColor,
-                    child: Image.asset(
-                      'assets/images/TweetLogo.png',
-                      fit: BoxFit.cover,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateTweetScreen(
-                            currentUserId: widget.currentUserId,
-                            user: user,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
+          ? FloatingActionButton(
+              backgroundColor: TwitterColor,
+              child: Image.asset(
+                'assets/images/TweetLogo.png',
+                fit: BoxFit.cover,
               ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateTweetScreen(
+                      currentUserId: widget.currentUserId,
+                    ),
+                  ),
+                );
+              },
             )
           : SizedBox.shrink(),
     );

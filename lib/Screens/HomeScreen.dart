@@ -130,9 +130,10 @@ class HomeScreen extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProfileScreen(
-                                            currentUserId: currentUserId,
-                                            visitedUserUserId:
-                                                listSnap[index].get('userId')),
+                                          currentUserId: currentUserId,
+                                          visitedUserUserId:
+                                              listSnap[index].get('userId'),
+                                        ),
                                       ),
                                     );
                                   },
@@ -207,34 +208,22 @@ class HomeScreen extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: Container(
-        child: StreamBuilder(
-          stream: usersRef.doc(currentUserId).snapshots(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return SizedBox.shrink();
-            }
-            User user = User.fromDoc(snapshot.data);
-            return FloatingActionButton(
-              backgroundColor: TwitterColor,
-              child: Image.asset(
-                'assets/images/TweetLogo.png',
-                fit: BoxFit.cover,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateTweetScreen(
-                      currentUserId: currentUserId,
-                      user: user,
-                    ),
-                  ),
-                );
-              },
-            );
-          },
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: TwitterColor,
+        child: Image.asset(
+          'assets/images/TweetLogo.png',
+          fit: BoxFit.cover,
         ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateTweetScreen(
+                currentUserId: currentUserId,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
