@@ -110,6 +110,10 @@ class HomeScreen extends StatelessWidget {
                             return SizedBox.shrink();
                           }
                           List<DocumentSnapshot> listSnap = snapshot.data!.docs;
+                          /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
+                          listSnap.removeWhere((snapshot) =>
+                              snapshot.get('userId') == user.userId);
+
                           return ListView.builder(
                             physics: BouncingScrollPhysics(
                               parent: AlwaysScrollableScrollPhysics(),

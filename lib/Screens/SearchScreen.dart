@@ -92,6 +92,10 @@ class _SearchScreenState extends State<SearchScreen> {
               }
 
               List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
+              /* ユーザー自身のツイート画像は表示リストから削除 → removeWhere */
+              allImageTweets.removeWhere(
+                  (imageTweet) => imageTweet.get('authorId') == user.userId);
+
               if (allImageTweets.length == 0) {
                 return Container();
               }
