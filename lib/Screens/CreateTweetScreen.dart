@@ -15,7 +15,7 @@ class CreateTweetScreen extends StatefulWidget {
 
 class _CreateTweetScreenState extends State<CreateTweetScreen> {
   //late String _tweetText;
-  List<File> _tweetImage = [];
+  List<File> _tweetImageList = [];
   //bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
@@ -25,12 +25,21 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
           await ImagePicker().getImage(source: ImageSource.gallery);
       if (imageFile != null) {
         setState(() {
-          _tweetImage.add(File(imageFile.path));
+          _tweetImageList.add(File(imageFile.path));
         });
       }
     } catch (e) {
       print('image_pickerエラー');
     }
+  }
+
+  removeImageFromList({required File image}) {
+    _tweetImageList.removeWhere((removeImage) => removeImage == image);
+    /*_tweetImageListの画像の中から削除ボタンを押された画像を削除*/
+    setState(() {
+      _tweetImageList = _tweetImageList;
+      /*削除されていない画像が_tweetImageListに再びセットされる*/
+    });
   }
 
   // handleTweet() async {
@@ -160,7 +169,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: _tweetImage.length,
+                  itemCount: _tweetImageList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Stack(
                       children: [
@@ -170,7 +179,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             image: DecorationImage(
-                              image: FileImage(_tweetImage[index]),
+                              image: FileImage(_tweetImageList[index]),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -178,16 +187,22 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                         Positioned(
                           top: 10,
                           right: 15,
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black45,
-                            ),
-                            child: Icon(
-                              Icons.clear_rounded,
-                              color: Colors.white,
+                          child: GestureDetector(
+                            onTap: () {
+                              removeImageFromList(
+                                  image: _tweetImageList[index]);
+                            },
+                            child: Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black45,
+                              ),
+                              child: Icon(
+                                Icons.clear_rounded,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
