@@ -102,16 +102,16 @@ class SearchScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        tweet.image,
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                // child: Container(
+                //   decoration: BoxDecoration(
+                //     image: DecorationImage(
+                //       image: NetworkImage(
+                //         tweet.image,
+                //       ),
+                //       fit: BoxFit.cover,
+                //     ),
+                //   ),
+                // ),
               );
             },
             staggeredTileBuilder: (index) => StaggeredTile.count(

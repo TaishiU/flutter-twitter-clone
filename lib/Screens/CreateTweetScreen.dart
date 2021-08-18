@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Firebase/Firestore.dart';
+import 'package:twitter_clone/Firebase/Storage.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class CreateTweetScreen extends StatefulWidget {
   final String currentUserId;
@@ -14,9 +20,9 @@ class CreateTweetScreen extends StatefulWidget {
 }
 
 class _CreateTweetScreenState extends State<CreateTweetScreen> {
-  //late String _tweetText;
+  late String _tweetText;
   List<File> _tweetImageList = [];
-  //bool _isLoading = false;
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
   handleImageFromGallery() async {
@@ -42,45 +48,73 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
     });
   }
 
-  // handleTweet() async {
-  //   _formKey.currentState!.save();
-  //   if (_formKey.currentState!.validate() && !_isLoading) {
-  //     setState(() {
-  //       _isLoading = true;
-  //     });
-  //     String tweetImageUrl;
-  //     bool hasImage;
-  //     if (_tweetImage == null) {
-  //       tweetImageUrl = '';
-  //       hasImage = false;
-  //     } else {
-  //       tweetImageUrl = await Storage().uploadTweetImage(
-  //           userId: widget.currentUserId, imageFile: _tweetImage!);
-  //       hasImage = true;
-  //     }
-  //
-  //     DocumentSnapshot userProfileDoc =
-  //         await Firestore().getUserProfile(userId: widget.currentUserId);
-  //     User user = User.fromDoc(userProfileDoc);
-  //
-  //     Tweet tweet = Tweet(
-  //       authorName: user.name,
-  //       authorId: user.userId,
-  //       authorProfileImage: user.profileImage,
-  //       text: _tweetText,
-  //       image: tweetImageUrl,
-  //       hasImage: hasImage,
-  //       timestamp: Timestamp.fromDate(DateTime.now()),
-  //       likes: 0,
-  //       reTweets: 0,
-  //     );
-  //     Firestore().createTweet(tweet: tweet);
-  //     Navigator.of(context).pop();
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
+  handleTweet() async {
+    _formKey.currentState!.save();
+    if (_formKey.currentState!.validate() && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+      // String tweetImageUrl;
+      // bool hasImage;
+      // if (_tweetImage == null) {
+      //   tweetImageUrl = '';
+      //   hasImage = false;
+      // } else {
+      //   tweetImageUrl = await Storage().uploadTweetImage(
+      //       userId: widget.currentUserId, imageFile: _tweetImage!);
+      //   hasImage = true;
+      // }
+      Map<String, String> _images = {};
+      bool hasImage = false;
+
+      /*画像がある場合*/
+      if (_tweetImageList.length != 0) {
+        _images = await _uploadImage();
+        /* _uploadImage()メソッドは下にある↓ */
+        hasImage = true;
+      }
+
+      /*画像がない場合*/
+      /*上記で宣言した「_images = {}, hasImage = false」がFirestoreに保存される*/
+
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: widget.currentUserId);
+      User user = User.fromDoc(userProfileDoc);
+
+      Tweet tweet = Tweet(
+        authorName: user.name,
+        authorId: user.userId,
+        authorProfileImage: user.profileImage,
+        text: _tweetText,
+        images: _images,
+        hasImage: hasImage,
+        timestamp: Timestamp.fromDate(DateTime.now()),
+        likes: 0,
+        reTweets: 0,
+      );
+      Firestore().createTweet(tweet: tweet);
+      Navigator.of(context).pop();
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<Map<String, String>> _uploadImage() async {
+    Map<String, String> _images = {}; /*Storage格納後に返却されるURLを格納*/
+    Map<int, File> _pickedImages = _tweetImageList.asMap();
+    if (_pickedImages.isNotEmpty) {
+      print('Storageに画像保存開始');
+      for (var _pickedImage in _pickedImages.entries) {
+        String _tweetImageUrl = await Storage().uploadTweetImage(
+            userId: widget.currentUserId, imageFile: _pickedImage.value);
+        print('画像保存用URL: $_tweetImageUrl');
+        /* Mapの「key = value」の型 */
+        _images[_pickedImage.key.toString()] = _tweetImageUrl;
+      }
+    }
+    return _images;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +153,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                       ? 'Please enter your Tweet'
                       : null,
                   onChanged: (value) {
-                    // _tweetText = value;
+                    _tweetText = value;
                   },
                 ),
               ),
@@ -141,85 +175,92 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
               //         ],
               //       ),
               SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  handleImageFromGallery();
-                },
-                child: Container(
-                  height: 70,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: TwitterColor,
-                      width: 2,
+              _tweetImageList.length > 3
+                  ? SizedBox.shrink()
+                  : GestureDetector(
+                      onTap: () {
+                        handleImageFromGallery();
+                      },
+                      child: Container(
+                        height: 70,
+                        width: 70,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          border: Border.all(
+                            color: TwitterColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          size: 50,
+                          color: TwitterColor,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    size: 50,
-                    color: TwitterColor,
-                  ),
-                ),
-              ),
               SizedBox(height: 20),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _tweetImageList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4),
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              image: FileImage(_tweetImageList[index]),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 10,
-                          right: 15,
-                          child: GestureDetector(
-                            onTap: () {
-                              removeImageFromList(
-                                  image: _tweetImageList[index]);
-                            },
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black45,
+              _tweetImageList.length == 0
+                  ? SizedBox.shrink()
+                  : Container(
+                      height: 200,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _tweetImageList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Stack(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: DecorationImage(
+                                    image: FileImage(_tweetImageList[index]),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
-                              child: Icon(
-                                Icons.clear_rounded,
-                                color: Colors.white,
+                              Positioned(
+                                top: 10,
+                                right: 15,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    removeImageFromList(
+                                        image: _tweetImageList[index]);
+                                  },
+                                  child: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black45,
+                                    ),
+                                    child: Icon(
+                                      Icons.clear_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+              SizedBox(height: 50),
+              // if (_tweetImageList.length == 0)
+              //   CircleAvatar(radius: 20)
+              // else
+              RoundedButton(
+                btnText: 'Tweet',
+                onBtnPressed: () {
+                  handleTweet();
+                },
               ),
-              // SizedBox(height: 20),
-              // RoundedButton(
-              //   btnText: 'Tweet',
-              //   onBtnPressed: () {
-              //     handleTweet();
-              //   },
-              // ),
-              // SizedBox(height: 5),
-              // _isLoading ? CircularProgressIndicator() : SizedBox.shrink(),
+              SizedBox(height: 5),
+              _isLoading ? CircularProgressIndicator() : SizedBox.shrink(),
             ],
           ),
         ),

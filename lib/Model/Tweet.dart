@@ -6,7 +6,7 @@ class Tweet {
   String authorId;
   String authorProfileImage;
   String text;
-  String image;
+  Map<String, String> images;
   bool hasImage;
   Timestamp timestamp;
   int likes;
@@ -18,7 +18,7 @@ class Tweet {
     required this.authorId,
     required this.authorProfileImage,
     required this.text,
-    required this.image,
+    required this.images,
     required this.hasImage,
     required this.timestamp,
     required this.likes,
@@ -32,7 +32,7 @@ class Tweet {
       authorId: postDoc['authorId'],
       authorProfileImage: postDoc['authorProfileImage'],
       text: postDoc['text'],
-      image: postDoc['image'],
+      images: postDoc['images'],
       hasImage: postDoc['hasImage'],
       timestamp: postDoc['timestamp'],
       likes: postDoc['likes'],

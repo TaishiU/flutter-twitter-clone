@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -12,7 +11,6 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/CommentContaienr.dart';
 import 'package:twitter_clone/Widget/CommentUser.dart';
 import 'package:twitter_clone/Widget/LikesUserContainer.dart';
-import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetDetailScreen extends StatefulWidget {
   final String currentUserId;
@@ -240,33 +238,33 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           ),
                         ),
                         SizedBox(height: 15),
-                        widget.tweet.image.isEmpty
-                            ? SizedBox.shrink()
-                            : GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TweetImageView(
-                                        tappedImageIndex: 0,
-                                        image: widget.tweet.image,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        widget.tweet.image,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                        // widget.tweet.image.isEmpty
+                        //     ? SizedBox.shrink()
+                        //     : GestureDetector(
+                        //         onTap: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) => TweetImageView(
+                        //                 tappedImageIndex: 0,
+                        //                 image: widget.tweet.image,
+                        //               ),
+                        //             ),
+                        //           );
+                        //         },
+                        //         child: Container(
+                        //           height: 200,
+                        //           decoration: BoxDecoration(
+                        //             borderRadius: BorderRadius.circular(20),
+                        //             image: DecorationImage(
+                        //               image: NetworkImage(
+                        //                 widget.tweet.image,
+                        //               ),
+                        //               fit: BoxFit.cover,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
                         SizedBox(height: 15),
                         Text(
                           '${widget.tweet.timestamp.toDate().year.toString()}/${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}  ${widget.tweet.timestamp.toDate().hour.toString()}:${widget.tweet.timestamp.toDate().minute.toString()}',
@@ -404,37 +402,37 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               },
                             ),
                             SizedBox(width: 10),
-                            Container(
-                              child: FutureBuilder<Uri>(
-                                future: dynamicLink.createDynamicLink(
-                                  tweetId: widget.tweet.tweetId!,
-                                  tweetAuthorId: widget.tweet.authorId,
-                                  tweetText: widget.tweet.text,
-                                  imageUrl: widget.tweet.hasImage
-                                      ? widget.tweet.image
-                                      : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
-                                ),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return IconButton(
-                                      icon: Icon(Icons.share),
-                                      onPressed: () {
-                                        //Share.share(widget.tweet.text);
-                                      },
-                                    );
-                                  }
-                                  Uri uri = snapshot.data!;
-                                  return IconButton(
-                                    icon: Icon(Icons.share),
-                                    onPressed: () {
-                                      Share.share(
-                                        '${widget.tweet.text}\n\n${uri.toString()}',
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
+                            // Container(
+                            //   child: FutureBuilder<Uri>(
+                            //     future: dynamicLink.createDynamicLink(
+                            //       tweetId: widget.tweet.tweetId!,
+                            //       tweetAuthorId: widget.tweet.authorId,
+                            //       tweetText: widget.tweet.text,
+                            //       imageUrl: widget.tweet.hasImage
+                            //           ? widget.tweet.image
+                            //           : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+                            //     ),
+                            //     builder: (context, snapshot) {
+                            //       if (!snapshot.hasData) {
+                            //         return IconButton(
+                            //           icon: Icon(Icons.share),
+                            //           onPressed: () {
+                            //             //Share.share(widget.tweet.text);
+                            //           },
+                            //         );
+                            //       }
+                            //       Uri uri = snapshot.data!;
+                            //       return IconButton(
+                            //         icon: Icon(Icons.share),
+                            //         onPressed: () {
+                            //           Share.share(
+                            //             '${widget.tweet.text}\n\n${uri.toString()}',
+                            //           );
+                            //         },
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
                           ],
                         ),
                         // Divider(),
