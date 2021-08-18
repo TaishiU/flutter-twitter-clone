@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -76,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            User user = User.fromDoc(snapshot.data);
+            //User user = User.fromDoc(snapshot.data);
             return StreamBuilder<QuerySnapshot>(
               stream: allTweetsRef
                   .orderBy('timestamp', descending: true)
@@ -112,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                           List<DocumentSnapshot> listSnap = snapshot.data!.docs;
                           /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
                           listSnap.removeWhere((snapshot) =>
-                              snapshot.get('userId') == user.userId);
+                              snapshot.get('userId') == currentUserId);
 
                           return ListView.builder(
                             physics: BouncingScrollPhysics(
@@ -196,7 +195,6 @@ class HomeScreen extends StatelessWidget {
                           return TweetContainer(
                             currentUserId: currentUserId,
                             tweet: tweet,
-                            user: user,
                           );
                         }).toList(),
                       ),

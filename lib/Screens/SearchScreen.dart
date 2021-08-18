@@ -4,20 +4,13 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/SearchUserScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends StatelessWidget {
   final String currentUserId;
+  const SearchScreen({Key? key, required this.currentUserId}) : super(key: key);
 
-  SearchScreen({Key? key, required this.currentUserId}) : super(key: key);
-
-  @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => SearchUserScreen(
-                  currentUserId: widget.currentUserId,
+                  currentUserId: currentUserId,
                 ),
               ),
             );
@@ -70,73 +63,61 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: usersRef.doc(widget.currentUserId).snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
+        stream: allTweetsRef
+            .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-          User user = User.fromDoc(snapshot.data);
-          return StreamBuilder(
-            stream: allTweetsRef
-                .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
-                .orderBy('timestamp', descending: true)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
 
-              List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
-              /* ユーザー自身のツイート画像は表示リストから削除 → removeWhere */
-              allImageTweets.removeWhere(
-                  (imageTweet) => imageTweet.get('authorId') == user.userId);
+          List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
+          /* ユーザー自身のツイート画像は表示リストから削除 → removeWhere */
+          allImageTweets.removeWhere(
+              (imageTweet) => imageTweet.get('authorId') == currentUserId);
 
-              if (allImageTweets.length == 0) {
-                return Container();
-              }
-              return StaggeredGridView.countBuilder(
-                crossAxisCount: 3,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-                itemCount: allImageTweets.length,
-                itemBuilder: (context, index) {
-                  Tweet tweet = Tweet.fromDoc(allImageTweets[index]);
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TweetDetailScreen(
-                            currentUserId: widget.currentUserId,
-                            tweet: tweet,
-                            //user: user,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            tweet.image,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
+          if (allImageTweets.length == 0) {
+            return Container();
+          }
+          return StaggeredGridView.countBuilder(
+            crossAxisCount: 3,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            itemCount: allImageTweets.length,
+            itemBuilder: (context, index) {
+              Tweet tweet = Tweet.fromDoc(allImageTweets[index]);
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetDetailScreen(
+                        currentUserId: currentUserId,
+                        tweet: tweet,
+                        //user: user,
                       ),
                     ),
                   );
                 },
-                staggeredTileBuilder: (index) => StaggeredTile.count(
-                    /*横の比率が2:1, 縦の比率が2:1*/
-                    (index % 7 == 0) ? 2 : 1,
-                    (index % 7 == 0) ? 2 : 1),
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        tweet.image,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
               );
             },
+            staggeredTileBuilder: (index) => StaggeredTile.count(
+                /*横の比率が2:1, 縦の比率が2:1*/
+                (index % 7 == 0) ? 2 : 1,
+                (index % 7 == 0) ? 2 : 1),
           );
         },
       ),

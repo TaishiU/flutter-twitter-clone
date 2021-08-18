@@ -119,7 +119,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return TweetContainer(
                   currentUserId: widget.currentUserId,
                   tweet: tweet,
-                  user: user,
                 );
               }).toList(),
             );
@@ -165,7 +164,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 return TweetContainer(
                   currentUserId: widget.currentUserId,
                   tweet: tweet,
-                  user: user,
                 );
               }).toList(),
             );

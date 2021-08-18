@@ -14,13 +14,11 @@ import 'package:twitter_clone/Widget/TweetImageView.dart';
 class TweetContainer extends StatefulWidget {
   final String currentUserId;
   final Tweet tweet;
-  final User user;
 
   TweetContainer({
     Key? key,
     required this.currentUserId,
     required this.tweet,
-    required this.user,
   }) : super(key: key);
 
   @override
@@ -67,7 +65,7 @@ class _TweetContainerState extends State<TweetContainer> {
           await Firestore().getUserProfile(userId: widget.currentUserId);
       User user = User.fromDoc(userProfileDoc);
       Likes likes = Likes(
-        likesUserId: widget.currentUserId,
+        likesUserId: user.userId,
         likesUserName: user.name,
         likesUserProfileImage: user.profileImage,
         likesUserBio: user.bio,
