@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetImage extends StatelessWidget {
   final Map<String, String> images;
-  TweetImage({Key? key, required this.images}) : super(key: key);
+  final double containerHeight;
+  final double containerWith;
+  final double imageHeight;
+  final double imageWith;
+
+  TweetImage({
+    Key? key,
+    required this.images,
+    required this.containerHeight,
+    required this.containerWith,
+    required this.imageHeight,
+    required this.imageWith,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +34,29 @@ class TweetImage extends StatelessWidget {
   }
 
   Widget _image1({required BuildContext context}) {
-    return Container(
-      height: 180,
-      width: MediaQuery.of(context).size.width * 0.76,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: NetworkImage(
-            images['0']!,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TweetImageView(
+              tappedImageIndex: 0,
+              images: images,
+            ),
           ),
-          fit: BoxFit.cover,
+        );
+      },
+      child: Container(
+        height: containerHeight,
+        width: containerWith,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: NetworkImage(
+              images['0']!,
+            ),
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -38,38 +64,64 @@ class TweetImage extends StatelessWidget {
 
   Widget _image2({required BuildContext context}) {
     return Container(
-      height: 180,
-      width: MediaQuery.of(context).size.width * 0.76,
+      height: containerHeight,
+      width: containerWith,
       child: Row(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.374,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-              ),
-              image: DecorationImage(
-                image: NetworkImage(
-                  images['0']!,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TweetImageView(
+                    tappedImageIndex: 0,
+                    images: images,
+                  ),
                 ),
-                fit: BoxFit.cover,
+              );
+            },
+            child: Container(
+              width: imageWith,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    images['0']!,
+                  ),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
           SizedBox(width: 4),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.374,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-              image: DecorationImage(
-                image: NetworkImage(
-                  images['1']!,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TweetImageView(
+                    tappedImageIndex: 1,
+                    images: images,
+                  ),
                 ),
-                fit: BoxFit.cover,
+              );
+            },
+            child: Container(
+              width: imageWith,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    images['1']!,
+                  ),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
@@ -80,56 +132,95 @@ class TweetImage extends StatelessWidget {
 
   Widget _image3({required BuildContext context}) {
     return Container(
-      height: 180,
-      width: MediaQuery.of(context).size.width * 0.76,
+      height: containerHeight,
+      width: containerWith,
       child: Row(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.374,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-              ),
-              image: DecorationImage(
-                image: NetworkImage(
-                  images['0']!,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TweetImageView(
+                    tappedImageIndex: 0,
+                    images: images,
+                  ),
                 ),
-                fit: BoxFit.cover,
+              );
+            },
+            child: Container(
+              width: imageWith,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    images['0']!,
+                  ),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
           SizedBox(width: 4),
           Column(
             children: [
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['1']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 1,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['1']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 4),
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['2']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 2,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['2']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -142,40 +233,66 @@ class TweetImage extends StatelessWidget {
 
   Widget _image4({required BuildContext context}) {
     return Container(
-      height: 180,
-      width: MediaQuery.of(context).size.width * 0.76,
+      height: containerHeight,
+      width: containerWith,
       child: Row(
         children: [
           Column(
             children: [
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['0']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 0,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['0']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 4),
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['2']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 2,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['2']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -184,34 +301,60 @@ class TweetImage extends StatelessWidget {
           SizedBox(width: 4),
           Column(
             children: [
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['1']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 1,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['1']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 4),
-              Container(
-                height: 88,
-                width: MediaQuery.of(context).size.width * 0.374,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      images['3']!,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TweetImageView(
+                        tappedImageIndex: 3,
+                        images: images,
+                      ),
                     ),
-                    fit: BoxFit.cover,
+                  );
+                },
+                child: Container(
+                  height: imageHeight,
+                  width: imageWith,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(20),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        images['3']!,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

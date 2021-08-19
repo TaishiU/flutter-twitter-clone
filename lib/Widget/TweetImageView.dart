@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 class TweetImageView extends StatefulWidget {
   final int tappedImageIndex;
-  final String image;
+  final Map<String, String> images;
 
-  TweetImageView(
-      {Key? key, required this.tappedImageIndex, required this.image})
-      : super(key: key);
+  TweetImageView({
+    Key? key,
+    required this.tappedImageIndex,
+    required this.images,
+  }) : super(key: key);
 
   @override
   _TweetImageViewState createState() => _TweetImageViewState();
@@ -53,65 +55,64 @@ class _TweetImageViewState extends State<TweetImageView> {
       ),
       body: PageView(
         controller: _pageController,
-        children: [
-          tweetImage(),
-        ],
-      ),
-    );
-  }
-
-  tweetImage() {
-    return Center(
-      child: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.network(widget.image),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.mode_comment_outlined,
-                      color: Colors.white,
+        children: widget.images.values.toList().map((image) {
+          return Center(
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.network(image),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    color: Colors.black45,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.mode_comment_outlined,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.repeat,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: _isLiked
+                                ? Icon(Icons.favorite)
+                                : Icon(Icons.favorite_border),
+                            color: _isLiked ? Colors.red : Colors.white,
+                            onPressed: () {
+                              likeTweet();
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.share,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: () {},
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.repeat,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: _isLiked
-                        ? Icon(Icons.favorite)
-                        : Icon(Icons.favorite_border),
-                    color: _isLiked ? Colors.red : Colors.white,
-                    onPressed: () {
-                      likeTweet();
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.share,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }

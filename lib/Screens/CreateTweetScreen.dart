@@ -54,16 +54,6 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
       setState(() {
         _isLoading = true;
       });
-      // String tweetImageUrl;
-      // bool hasImage;
-      // if (_tweetImage == null) {
-      //   tweetImageUrl = '';
-      //   hasImage = false;
-      // } else {
-      //   tweetImageUrl = await Storage().uploadTweetImage(
-      //       userId: widget.currentUserId, imageFile: _tweetImage!);
-      //   hasImage = true;
-      // }
       Map<String, String> _images = {};
       bool hasImage = false;
 
@@ -104,11 +94,9 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
     Map<String, String> _images = {}; /*Storage格納後に返却されるURLを格納*/
     Map<int, File> _pickedImages = _tweetImageList.asMap();
     if (_pickedImages.isNotEmpty) {
-      print('Storageに画像保存開始');
       for (var _pickedImage in _pickedImages.entries) {
         String _tweetImageUrl = await Storage().uploadTweetImage(
             userId: widget.currentUserId, imageFile: _pickedImage.value);
-        print('画像保存用URL: $_tweetImageUrl');
         /* Mapの「key = value」の型 */
         _images[_pickedImage.key.toString()] = _tweetImageUrl;
       }
@@ -157,23 +145,6 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                   },
                 ),
               ),
-              // _tweetImage == null
-              //     ? SizedBox.shrink()
-              //     : Column(
-              //         children: [
-              //           Container(
-              //             height: 200,
-              //             decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(20),
-              //               color: TwitterColor,
-              //               image: DecorationImage(
-              //                 image: FileImage(_tweetImage!),
-              //                 fit: BoxFit.cover,
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
               SizedBox(height: 10),
               _tweetImageList.length > 3
                   ? SizedBox.shrink()
@@ -250,9 +221,6 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                       ),
                     ),
               SizedBox(height: 50),
-              // if (_tweetImageList.length == 0)
-              //   CircleAvatar(radius: 20)
-              // else
               RoundedButton(
                 btnText: 'Tweet',
                 onBtnPressed: () {

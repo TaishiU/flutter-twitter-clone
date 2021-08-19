@@ -11,6 +11,7 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/CommentContaienr.dart';
 import 'package:twitter_clone/Widget/CommentUser.dart';
 import 'package:twitter_clone/Widget/LikesUserContainer.dart';
+import 'package:twitter_clone/Widget/TweetImage.dart';
 
 class TweetDetailScreen extends StatefulWidget {
   final String currentUserId;
@@ -238,6 +239,17 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           ),
                         ),
                         SizedBox(height: 15),
+                        widget.tweet.images.isEmpty
+                            ? SizedBox.shrink()
+                            : TweetImage(
+                                images: widget.tweet.images,
+                                containerHeight: 200,
+                                containerWith:
+                                    MediaQuery.of(context).size.width,
+                                imageHeight: 98,
+                                imageWith:
+                                    MediaQuery.of(context).size.width * 0.452,
+                              ),
                         // widget.tweet.image.isEmpty
                         //     ? SizedBox.shrink()
                         //     : GestureDetector(

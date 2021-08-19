@@ -227,7 +227,15 @@ class _TweetContainerState extends State<TweetContainer> {
                         SizedBox(height: 15),
                         widget.tweet.images.isEmpty
                             ? SizedBox.shrink()
-                            : TweetImage(images: widget.tweet.images),
+                            : TweetImage(
+                                images: widget.tweet.images,
+                                containerHeight: 180,
+                                containerWith:
+                                    MediaQuery.of(context).size.width * 0.76,
+                                imageHeight: 88,
+                                imageWith:
+                                    MediaQuery.of(context).size.width * 0.3744,
+                              ),
                         Row(
                           children: [
                             Row(
