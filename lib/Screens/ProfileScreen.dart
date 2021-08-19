@@ -236,22 +236,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
           User user = User.fromDoc(snapshot.data);
           return ListView(
-            //shrinkWrap: true,
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileImageView(
-                        tappedImageIndex: 0,
-                        image: user.coverImage,
+                  if (user.coverImage.isNotEmpty)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileImageView(
+                          tappedImageIndex: 0,
+                          image: user.coverImage,
+                        ),
                       ),
-                    ),
-                  );
+                    );
                 },
                 child: Container(
                   height: 150,
@@ -321,15 +321,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileImageView(
-                                  tappedImageIndex: 0,
-                                  image: user.profileImage,
+                            if (user.profileImage.isNotEmpty)
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileImageView(
+                                    tappedImageIndex: 0,
+                                    image: user.profileImage,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
                           },
                           child: Stack(
                             alignment: Alignment.center,
@@ -438,13 +439,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 5),
-                    Text(
-                      '@${user.bio}',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                      ),
-                    ),
+                    user.bio.isEmpty
+                        ? SizedBox.shrink()
+                        : Text(
+                            '@${user.bio}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey,
+                            ),
+                          ),
                     SizedBox(height: 20),
                     Row(
                       children: [
