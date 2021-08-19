@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -329,37 +330,37 @@ class _TweetContainerState extends State<TweetContainer> {
                               ],
                             ),
                             SizedBox(width: 10),
-                            // Container(
-                            //   child: FutureBuilder<Uri>(
-                            //     future: dynamicLink.createDynamicLink(
-                            //       tweetId: widget.tweet.tweetId!,
-                            //       tweetAuthorId: widget.tweet.authorId,
-                            //       tweetText: widget.tweet.text,
-                            //       imageUrl: widget.tweet.hasImage
-                            //           ? widget.tweet.image
-                            //           : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
-                            //     ),
-                            //     builder: (context, snapshot) {
-                            //       if (!snapshot.hasData) {
-                            //         return IconButton(
-                            //           icon: Icon(Icons.share),
-                            //           onPressed: () {
-                            //             //Share.share(widget.tweet.text);
-                            //           },
-                            //         );
-                            //       }
-                            //       Uri uri = snapshot.data!;
-                            //       return IconButton(
-                            //         icon: Icon(Icons.share),
-                            //         onPressed: () {
-                            //           Share.share(
-                            //             '${widget.tweet.text}\n\n${uri.toString()}',
-                            //           );
-                            //         },
-                            //       );
-                            //     },
-                            //   ),
-                            // ),
+                            Container(
+                              child: FutureBuilder<Uri>(
+                                future: dynamicLink.createDynamicLink(
+                                  tweetId: widget.tweet.tweetId!,
+                                  tweetAuthorId: widget.tweet.authorId,
+                                  tweetText: widget.tweet.text,
+                                  imageUrl: widget.tweet.hasImage
+                                      ? widget.tweet.images['0']!
+                                      : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+                                ),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return IconButton(
+                                      icon: Icon(Icons.share),
+                                      onPressed: () {
+                                        //Share.share(widget.tweet.text);
+                                      },
+                                    );
+                                  }
+                                  Uri uri = snapshot.data!;
+                                  return IconButton(
+                                    icon: Icon(Icons.share),
+                                    onPressed: () {
+                                      Share.share(
+                                        '${widget.tweet.text}\n\n${uri.toString()}',
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
                           ],
                         ),
                         // Divider(),
