@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
 import 'package:twitter_clone/Screens/NotificationsScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -84,6 +85,9 @@ class _FeedScreenState extends State<FeedScreen> {
         SearchScreen(
           currentUserId: widget.currentUserId,
         ),
+        ChatScreen(
+          currentUserId: widget.currentUserId,
+        ),
         NotificationsScreen(
           currentUserId: widget.currentUserId,
         ),
@@ -103,6 +107,7 @@ class _FeedScreenState extends State<FeedScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home)),
           BottomNavigationBarItem(icon: Icon(Icons.search)),
+          BottomNavigationBarItem(icon: Icon(Icons.chat)),
           BottomNavigationBarItem(icon: Icon(Icons.notifications)),
           BottomNavigationBarItem(icon: Icon(Icons.person)),
           // BottomNavigationBarItem(
