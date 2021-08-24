@@ -3,10 +3,13 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Model/Likes.dart';
+import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 
 class Firestore {
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   /*プロフィール関連*/
   Future<void> registerUser({
     required String userId,
@@ -286,6 +289,76 @@ class Firestore {
       likes: false,
       comment: true,
       tweetId: postId,
+    );
+  }
+
+  /*チャット関連*/
+  Future<void>? sendMessage({
+    required User currentUser,
+    required User peerUser,
+    required Message message,
+  }) {
+    final DocumentReference convoDoc = messagesRef.doc(message.convoId);
+
+    convoDoc.set({
+      'user1Id': currentUser.userId,
+      /*ユーザー自身*/
+      'user2Id': peerUser.userId,
+      /*相手ユーザー*/
+      'user1Name': currentUser.name,
+      'user2Name': peerUser.name,
+      'user1ProfileImage': currentUser.profileImage,
+      'user2ProfileImage': peerUser.profileImage,
+      'convoId': message.convoId,
+      'userFrom': message.userFrom,
+      'userTo': message.userTo,
+      'idFrom': message.idFrom,
+      'idTo': message.idTo,
+      'timestamp': message.timestamp,
+      'content': message.content,
+      'read': false,
+      'users': [currentUser.userId, peerUser.userId],
+    });
+
+    final DocumentReference messageDoc = messagesRef
+        .doc(message.convoId)
+        .collection('allMessages')
+        .doc(message.timestamp.toString());
+
+    /*トランザクション処理*/
+    _firestore.runTransaction((Transaction transaction) async {
+      transaction.set(
+        messageDoc,
+        {
+          'convoId': message.convoId,
+          'userFrom': message.userFrom,
+          'userTo': message.userTo,
+          'idFrom': message.idFrom,
+          'idTo': message.idTo,
+          'timestamp': message.timestamp,
+          'content': message.content,
+          'read': false,
+        },
+      );
+    });
+  }
+
+  Future<void>? updateMessageRead({
+    required Message message,
+  }) async {
+    DocumentReference convoDoc = messagesRef.doc(message.convoId);
+    await convoDoc.set(
+      {'read': true},
+      SetOptions(merge: true),
+    );
+
+    DocumentReference documentReference = messagesRef
+        .doc(message.convoId)
+        .collection('allMessages')
+        .doc(message.timestamp.toString());
+    await documentReference.set(
+      {'read': true},
+      SetOptions(merge: true),
     );
   }
 
