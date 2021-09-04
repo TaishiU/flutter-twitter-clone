@@ -32,6 +32,49 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
+  Widget buildUserTile({
+    required BuildContext context,
+    required GetLastMessage getLastMessage,
+  }) {
+    /*user1Idがユーザー自身のidと一致するか*/
+    final _isOwner = currentUserId == getLastMessage.user1Id;
+    return Container(
+      /*未読状態のメッセージには背景色(青色)を設定する*/
+      color: !getLastMessage.read && getLastMessage.idTo == currentUserId
+          ? TwitterColor
+          : Colors.transparent,
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 23,
+          backgroundColor: TwitterColor,
+          backgroundImage: _isOwner
+              ? NetworkImage(getLastMessage.user2ProfileImage)
+              : NetworkImage(getLastMessage.user1ProfileImage),
+        ),
+        title: Text(
+          _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
+        ),
+        subtitle: DefaultTextStyle(
+          style: TextStyle(color: Colors.black),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: Text(getLastMessage.content),
+        ),
+        trailing: Text(
+          '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
+        ),
+        onTap: () {
+          moveToChatScreen(
+            context: context,
+            convoId: getLastMessage.convoId!,
+            peerUserId:
+                _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,84 +122,9 @@ class ChatScreen extends StatelessWidget {
             ),
             children: listLastMessagesSnap.map((message) {
               GetLastMessage getLastMessage = GetLastMessage.fromDoc(message);
-              final _isOwner = currentUserId == getLastMessage.user1Id;
-              /*user1Idがユーザー自身のidと一致するか*/
-              return Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      moveToChatScreen(
-                        context: context,
-                        convoId: getLastMessage.convoId!,
-                        peerUserId: _isOwner
-                            ? getLastMessage.user2Id
-                            : getLastMessage.user1Id,
-                      );
-                    },
-                    child: Container(
-                      /*未読状態のメッセージには背景色(青色)を設定する*/
-                      color: !getLastMessage.read &&
-                              getLastMessage.idTo == currentUserId
-                          ? Colors.yellow
-                          : Colors.transparent,
-                      height: 80,
-                      width: double.infinity,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.blue,
-                                backgroundImage: _isOwner
-                                    ? NetworkImage(
-                                        getLastMessage.user2ProfileImage)
-                                    : NetworkImage(
-                                        getLastMessage.user1ProfileImage),
-                              ),
-                              SizedBox(width: 20),
-                              Container(
-                                color: Colors.transparent,
-                                width: MediaQuery.of(context).size.width * 0.69,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          _isOwner
-                                              ? getLastMessage.user2Name
-                                              : getLastMessage.user1Name,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(getLastMessage.content),
-                                      ],
-                                    ),
-                                    Text(
-                                      '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              //SizedBox(width: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Divider(),
-                ],
+              return buildUserTile(
+                context: context,
+                getLastMessage: getLastMessage,
               );
             }).toList(),
           );

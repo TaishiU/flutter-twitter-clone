@@ -132,18 +132,25 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
               child: Padding(
                 padding:
-                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 10),
+                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       height: 40,
                       width: MediaQuery.of(context).size.width * 0.75,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       child: TextFormField(
-                        autofocus: true,
+                        //autofocus: true,
                         controller: textEditingController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 11),
+                          contentPadding: EdgeInsets.only(left: 12, bottom: 11),
+                          border: InputBorder.none,
                         ),
                         onChanged: (input) {
                           setState(() {
