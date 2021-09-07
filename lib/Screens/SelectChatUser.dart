@@ -16,6 +16,33 @@ class SelectChatUser extends StatefulWidget {
 }
 
 class _SelectChatUserState extends State<SelectChatUser> {
+  Future<QuerySnapshot>? _users;
+  TextEditingController _searchController = TextEditingController();
+
+  // Widget buildUserTile({required User user}) {
+  //   return ListTile(
+  //     leading: CircleAvatar(
+  //       radius: 23,
+  //       backgroundColor: TwitterColor,
+  //       backgroundImage:
+  //           user.profileImage.isEmpty ? null : NetworkImage(user.profileImage),
+  //     ),
+  //     title: Text(user.name),
+  //     subtitle: Text('@${user.bio}'),
+  //     onTap: () {
+  //       // Navigator.push(
+  //       //   context,
+  //       //   MaterialPageRoute(
+  //       //     builder: (context) => ProfileScreen(
+  //       //       currentUserId: widget.currentUserId,
+  //       //       visitedUserUserId: user.userId,
+  //       //     ),
+  //       //   ),
+  //       // );
+  //     },
+  //   );
+  // }
+
   Widget buildUserTile({required User peerUser}) {
     return ListTile(
       leading: CircleAvatar(
@@ -69,84 +96,118 @@ class _SelectChatUserState extends State<SelectChatUser> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
         centerTitle: true,
-        title: Row(
-          children: [
-            Container(
-              height: 40,
-              width: MediaQuery.of(context).size.width * 0.6,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              decoration: BoxDecoration(
-                // color: Colors.grey.shade100,
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.grey.shade200,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                ),
+        elevation: 0.5,
+        title: Container(
+          height: 40,
+          width: MediaQuery.of(context).size.width * 0.7,
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+          decoration: BoxDecoration(
+            //color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: TextFormField(
+            autofocus: true,
+            //controller: textEditingController,
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              hintStyle: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                child: Text(
-                  'Search...',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(bottom: 8),
             ),
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: TwitterColor,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-              ),
-              child: Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-            ),
-          ],
+            onChanged: (String name) {
+              if (name.isNotEmpty) {
+                setState(() {
+                  _users = Firestore().searchUsers(name: name);
+                });
+              }
+            },
+          ),
         ),
-        // title: Text(
-        //   'Select user',
-        //   style: TextStyle(
-        //     color: TwitterColor,
-        //   ),
-        // ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: usersRef.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
-          userListSnap.removeWhere(
-              (snapshot) => snapshot.get('userId') == widget.currentUserId);
-          return ListView(
-            physics: BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+      body: _users == null
+          ? StreamBuilder<QuerySnapshot>(
+              stream: usersRef.limit(5).snapshots(),
+              /*リミットは5件*/
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
+                userListSnap.removeWhere((snapshot) =>
+                    snapshot.get('userId') == widget.currentUserId);
+                return ListView(
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  children: userListSnap.map((userSnap) {
+                    User peerUser = User.fromDoc(userSnap);
+                    return buildUserTile(peerUser: peerUser);
+                  }).toList(),
+                );
+              },
+            )
+          : FutureBuilder(
+              future: _users,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.data!.docs.length == 0) {
+                  return Center(
+                    child: Text(
+                      'No users found!',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                    ),
+                  );
+                }
+                List<DocumentSnapshot> usersListSnap = snapshot.data!.docs;
+                /* ユーザー自身は表示リストから削除 → removeWhere */
+                usersListSnap.removeWhere((snapshot) =>
+                    snapshot.get('userId') == widget.currentUserId);
+                return ListView(
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  children: usersListSnap.map((usersList) {
+                    User peerUser = User.fromDoc(usersList);
+                    return buildUserTile(peerUser: peerUser);
+                  }).toList(),
+                );
+              },
             ),
-            children: userListSnap.map((userSnap) {
-              User peerUser = User.fromDoc(userSnap);
-              return buildUserTile(peerUser: peerUser);
-            }).toList(),
-          );
-        },
-      ),
+      // body: StreamBuilder<QuerySnapshot>(
+      //   stream: usersRef.snapshots(),
+      //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      //     if (!snapshot.hasData) {
+      //       return Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     }
+      //     List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
+      //     userListSnap.removeWhere(
+      //         (snapshot) => snapshot.get('userId') == widget.currentUserId);
+      //     return ListView(
+      //       physics: BouncingScrollPhysics(
+      //         parent: AlwaysScrollableScrollPhysics(),
+      //       ),
+      //       children: userListSnap.map((userSnap) {
+      //         User peerUser = User.fromDoc(userSnap);
+      //         return buildUserTile(peerUser: peerUser);
+      //       }).toList(),
+      //     );
+      //   },
+      // ),
     );
   }
 }
