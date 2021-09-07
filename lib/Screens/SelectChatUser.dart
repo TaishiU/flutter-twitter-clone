@@ -16,6 +16,27 @@ class SelectChatUser extends StatefulWidget {
 }
 
 class _SelectChatUserState extends State<SelectChatUser> {
+  Widget buildUserTile({required User peerUser}) {
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 23,
+        backgroundColor: TwitterColor,
+        backgroundImage: peerUser.profileImage.isEmpty
+            ? null
+            : NetworkImage(peerUser.profileImage),
+      ),
+      title: Text(peerUser.name),
+      subtitle: Text('@${peerUser.bio}'),
+      onTap: () {
+        moveToChatScreen(
+          context: context,
+          currentUserId: widget.currentUserId,
+          peerUser: peerUser,
+        );
+      },
+    );
+  }
+
   moveToChatScreen({
     required BuildContext context,
     required String currentUserId,
@@ -42,27 +63,6 @@ class _SelectChatUserState extends State<SelectChatUser> {
     );
   }
 
-  Widget buildUserTile({required User peerUser}) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 23,
-        backgroundColor: TwitterColor,
-        backgroundImage: peerUser.profileImage.isEmpty
-            ? null
-            : NetworkImage(peerUser.profileImage),
-      ),
-      title: Text(peerUser.name),
-      subtitle: Text('@${peerUser.bio}'),
-      onTap: () {
-        moveToChatScreen(
-          context: context,
-          currentUserId: widget.currentUserId,
-          peerUser: peerUser,
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,12 +71,59 @@ class _SelectChatUserState extends State<SelectChatUser> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
-        title: Text(
-          'Select user',
-          style: TextStyle(
-            color: TwitterColor,
-          ),
+        title: Row(
+          children: [
+            Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width * 0.6,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              decoration: BoxDecoration(
+                // color: Colors.grey.shade100,
+                color: Colors.white,
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                child: Text(
+                  'Search...',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: TwitterColor,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              child: Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
+        // title: Text(
+        //   'Select user',
+        //   style: TextStyle(
+        //     color: TwitterColor,
+        //   ),
+        // ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: usersRef.snapshots(),

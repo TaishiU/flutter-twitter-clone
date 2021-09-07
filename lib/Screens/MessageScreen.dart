@@ -132,7 +132,7 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
               child: Padding(
                 padding:
-                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 5),
+                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

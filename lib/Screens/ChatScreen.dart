@@ -90,18 +90,44 @@ class ChatScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SelectChatUser(currentUserId: currentUserId),
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SelectChatUser(currentUserId: currentUserId),
+                  ),
+                );
+              },
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey.shade200,
                 ),
-              );
-            },
+                child: Icon(
+                  Icons.search,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
           ),
+          // IconButton(
+          //   icon: Icon(Icons.add),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) =>
+          //             SelectChatUser(currentUserId: currentUserId),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
       body: StreamBuilder(
