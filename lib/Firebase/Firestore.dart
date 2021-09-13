@@ -280,6 +280,34 @@ class Firestore {
     await unLikesTweetReferenceInAllTweets.delete();
   }
 
+  Future<void> favoriteTweet({
+    required String currentUserId,
+    required String name,
+    required Tweet tweet,
+  }) async {
+    await favoritesRef.doc(currentUserId).set({
+      'name': name,
+      'userId': currentUserId,
+    });
+    await favoritesRef
+        .doc(currentUserId)
+        .collection('favoriteTweets')
+        .doc(tweet.tweetId)
+        .set({
+      'tweetId': tweet.tweetId,
+      'authorName': tweet.authorName,
+      'authorId': tweet.authorId,
+      'authorProfileImage': tweet.authorProfileImage,
+      'text': tweet.text,
+      'images': tweet.images,
+      'hasImage': tweet.hasImage,
+      'timestamp': Timestamp.fromDate(DateTime.now()),
+      /*ユーザー自身がいいねを押した瞬間のタイムスタンプ*/
+      'likes': tweet.likes,
+      'reTweets': tweet.reTweets,
+    });
+  }
+
   Future<bool> isLikedTweet({
     required String currentUserId,
     required String tweetAuthorId,

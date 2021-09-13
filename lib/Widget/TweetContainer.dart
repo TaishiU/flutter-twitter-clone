@@ -76,6 +76,11 @@ class _TweetContainerState extends State<TweetContainer> {
         postId: widget.tweet.tweetId!,
         postUserId: widget.tweet.authorId,
       );
+      Firestore().favoriteTweet(
+        currentUserId: widget.currentUserId,
+        name: user.name,
+        tweet: widget.tweet,
+      );
     } else if (_isLiked) {
       /*いいねされている時*/
       setState(() {

@@ -9,3 +9,4 @@ final allTweetsRef = _firestore.collection('allTweets');
 final messagesRef = _firestore.collection('messages');
 final activitiesRef = _firestore.collection('activities');
 final feedsRef = _firestore.collection('feeds');
+final favoritesRef = _firestore.collection('favorites');
