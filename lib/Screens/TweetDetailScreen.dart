@@ -484,7 +484,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
               ),
               child: Padding(
                 padding:
-                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 10),
+                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
