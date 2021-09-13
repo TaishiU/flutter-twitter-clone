@@ -66,148 +66,13 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-        // child: StreamBuilder(
-        //   stream: usersRef.doc(currentUserId).snapshots(),
-        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-        //     if (!snapshot.hasData) {
-        //       return Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     }
-        //     //User user = User.fromDoc(snapshot.data);
-        //     return StreamBuilder<QuerySnapshot>(
-        //       stream: allTweetsRef
-        //           .orderBy('timestamp', descending: true)
-        //           .snapshots(),
-        //       builder: (BuildContext context,
-        //           AsyncSnapshot<QuerySnapshot> snapshot) {
-        //         if (!snapshot.hasData) {
-        //           return Center(
-        //             child: CircularProgressIndicator(),
-        //           );
-        //         }
-        //         List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
-        //         if (allUserTweets.length == 0) {
-        //           return Center(
-        //             child: Text('There is no tweet...'),
-        //           );
-        //         }
-        //         return ListView(
-        //           //shrinkWrap: true,
-        //           physics: BouncingScrollPhysics(
-        //             parent: AlwaysScrollableScrollPhysics(),
-        //           ),
-        //           children: [
-        //             Container(
-        //               height: 100,
-        //               child: StreamBuilder<QuerySnapshot>(
-        //                 stream: usersRef.snapshots(),
-        //                 builder: (BuildContext context,
-        //                     AsyncSnapshot<QuerySnapshot> snapshot) {
-        //                   if (!snapshot.hasData) {
-        //                     return SizedBox.shrink();
-        //                   }
-        //                   List<DocumentSnapshot> listSnap = snapshot.data!.docs;
-        //                   /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
-        //                   listSnap.removeWhere((snapshot) =>
-        //                       snapshot.get('userId') == currentUserId);
-        //
-        //                   return ListView.builder(
-        //                     physics: BouncingScrollPhysics(
-        //                       parent: AlwaysScrollableScrollPhysics(),
-        //                     ),
-        //                     scrollDirection: Axis.horizontal,
-        //                     itemCount: listSnap.length,
-        //                     itemBuilder: (BuildContext context, int index) {
-        //                       return Container(
-        //                         padding: EdgeInsets.symmetric(
-        //                             horizontal: 5, vertical: 10),
-        //                         child: GestureDetector(
-        //                           onTap: () {
-        //                             Navigator.push(
-        //                               context,
-        //                               MaterialPageRoute(
-        //                                 builder: (context) => ProfileScreen(
-        //                                   currentUserId: currentUserId,
-        //                                   visitedUserUserId:
-        //                                       listSnap[index].get('userId'),
-        //                                 ),
-        //                               ),
-        //                             );
-        //                           },
-        //                           child: Column(
-        //                             children: [
-        //                               Stack(
-        //                                 alignment: Alignment.center,
-        //                                 children: [
-        //                                   Container(
-        //                                     height: 57,
-        //                                     width: 57,
-        //                                     decoration: BoxDecoration(
-        //                                       shape: BoxShape.circle,
-        //                                       color: Colors.yellow,
-        //                                       gradient: LinearGradient(
-        //                                         begin:
-        //                                             FractionalOffset.bottomLeft,
-        //                                         end: FractionalOffset.topRight,
-        //                                         colors: [
-        //                                           Colors.red,
-        //                                           Colors.yellow,
-        //                                         ],
-        //                                       ),
-        //                                     ),
-        //                                   ),
-        //                                   CircleAvatar(
-        //                                     radius: 27,
-        //                                     backgroundColor: Colors.white,
-        //                                   ),
-        //                                   CircleAvatar(
-        //                                     radius: 25,
-        //                                     backgroundColor: TwitterColor,
-        //                                     backgroundImage: NetworkImage(
-        //                                       listSnap[index]
-        //                                           .get('profileImage'),
-        //                                     ),
-        //                                   ),
-        //                                 ],
-        //                               ),
-        //                               SizedBox(height: 5),
-        //                               Text(listSnap[index].get('name')),
-        //                             ],
-        //                           ),
-        //                         ),
-        //                       );
-        //                     },
-        //                   );
-        //                 },
-        //               ),
-        //             ),
-        //             Container(
-        //               height: 5,
-        //               color: Colors.grey.shade300,
-        //             ),
-        //             Padding(
-        //               padding: EdgeInsets.symmetric(horizontal: 15),
-        //               child: Column(
-        //                 children: allUserTweets.map((allTweets) {
-        //                   Tweet tweet = Tweet.fromDoc(allTweets);
-        //                   return TweetContainer(
-        //                     currentUserId: currentUserId,
-        //                     tweet: tweet,
-        //                   );
-        //                 }).toList(),
-        //               ),
-        //             ),
-        //           ],
-        //         );
-        //       },
-        //     );
-        //   },
-        // ),
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: StreamBuilder<QuerySnapshot>(
-          stream:
-              allTweetsRef.orderBy('timestamp', descending: true).snapshots(),
+          stream: feedsRef
+              .doc(currentUserId)
+              .collection('followingUserTweets')
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
@@ -222,7 +87,6 @@ class HomeScreen extends StatelessWidget {
               );
             }
             return ListView(
-              //shrinkWrap: true,
               physics: BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),

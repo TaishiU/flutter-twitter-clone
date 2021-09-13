@@ -124,6 +124,7 @@ class Firestore {
 
   /*ツイート関連*/
   Future<void> createTweet({required Tweet tweet}) async {
+    // usersコレクション
     DocumentReference tweetReference =
         usersRef.doc(tweet.authorId).collection('tweets').doc();
     await tweetReference.set({
@@ -141,9 +142,14 @@ class Firestore {
 
     String tweetReferenceId = tweetReference.id;
 
-    DocumentReference allTweetsReference = allTweetsRef.doc(tweetReferenceId);
-    await allTweetsReference.set({
-      'tweetId': tweetReferenceId,
+    // feedsコレクション
+    /*①ユーザー自身のfeedsにツイートを格納*/
+    feedsRef
+        .doc(tweet.authorId)
+        .collection('followingUserTweets')
+        .doc(tweetReferenceId)
+        .set({
+      'tweetId': tweetReference.id,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
       'authorProfileImage': tweet.authorProfileImage,
@@ -155,15 +161,17 @@ class Firestore {
       'reTweets': tweet.reTweets,
     });
 
-    /*フォローしているユーザーのツイートを自身のfeedsに格納*/
+    /*フォロワーのリストを取得*/
     QuerySnapshot followerSnapshot =
         await usersRef.doc(tweet.authorId).collection('followers').get();
+
     for (var docSnapshot in followerSnapshot.docs) {
-      feedRefs.doc(docSnapshot.id).set({
+      feedsRef.doc(docSnapshot.id).set({
         'name': docSnapshot.get('name'),
         'userId': docSnapshot.get('userId'),
       });
-      feedRefs
+      /*②フォロワー１人ひとりのfeedsにツイートを格納*/
+      feedsRef
           .doc(docSnapshot.id)
           .collection('followingUserTweets')
           .doc(tweetReferenceId)
@@ -180,6 +188,21 @@ class Firestore {
         'reTweets': tweet.reTweets,
       });
     }
+
+    // allTweetsコレクション
+    DocumentReference allTweetsReference = allTweetsRef.doc(tweetReferenceId);
+    await allTweetsReference.set({
+      'tweetId': tweetReferenceId,
+      'authorName': tweet.authorName,
+      'authorId': tweet.authorId,
+      'authorProfileImage': tweet.authorProfileImage,
+      'text': tweet.text,
+      'images': tweet.images,
+      'hasImage': tweet.hasImage,
+      'timestamp': tweet.timestamp,
+      'likes': tweet.likes,
+      'reTweets': tweet.reTweets,
+    });
   }
 
   Future<DocumentSnapshot> getTweet(
