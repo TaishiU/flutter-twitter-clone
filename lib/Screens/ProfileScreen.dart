@@ -77,6 +77,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     ),
+    2: Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        'Likes',
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: Colors.black,
+        ),
+      ),
+    ),
   };
 
   Widget buildProfileWidget({required User user}) {
@@ -161,6 +172,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
               physics: NeverScrollableScrollPhysics(),
               children: allUserMediaTweets.map((userTweet) {
                 Tweet tweet = Tweet.fromDoc(userTweet);
+                return TweetContainer(
+                  currentUserId: widget.currentUserId,
+                  tweet: tweet,
+                );
+              }).toList(),
+            );
+          },
+        );
+        break;
+      case 2:
+        return StreamBuilder<QuerySnapshot>(
+          stream: usersRef
+              .doc(user.userId)
+              .collection('favorite')
+              .orderBy('timestamp', descending: true)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            List<DocumentSnapshot> allFavoriteTweets = snapshot.data!.docs;
+            if (allFavoriteTweets.length == 0) {
+              return Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 50),
+                    Text(
+                      'There is no favorite tweet...',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: allFavoriteTweets.map((favoriteTweet) {
+                Tweet tweet = Tweet.fromDoc(favoriteTweet);
                 return TweetContainer(
                   currentUserId: widget.currentUserId,
                   tweet: tweet,

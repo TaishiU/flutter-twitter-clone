@@ -285,13 +285,9 @@ class Firestore {
     required String name,
     required Tweet tweet,
   }) async {
-    await favoritesRef.doc(currentUserId).set({
-      'name': name,
-      'userId': currentUserId,
-    });
-    await favoritesRef
+    await usersRef
         .doc(currentUserId)
-        .collection('favoriteTweets')
+        .collection('favorite')
         .doc(tweet.tweetId)
         .set({
       'tweetId': tweet.tweetId,
