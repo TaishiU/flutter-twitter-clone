@@ -273,6 +273,12 @@ class Firestore {
         .doc(unlikesUser.userId);
     await unLikesTweetReferenceInUser.delete();
 
+    DocumentReference unLikesTweetReferenceInFavorite = usersRef
+        .doc(unlikesUser.userId)
+        .collection('favorite')
+        .doc(tweet.tweetId);
+    await unLikesTweetReferenceInFavorite.delete();
+
     DocumentReference unLikesTweetReferenceInAllTweets = allTweetsRef
         .doc(tweet.tweetId)
         .collection('likes')
