@@ -223,7 +223,6 @@ class _TweetContainerState extends State<TweetContainer> {
                             )
                           ],
                         ),
-                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(
@@ -347,11 +346,10 @@ class _TweetContainerState extends State<TweetContainer> {
                                 ),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
+                                    /*データがない間はアイコンボタンを表示するだけ*/
                                     return IconButton(
                                       icon: Icon(Icons.share),
-                                      onPressed: () {
-                                        //Share.share(widget.tweet.text);
-                                      },
+                                      onPressed: () {},
                                     );
                                   }
                                   Uri uri = snapshot.data!;

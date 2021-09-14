@@ -17,7 +17,6 @@ import 'package:twitter_clone/Widget/TweetImage.dart';
 class TweetDetailScreen extends StatefulWidget {
   final String currentUserId;
   final Tweet tweet;
-  //final User user;
 
   TweetDetailScreen({
     Key? key,
@@ -237,7 +236,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                           ],
                         ),
                         SizedBox(height: 15),
-                        //Text('tweetId: ${widget.tweet.tweetId.toString()}'),
                         Text(
                           widget.tweet.text,
                           style: TextStyle(
@@ -304,7 +302,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                       children: [
                                         Text(
                                           likesListForTweet.length.toString(),
-                                          //'${likesListForTweet.first.get('likesUserName')}さん、他${likesListForTweet.length - 1}人',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -334,7 +331,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   }
                                   List<DocumentSnapshot> commentListForTweet =
                                       snapshot.data!.docs;
-                                  //commentListForTweet.shuffle(); /*リストをシャッフル*/
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -353,7 +349,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                       children: [
                                         Text(
                                           commentListForTweet.length.toString(),
-                                          //'${commentListForTweet.first.get('commentUserName')}さん、他${commentListForTweet.length - 1}人',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -405,11 +400,10 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                 ),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
+                                    /*データがない間はアイコンボタンを表示するだけ*/
                                     return IconButton(
                                       icon: Icon(Icons.share),
-                                      onPressed: () {
-                                        //Share.share(widget.tweet.text);
-                                      },
+                                      onPressed: () {},
                                     );
                                   }
                                   Uri uri = snapshot.data!;

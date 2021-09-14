@@ -159,11 +159,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                               children: [
                                                 CircleAvatar(
                                                   backgroundColor: TwitterColor,
-                                                  backgroundImage: user
-                                                          .profileImage.isEmpty
-                                                      ? null
-                                                      : NetworkImage(
-                                                          user.profileImage),
+                                                  backgroundImage:
+                                                      user.profileImage.isEmpty
+                                                          ? null
+                                                          : NetworkImage(
+                                                              user.profileImage,
+                                                            ),
                                                 ),
                                                 SizedBox(width: 10),
                                                 Text(

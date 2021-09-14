@@ -53,13 +53,10 @@ class _FeedScreenState extends State<FeedScreen> {
       String? tweetId = deepLink.queryParameters['tweetId'];
       String? tweetAuthorId = deepLink.queryParameters['tweetAuthorId'];
 
-      // DocumentSnapshot userProfile =
-      //     await Firestore().getUserProfile(userId: widget.currentUserId);
       DocumentSnapshot tweetSnap = await Firestore().getTweet(
         tweetId: tweetId!,
         tweetAuthorId: tweetAuthorId!,
       );
-      //User user = User.fromDoc(userProfile);
       Tweet tweet = Tweet.fromDoc(tweetSnap);
       Navigator.push(
         context,
@@ -67,7 +64,6 @@ class _FeedScreenState extends State<FeedScreen> {
           builder: (context) => TweetDetailScreen(
             currentUserId: widget.currentUserId,
             tweet: tweet,
-            //user: user,
           ),
         ),
       );
@@ -110,27 +106,6 @@ class _FeedScreenState extends State<FeedScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.chat)),
           BottomNavigationBarItem(icon: Icon(Icons.notifications)),
           BottomNavigationBarItem(icon: Icon(Icons.person)),
-          // BottomNavigationBarItem(
-          //   icon: Container(
-          //     child: StreamBuilder(
-          //       stream: usersRef.doc(widget.currentUserId).snapshots(),
-          //       builder: (BuildContext context, AsyncSnapshot snapshot) {
-          //         if (!snapshot.hasData) {
-          //           return CircleAvatar(
-          //             radius: 20,
-          //             backgroundColor: TwitterColor,
-          //             backgroundImage: null,
-          //           );
-          //         }
-          //         User user = User.fromDoc(snapshot.data);
-          //         return CircleAvatar(
-          //           radius: 20,
-          //           backgroundImage: NetworkImage(user.profileImage),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
