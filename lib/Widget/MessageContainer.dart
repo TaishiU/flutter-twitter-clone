@@ -26,29 +26,67 @@ class MessageContainer extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () async {
-              await messagesRef
-                  .doc(message.convoId)
-                  .collection('allMessages')
-                  .doc(message.timestamp.toString())
-                  .delete();
-              print('削除しました！');
+          GestureDetector(
+            onLongPress: () {
+              /*長押しでメッセージ削除のアラートを出す*/
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Delete message'),
+                    content: Text('Do you want to Delete this message?'),
+                    actions: [
+                      TextButton(
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          primary: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      TextButton(
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        onPressed: () async {
+                          await messagesRef
+                              .doc(message.convoId)
+                              .collection('allMessages')
+                              .doc(message.timestamp.toString())
+                              .delete();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
-          ),
-          Container(
-            width: 200,
-            margin: EdgeInsets.symmetric(vertical: 5),
-            child: Bubble(
-              color: Colors.blue,
-              elevation: 0,
-              padding: BubbleEdges.all(10.0),
-              nip: BubbleNip.rightTop,
-              child: Text(
-                message.content,
-                style: TextStyle(
-                  color: Colors.white,
+            child: Container(
+              width: 200,
+              margin: EdgeInsets.symmetric(vertical: 5),
+              child: Bubble(
+                color: Colors.blue,
+                elevation: 0,
+                padding: BubbleEdges.all(10.0),
+                nip: BubbleNip.rightTop,
+                child: Text(
+                  message.content,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
