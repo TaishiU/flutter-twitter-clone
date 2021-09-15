@@ -81,10 +81,10 @@ class _FeedScreenState extends State<FeedScreen> {
         SearchScreen(
           currentUserId: widget.currentUserId,
         ),
-        ChatScreen(
+        NotificationsScreen(
           currentUserId: widget.currentUserId,
         ),
-        NotificationsScreen(
+        ChatScreen(
           currentUserId: widget.currentUserId,
         ),
         ProfileScreen(
@@ -103,8 +103,9 @@ class _FeedScreenState extends State<FeedScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home)),
           BottomNavigationBarItem(icon: Icon(Icons.search)),
-          BottomNavigationBarItem(icon: Icon(Icons.chat)),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications)),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_none_outlined)),
+          BottomNavigationBarItem(icon: Icon(Icons.mail_outline_rounded)),
           BottomNavigationBarItem(icon: Icon(Icons.person)),
         ],
       ),

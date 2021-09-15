@@ -84,7 +84,7 @@ class ChatScreen extends StatelessWidget {
         elevation: 0.5,
         centerTitle: true,
         title: Text(
-          'Chat',
+          'Message',
           style: TextStyle(
             color: TwitterColor,
           ),
@@ -116,18 +116,6 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
           ),
-          // IconButton(
-          //   icon: Icon(Icons.add),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) =>
-          //             SelectChatUser(currentUserId: currentUserId),
-          //       ),
-          //     );
-          //   },
-          // ),
         ],
       ),
       body: StreamBuilder(

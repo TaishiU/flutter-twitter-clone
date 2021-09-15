@@ -24,16 +24,10 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
-        leading: Image.asset(
+        title: Image.asset(
           'assets/images/TwitterLogo.png',
           width: 45,
           height: 45,
-        ),
-        title: Text(
-          'Twitter',
-          style: TextStyle(
-            color: TwitterColor,
-          ),
         ),
         actions: [
           PopupMenuButton(
@@ -92,7 +86,7 @@ class HomeScreen extends StatelessWidget {
               ),
               children: [
                 Container(
-                  height: 100,
+                  height: 83,
                   child: StreamBuilder<QuerySnapshot>(
                     stream: usersRef.snapshots(),
                     builder: (BuildContext context,
@@ -104,6 +98,9 @@ class HomeScreen extends StatelessWidget {
                       /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
                       listSnap.removeWhere((snapshot) =>
                           snapshot.get('userId') == currentUserId);
+                      /* プロフィール画像を登録していないアバターは表示リストから削除 */
+                      listSnap.removeWhere(
+                          (snapshot) => snapshot.get('profileImage') == '');
 
                       return ListView.builder(
                         physics: BouncingScrollPhysics(
@@ -114,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 10),
+                                horizontal: 5, vertical: 0),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -138,15 +135,15 @@ class HomeScreen extends StatelessWidget {
                                         width: 57,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.yellow,
-                                          gradient: LinearGradient(
-                                            begin: FractionalOffset.bottomLeft,
-                                            end: FractionalOffset.topRight,
-                                            colors: [
-                                              Colors.red,
-                                              Colors.yellow,
-                                            ],
-                                          ),
+                                          color: TwitterColor,
+                                          // gradient: LinearGradient(
+                                          //   begin: FractionalOffset.bottomLeft,
+                                          //   end: FractionalOffset.topRight,
+                                          //   colors: [
+                                          //     Colors.red,
+                                          //     Colors.yellow,
+                                          //   ],
+                                          // ),
                                         ),
                                       ),
                                       CircleAvatar(
@@ -174,7 +171,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: 5,
+                  height: 3,
                   color: Colors.grey.shade300,
                 ),
                 Padding(

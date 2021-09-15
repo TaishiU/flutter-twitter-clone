@@ -216,7 +216,12 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                             Icons.delete,
                                             color: Colors.redAccent,
                                           ),
-                                          Text('Delete'),
+                                          Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),

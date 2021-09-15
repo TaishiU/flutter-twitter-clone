@@ -204,7 +204,12 @@ class _TweetContainerState extends State<TweetContainer> {
                                             Icons.delete,
                                             color: Colors.redAccent,
                                           ),
-                                          Text('Delete'),
+                                          Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -229,95 +234,60 @@ class _TweetContainerState extends State<TweetContainer> {
                             fontSize: 15,
                           ),
                         ),
-                        SizedBox(height: 15),
                         widget.tweet.images.isEmpty
                             ? SizedBox.shrink()
-                            : TweetImage(
-                                images: widget.tweet.images,
-                                containerHeight: 180,
-                                containerWith:
-                                    MediaQuery.of(context).size.width * 0.76,
-                                imageHeight: 88,
-                                imageWith:
-                                    MediaQuery.of(context).size.width * 0.3744,
-                              ),
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TweetDetailScreen(
-                                          currentUserId: widget.currentUserId,
-                                          tweet: widget.tweet,
-                                          //user: widget.user,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.mode_comment_outlined,
-                                    color: Colors.black,
+                            : Column(
+                                children: [
+                                  SizedBox(height: 15),
+                                  TweetImage(
+                                    images: widget.tweet.images,
+                                    containerHeight: 180,
+                                    containerWith:
+                                        MediaQuery.of(context).size.width *
+                                            0.76,
+                                    imageHeight: 88,
+                                    imageWith:
+                                        MediaQuery.of(context).size.width *
+                                            0.3744,
                                   ),
-                                ),
-                                SizedBox(width: 8),
-                                Container(
-                                  child: StreamBuilder(
-                                    stream: usersRef
-                                        .doc(widget.tweet.authorId)
-                                        .collection('tweets')
-                                        .doc(widget.tweet.tweetId)
-                                        .collection('comments')
-                                        .snapshots(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return SizedBox.shrink();
-                                      }
-                                      return Text(
-                                        snapshot.data!.size.toString(),
-                                        /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                ],
+                              ),
+                        SizedBox(height: 15),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TweetDetailScreen(
+                                            currentUserId: widget.currentUserId,
+                                            tweet: widget.tweet,
+                                            //user: widget.user,
+                                          ),
+                                        ),
                                       );
                                     },
+                                    child: Icon(
+                                      Icons.mode_comment_outlined,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 10),
-                            IconButton(
-                              icon: Icon(Icons.repeat),
-                              onPressed: () {},
-                            ),
-                            SizedBox(width: 10),
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    likeOrUnLikeTweet();
-                                  },
-                                  child: _isLiked
-                                      ? Icon(
-                                          Icons.favorite,
-                                          color: Colors.red,
-                                        )
-                                      : Icon(
-                                          Icons.favorite_border,
-                                          color: Colors.black,
-                                        ),
-                                ),
-                                SizedBox(width: 8),
-                                Container(
-                                  child: StreamBuilder(
+                                  SizedBox(width: 8),
+                                  Container(
+                                    child: StreamBuilder(
                                       stream: usersRef
                                           .doc(widget.tweet.authorId)
                                           .collection('tweets')
                                           .doc(widget.tweet.tweetId)
-                                          .collection('likes')
-                                          .orderBy('timestamp',
-                                              descending: true)
+                                          .collection('comments')
                                           .snapshots(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot<QuerySnapshot>
@@ -329,44 +299,96 @@ class _TweetContainerState extends State<TweetContainer> {
                                           snapshot.data!.size.toString(),
                                           /*Firestoreコレクションの要素数はsizeで取得できる*/
                                         );
-                                      }),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 10),
-                            Container(
-                              child: FutureBuilder<Uri>(
-                                future: dynamicLink.createDynamicLink(
-                                  tweetId: widget.tweet.tweetId!,
-                                  tweetAuthorId: widget.tweet.authorId,
-                                  tweetText: widget.tweet.text,
-                                  imageUrl: widget.tweet.hasImage
-                                      ? widget.tweet.images['0']!
-                                      : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
-                                ),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    /*データがない間はアイコンボタンを表示するだけ*/
-                                    return IconButton(
-                                      icon: Icon(Icons.share),
-                                      onPressed: () {},
-                                    );
-                                  }
-                                  Uri uri = snapshot.data!;
-                                  return IconButton(
-                                    icon: Icon(Icons.share),
-                                    onPressed: () {
-                                      Share.share(
-                                        '${widget.tweet.text}\n\n${uri.toString()}',
-                                      );
-                                    },
-                                  );
-                                },
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 10),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.repeat,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('0'),
+                                ],
+                              ),
+                              SizedBox(width: 10),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      likeOrUnLikeTweet();
+                                    },
+                                    child: _isLiked
+                                        ? Icon(
+                                            Icons.favorite,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.black,
+                                          ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Container(
+                                    child: StreamBuilder(
+                                        stream: usersRef
+                                            .doc(widget.tweet.authorId)
+                                            .collection('tweets')
+                                            .doc(widget.tweet.tweetId)
+                                            .collection('likes')
+                                            .orderBy('timestamp',
+                                                descending: true)
+                                            .snapshots(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<QuerySnapshot>
+                                                snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return SizedBox.shrink();
+                                          }
+                                          return Text(
+                                            snapshot.data!.size.toString(),
+                                            /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                          );
+                                        }),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: 10),
+                              Container(
+                                child: FutureBuilder<Uri>(
+                                  future: dynamicLink.createDynamicLink(
+                                    tweetId: widget.tweet.tweetId!,
+                                    tweetAuthorId: widget.tweet.authorId,
+                                    tweetText: widget.tweet.text,
+                                    imageUrl: widget.tweet.hasImage
+                                        ? widget.tweet.images['0']!
+                                        : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      /*データがない間はアイコンボタンを表示するだけ*/
+                                      return Icon(Icons.share);
+                                    }
+                                    Uri uri = snapshot.data!;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Share.share(
+                                          '${widget.tweet.text}\n\n${uri.toString()}',
+                                        );
+                                      },
+                                      child: Icon(Icons.share),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        // Divider(),
+                        SizedBox(height: 5),
                       ],
                     ),
                   ),
