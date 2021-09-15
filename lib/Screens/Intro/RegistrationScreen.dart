@@ -14,6 +14,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String _name;
   late String _email;
   late String _password;
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +75,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 SizedBox(height: 30),
                 TextFormField(
-                  obscureText: true,
+                  obscureText: _isObscure,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     icon: Icon(Icons.vpn_key),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                    ),
                   ),
                   onChanged: (value) {
                     _password = value;
