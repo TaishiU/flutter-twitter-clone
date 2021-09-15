@@ -171,7 +171,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   MaterialPageRoute(
                                     builder: (context) => ProfileScreen(
                                       currentUserId: widget.currentUserId,
-                                      visitedUserUserId: widget.tweet.authorId,
+                                      visitedUserId: widget.tweet.authorId,
                                     ),
                                   ),
                                 );

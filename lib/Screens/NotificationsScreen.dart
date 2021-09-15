@@ -47,7 +47,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         MaterialPageRoute(
           builder: (context) => ProfileScreen(
             currentUserId: widget.currentUserId,
-            visitedUserUserId: user.userId,
+            visitedUserId: user.userId,
           ),
         ),
       );

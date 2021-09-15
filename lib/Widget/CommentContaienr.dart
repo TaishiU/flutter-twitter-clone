@@ -53,7 +53,7 @@ class _CommentContainerState extends State<CommentContainer> {
                           MaterialPageRoute(
                             builder: (context) => ProfileScreen(
                               currentUserId: widget.currentUserId,
-                              visitedUserUserId: widget.comment.commentUserId,
+                              visitedUserId: widget.comment.commentUserId,
                             ),
                           ),
                         );
@@ -86,8 +86,7 @@ class _CommentContainerState extends State<CommentContainer> {
                                 MaterialPageRoute(
                                   builder: (context) => ProfileScreen(
                                     currentUserId: widget.currentUserId,
-                                    visitedUserUserId:
-                                        widget.comment.commentUserId,
+                                    visitedUserId: widget.comment.commentUserId,
                                   ),
                                 ),
                               );

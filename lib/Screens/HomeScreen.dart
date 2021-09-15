@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
+import 'package:twitter_clone/Widget/ListUserContainer.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -92,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) => ProfileScreen(
                                       currentUserId: currentUserId,
-                                      visitedUserUserId:
+                                      visitedUserId:
                                           listSnap[index].get('userId'),
                                     ),
                                   ),
@@ -168,30 +170,186 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           children: [
             DrawerHeader(
-              child: Text('Hello'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
+              child: StreamBuilder(
+                stream: usersRef.doc(currentUserId).snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  User user = User.fromDoc(snapshot.data);
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundImage: user.profileImage.isEmpty
+                            ? null
+                            : NetworkImage(user.profileImage),
+                        backgroundColor: TwitterColor,
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        user.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        '@${user.bio}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        children: [
+                          Container(
+                            child: StreamBuilder(
+                              stream: usersRef
+                                  .doc(currentUserId)
+                                  .collection('following')
+                                  .orderBy('timestamp', descending: true)
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox.shrink();
+                                }
+                                List<DocumentSnapshot> followingUserList =
+                                    snapshot.data!.docs;
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ListUserContainer(
+                                          title: 'Following User',
+                                          currentUserId: currentUserId,
+                                          listUserDocumentSnap:
+                                              followingUserList,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        followingUserList.length.toString(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'Following',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey,
+                                          //fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Container(
+                            child: StreamBuilder(
+                              stream: usersRef
+                                  .doc(currentUserId)
+                                  .collection('followers')
+                                  .orderBy('timestamp', descending: true)
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox.shrink();
+                                }
+                                List<DocumentSnapshot> followersUserList =
+                                    snapshot.data!.docs;
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ListUserContainer(
+                                          title: 'Followers',
+                                          currentUserId: currentUserId,
+                                          listUserDocumentSnap:
+                                              followersUserList,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        followersUserList.length.toString(),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'Followers',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey,
+                                          //fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-            Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.person_outline,
-                      color: Colors.grey,
-                      size: 30,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      currentUserId: currentUserId,
+                      visitedUserId: visitedUserId,
                     ),
-                    SizedBox(width: 25),
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontSize: 18,
+                  ),
+                );
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person_outline,
+                        color: Colors.grey,
+                        size: 30,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 25),
+                      Text(
+                        'Profile',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -51,7 +51,7 @@ class CommentUser extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
                         currentUserId: currentUserId,
-                        visitedUserUserId: comment.commentUserId,
+                        visitedUserId: comment.commentUserId,
                       ),
                     ),
                   );

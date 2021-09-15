@@ -89,7 +89,7 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         ProfileScreen(
           currentUserId: widget.currentUserId,
-          visitedUserUserId: widget.currentUserId,
+          visitedUserId: widget.currentUserId,
         ),
       ].elementAt(_selectedTab),
       bottomNavigationBar: CupertinoTabBar(

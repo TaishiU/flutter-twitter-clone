@@ -15,10 +15,10 @@ import 'package:twitter_clone/Widget/TweetContainer.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String currentUserId;
-  final String visitedUserUserId;
+  final String visitedUserId;
 
   const ProfileScreen(
-      {Key? key, required this.currentUserId, required this.visitedUserUserId})
+      {Key? key, required this.currentUserId, required this.visitedUserId})
       : super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   setupIsFollowing() async {
     bool isFollowingUser = await Firestore().isFollowingUser(
       currentUserId: widget.currentUserId,
-      visitedUserId: widget.visitedUserUserId,
+      visitedUserId: widget.visitedUserId,
     );
     if (mounted) {
       if (isFollowingUser == true) {
@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _isOwner = widget.currentUserId == widget.visitedUserUserId;
+    final _isOwner = widget.currentUserId == widget.visitedUserId;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -282,7 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       body: StreamBuilder(
-        stream: usersRef.doc(widget.visitedUserUserId).snapshots(),
+        stream: usersRef.doc(widget.visitedUserId).snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -509,7 +509,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           child: StreamBuilder(
                             stream: usersRef
-                                .doc(widget.visitedUserUserId)
+                                .doc(widget.visitedUserId)
                                 .collection('following')
                                 .orderBy('timestamp', descending: true)
                                 .snapshots(),
@@ -561,7 +561,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           child: StreamBuilder(
                             stream: usersRef
-                                .doc(widget.visitedUserUserId)
+                                .doc(widget.visitedUserId)
                                 .collection('followers')
                                 .orderBy('timestamp', descending: true)
                                 .snapshots(),

@@ -51,7 +51,7 @@ class LikesUserContainer extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => ProfileScreen(
                         currentUserId: currentUserId,
-                        visitedUserUserId: likes.likesUserId,
+                        visitedUserId: likes.likesUserId,
                       ),
                     ),
                   );

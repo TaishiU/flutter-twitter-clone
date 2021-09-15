@@ -121,7 +121,7 @@ class _TweetContainerState extends State<TweetContainer> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: 10),
+                      SizedBox(height: 8),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -129,7 +129,7 @@ class _TweetContainerState extends State<TweetContainer> {
                             MaterialPageRoute(
                               builder: (context) => ProfileScreen(
                                 currentUserId: widget.currentUserId,
-                                visitedUserUserId: widget.tweet.authorId,
+                                visitedUserId: widget.tweet.authorId,
                               ),
                             ),
                           );
@@ -161,7 +161,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                   MaterialPageRoute(
                                     builder: (context) => ProfileScreen(
                                       currentUserId: widget.currentUserId,
-                                      visitedUserUserId: widget.tweet.authorId,
+                                      visitedUserId: widget.tweet.authorId,
                                     ),
                                   ),
                                 );
@@ -254,7 +254,7 @@ class _TweetContainerState extends State<TweetContainer> {
                               ),
                         SizedBox(height: 15),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          width: MediaQuery.of(context).size.width * 0.65,
                           color: Colors.transparent,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -388,7 +388,6 @@ class _TweetContainerState extends State<TweetContainer> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 5),
                       ],
                     ),
                   ),
