@@ -8,7 +8,6 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
 import 'package:twitter_clone/Screens/NotificationsScreen.dart';
-import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/SearchScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 
@@ -87,10 +86,6 @@ class _FeedScreenState extends State<FeedScreen> {
         ChatScreen(
           currentUserId: widget.currentUserId,
         ),
-        ProfileScreen(
-          currentUserId: widget.currentUserId,
-          visitedUserId: widget.currentUserId,
-        ),
       ].elementAt(_selectedTab),
       bottomNavigationBar: CupertinoTabBar(
         onTap: (index) {
@@ -106,7 +101,6 @@ class _FeedScreenState extends State<FeedScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.notifications_none_outlined)),
           BottomNavigationBarItem(icon: Icon(Icons.mail_outline_rounded)),
-          BottomNavigationBarItem(icon: Icon(Icons.person)),
         ],
       ),
     );

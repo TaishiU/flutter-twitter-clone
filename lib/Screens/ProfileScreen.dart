@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
-import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
+import 'package:twitter_clone/Screens/MessageScreen.dart';
+import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
 import 'package:twitter_clone/Widget/ProfileImageView.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
@@ -28,6 +28,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _profileSegmentedValue = 0;
   bool _isFollowing = false;
+  List<String> categories = ['Tweet', 'Media', 'Likes'];
 
   @override
   void initState() {
@@ -236,6 +237,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  moveToChatScreen({
+    required BuildContext context,
+    required String currentUserId,
+    required User peerUser,
+  }) async {
+    /*ユーザー自身のプロフィール*/
+    DocumentSnapshot userProfileDoc =
+        await Firestore().getUserProfile(userId: currentUserId);
+    User currentUser = User.fromDoc(userProfileDoc);
+    /*会話Id（トークルームのId）を取得する*/
+    String convoId = HelperFunctions.getConvoIDFromHash(
+      currentUser: currentUser,
+      peerUser: peerUser,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MessageScreen(
+          currentUserId: currentUserId,
+          convoId: convoId,
+          peerUser: peerUser,
+        ),
+      ),
+    );
+  }
+
   followUser({required User followersUser}) async {
     setState(() {
       _isFollowing = true;
@@ -319,49 +346,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                           ),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _isOwner
-                            ? PopupMenuButton(
-                                icon: Icon(
-                                  Icons.more_horiz,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                                itemBuilder: (_) {
-                                  return <PopupMenuItem<String>>[
-                                    PopupMenuItem(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text('Logout'),
-                                        ],
-                                      ),
-                                      value: 'logout',
-                                    ),
-                                  ];
-                                },
-                                onSelected: (selectedItem) {
-                                  if (selectedItem == 'logout') {
-                                    Auth().logout();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => WelcomeScreen(),
-                                      ),
-                                    );
-                                  }
-                                },
-                              )
-                            : SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
                 ),
               ),
               Container(
@@ -436,27 +420,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                               )
                             : _isFollowing
-                                ? ElevatedButton(
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      child: Text(
-                                        'Following',
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                ? Row(
+                                    children: [
+                                      ElevatedButton(
+                                        child: Icon(
+                                          Icons.mail_outline,
+                                          color: TwitterColor,
                                         ),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.white,
+                                          onPrimary: Colors.black,
+                                          shape: CircleBorder(
+                                            side: BorderSide(
+                                              color: TwitterColor,
+                                              width: 1,
+                                              style: BorderStyle.solid,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          moveToChatScreen(
+                                            context: context,
+                                            currentUserId: widget.currentUserId,
+                                            peerUser: user,
+                                          );
+                                        },
                                       ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: TwitterColor,
-                                      onPrimary: Colors.black,
-                                      shape: StadiumBorder(),
-                                    ),
-                                    onPressed: () {
-                                      unFollowUser(unFollowersUser: user);
-                                    },
+                                      ElevatedButton(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text(
+                                            'Following',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: TwitterColor,
+                                          onPrimary: Colors.black,
+                                          shape: StadiumBorder(),
+                                        ),
+                                        onPressed: () {
+                                          unFollowUser(unFollowersUser: user);
+                                        },
+                                      ),
+                                    ],
                                   )
                                 : OutlinedButton(
                                     child: Padding(
@@ -611,22 +623,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
+                    // SizedBox(height: 20),
+                    // Container(
+                    //   width: MediaQuery.of(context).size.width,
+                    //   child: CupertinoSlidingSegmentedControl(
+                    //     groupValue: _profileSegmentedValue,
+                    //     thumbColor: TwitterColor,
+                    //     backgroundColor: Colors.transparent,
+                    //     children: _profileTabs,
+                    //     onValueChanged: (index) {
+                    //       setState(() {
+                    //         _profileSegmentedValue = index as int;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
                     SizedBox(height: 20),
                     Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: CupertinoSlidingSegmentedControl(
-                        groupValue: _profileSegmentedValue,
-                        thumbColor: TwitterColor,
-                        backgroundColor: Colors.transparent,
-                        children: _profileTabs,
-                        onValueChanged: (index) {
-                          setState(() {
-                            _profileSegmentedValue = index as int;
-                          });
+                      height: 30,
+                      color: Colors.transparent,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _profileSegmentedValue = index;
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 36),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    categories[index],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: _profileSegmentedValue == index
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Container(
+                                    height: 3,
+                                    width: 50,
+                                    color: _profileSegmentedValue == index
+                                        ? TwitterColor
+                                        : Colors.transparent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
-                    SizedBox(height: 20),
+                    Divider(),
                     buildProfileWidget(user: user),
                   ],
                 ),

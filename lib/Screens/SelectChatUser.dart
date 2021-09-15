@@ -19,30 +19,6 @@ class _SelectChatUserState extends State<SelectChatUser> {
   Future<QuerySnapshot>? _users;
   TextEditingController _searchController = TextEditingController();
 
-  // Widget buildUserTile({required User user}) {
-  //   return ListTile(
-  //     leading: CircleAvatar(
-  //       radius: 23,
-  //       backgroundColor: TwitterColor,
-  //       backgroundImage:
-  //           user.profileImage.isEmpty ? null : NetworkImage(user.profileImage),
-  //     ),
-  //     title: Text(user.name),
-  //     subtitle: Text('@${user.bio}'),
-  //     onTap: () {
-  //       // Navigator.push(
-  //       //   context,
-  //       //   MaterialPageRoute(
-  //       //     builder: (context) => ProfileScreen(
-  //       //       currentUserId: widget.currentUserId,
-  //       //       visitedUserUserId: user.userId,
-  //       //     ),
-  //       //   ),
-  //       // );
-  //     },
-  //   );
-  // }
-
   Widget buildUserTile({required User peerUser}) {
     return ListTile(
       leading: CircleAvatar(

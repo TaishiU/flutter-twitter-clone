@@ -11,27 +11,6 @@ class ChatScreen extends StatelessWidget {
   final String currentUserId;
   ChatScreen({Key? key, required this.currentUserId}) : super(key: key);
 
-  moveToChatScreen({
-    required BuildContext context,
-    required String convoId,
-    required String peerUserId,
-  }) async {
-    /*相手ユーザーのプロフィール*/
-    DocumentSnapshot userProfileDoc =
-        await Firestore().getUserProfile(userId: peerUserId);
-    User peerUser = User.fromDoc(userProfileDoc);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MessageScreen(
-          currentUserId: currentUserId,
-          convoId: convoId,
-          peerUser: peerUser,
-        ),
-      ),
-    );
-  }
-
   Widget buildUserTile({
     required BuildContext context,
     required GetLastMessage getLastMessage,
@@ -71,6 +50,27 @@ class ChatScreen extends StatelessWidget {
                 _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
           );
         },
+      ),
+    );
+  }
+
+  moveToChatScreen({
+    required BuildContext context,
+    required String convoId,
+    required String peerUserId,
+  }) async {
+    /*相手ユーザーのプロフィール*/
+    DocumentSnapshot userProfileDoc =
+        await Firestore().getUserProfile(userId: peerUserId);
+    User peerUser = User.fromDoc(userProfileDoc);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MessageScreen(
+          currentUserId: currentUserId,
+          convoId: convoId,
+          peerUser: peerUser,
+        ),
       ),
     );
   }
