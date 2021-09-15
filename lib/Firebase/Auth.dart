@@ -49,4 +49,13 @@ class Auth {
   void logout() {
     _auth.signOut();
   }
+
+  Future sendPasswordResetEmail({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return 'success';
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }

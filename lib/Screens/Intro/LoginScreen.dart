@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Screens/Intro/ForgetPasswordScreen.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 import 'package:twitter_clone/main.dart';
 
@@ -72,6 +73,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                     return null;
                   },
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ForgetPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Forget Password?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: TwitterColor,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 40,
