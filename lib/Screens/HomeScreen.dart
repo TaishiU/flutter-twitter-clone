@@ -12,9 +12,11 @@ class HomeScreen extends StatelessWidget {
   final String currentUserId;
   final String visitedUserId;
 
-  HomeScreen(
-      {Key? key, required this.currentUserId, required this.visitedUserId})
-      : super(key: key);
+  HomeScreen({
+    Key? key,
+    required this.currentUserId,
+    required this.visitedUserId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,35 +31,6 @@ class HomeScreen extends StatelessWidget {
           width: 45,
           height: 45,
         ),
-        actions: [
-          PopupMenuButton(
-            icon: Icon(
-              Icons.logout,
-              color: TwitterColor,
-              size: 25,
-            ),
-            itemBuilder: (_) {
-              return <PopupMenuItem<String>>[
-                PopupMenuItem(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Logout'),
-                    ],
-                  ),
-                  value: 'logout',
-                )
-              ];
-            },
-            onSelected: (selectedItem) {
-              if (selectedItem == 'logout') {
-                Auth().logout();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => WelcomeScreen()));
-              }
-            },
-          )
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 5),
@@ -189,6 +162,198 @@ class HomeScreen extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Text('Hello'),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.person_outline,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                    SizedBox(width: 25),
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.article_outlined,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                    SizedBox(width: 25),
+                    Text(
+                      'Lists',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.local_fire_department_outlined,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                    SizedBox(width: 25),
+                    Text(
+                      'Moment',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.wb_incandescent_outlined,
+                      color: Colors.grey,
+                      size: 30,
+                    ),
+                    SizedBox(width: 25),
+                    Text(
+                      'Twitter Advertisement',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Text(
+                  'Setting and Privacy',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Text(
+                  'Help center',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      //title: ,
+                      content: Text('Do you want to Logout?'),
+                      actions: [
+                        TextButton(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            primary: Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                          onPressed: () {
+                            Auth().logout();
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WelcomeScreen(),
+                                ),
+                                (_) => false);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
