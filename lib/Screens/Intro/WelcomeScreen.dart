@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Screens/Intro/LoginScreen.dart';
 import 'package:twitter_clone/Screens/Intro/RegistrationScreen.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
@@ -28,33 +29,54 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   Text(
                     'See what’s happening in the world right now',
-                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
               Column(
                 children: [
                   RoundedButton(
-                    btnText: 'Login',
-                    onBtnPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  RoundedButton(
                     btnText: 'Create account',
                     onBtnPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => RegistrationScreen()),
+                          builder: (context) => RegistrationScreen(),
+                        ),
                       );
                     },
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Have an account already?'),
+                      SizedBox(width: 5),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: TwitterColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

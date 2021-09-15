@@ -498,6 +498,7 @@ class Firestore {
         .doc(currentUserid)
         .collection('userActivities')
         .orderBy('timestamp', descending: true)
+        .limit(10)
         .get();
     List<Activity> activities =
         userActivitiesSnapshot.docs.map((userActivitiesSnap) {

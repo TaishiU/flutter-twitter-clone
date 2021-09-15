@@ -18,15 +18,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: TwitterColor,
+        backgroundColor: Colors.white,
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.5,
         title: Text(
           'Registration',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            color: TwitterColor,
           ),
         ),
       ),
@@ -106,7 +106,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if (isValid) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => MyApp()),
+                          MaterialPageRoute(
+                            builder: (context) => MyApp(),
+                          ),
                         );
                       } else {
                         print('Registration problem');
