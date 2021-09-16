@@ -131,6 +131,7 @@ class ChatScreen extends StatelessWidget {
           }
           List<DocumentSnapshot> listLastMessagesSnap = snapshot.data!.docs;
           return ListView(
+            shrinkWrap: true,
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),

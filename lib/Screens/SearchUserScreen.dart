@@ -101,17 +101,41 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
         ],
       ),
       body: _users == null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search, size: 150),
-                  Text(
-                    'Search user...',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
+          // ? Center(
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Icon(Icons.search, size: 150),
+          //         Text(
+          //           'Search user...',
+          //           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+          //         )
+          //       ],
+          //     ),
+          //   )
+          ? StreamBuilder<QuerySnapshot>(
+              stream: usersRef.limit(5).snapshots(),
+              /*リミットは5件*/
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
+                userListSnap.removeWhere((snapshot) =>
+                    snapshot.get('userId') == widget.currentUserId);
+                return ListView(
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  children: userListSnap.map((userSnap) {
+                    User user = User.fromDoc(userSnap);
+                    return buildUserTile(user: user);
+                  }).toList(),
+                );
+              },
             )
           : FutureBuilder(
               future: _users,

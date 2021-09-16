@@ -144,7 +144,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                   /* keyboardTypeとmaxLinesを上記のように指定することでテキスト折り返しが可能になる */
                   maxLength: 140,
                   decoration: InputDecoration(
-                    hintText: 'Enter your Tweet',
+                    hintText: 'What\'s happening? ',
                   ),
                   validator: (input) => input!.trim().length < 1
                       ? 'Please enter your Tweet'

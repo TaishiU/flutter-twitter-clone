@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   height: 83,
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: usersRef.snapshots(),
+                    stream: usersRef.limit(8).snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (!snapshot.hasData) {
