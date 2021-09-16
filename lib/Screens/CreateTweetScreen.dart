@@ -112,6 +112,15 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         centerTitle: true,
         elevation: 0.5,
         backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.clear,
+            size: 28,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
           'Tweet',
           style: TextStyle(

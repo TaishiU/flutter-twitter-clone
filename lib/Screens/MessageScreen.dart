@@ -68,20 +68,21 @@ class _MessageScreenState extends State<MessageScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
-        title: Row(
+        centerTitle: true,
+        title: Column(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.blue,
-              backgroundImage: widget.peerUser.profileImage.isEmpty
-                  ? null
-                  : NetworkImage(widget.peerUser.profileImage),
-            ),
-            SizedBox(width: 10),
             Text(
               widget.peerUser.name,
               style: TextStyle(
-                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            Text(
+              '@${widget.peerUser.bio}',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
               ),
             ),
           ],
@@ -110,9 +111,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 children: listMessageSnap.map((listMessage) {
                   Message message = Message.fromDoc(listMessage);
                   return MessageContainer(
-                    message: message,
                     currentUserId: widget.currentUserId,
                     peerUserId: widget.peerUser.userId,
+                    peerUserProfileImage: widget.peerUser.profileImage,
+                    message: message,
                   );
                 }).toList(),
               );
@@ -134,11 +136,19 @@ class _MessageScreenState extends State<MessageScreen> {
                 padding:
                     EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      color: Colors.blue,
+                    ),
+                    Icon(
+                      Icons.image_outlined,
+                      color: Colors.blue,
+                    ),
                     Container(
                       height: 40,
-                      width: MediaQuery.of(context).size.width * 0.75,
+                      width: MediaQuery.of(context).size.width * 0.5,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(20),
@@ -159,14 +169,14 @@ class _MessageScreenState extends State<MessageScreen> {
                         },
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
+                    GestureDetector(
+                      onTap: () {
+                        onSendMessage(content: message);
+                      },
+                      child: Icon(
                         Icons.send_rounded,
                         color: Colors.blue,
                       ),
-                      onPressed: () {
-                        onSendMessage(content: message);
-                      },
                     ),
                   ],
                 ),

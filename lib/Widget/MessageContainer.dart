@@ -1,4 +1,3 @@
-import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
@@ -7,12 +6,14 @@ import 'package:twitter_clone/Model/Message.dart';
 class MessageContainer extends StatelessWidget {
   final String currentUserId;
   final String peerUserId;
+  final String peerUserProfileImage;
   final Message message;
   MessageContainer({
     Key? key,
     required this.currentUserId,
     required this.peerUserId,
     required this.message,
+    required this.peerUserProfileImage,
   }) : super(key: key);
 
   @override
@@ -74,18 +75,42 @@ class MessageContainer extends StatelessWidget {
                 },
               );
             },
+            // child: Container(
+            //   width: 200,
+            //   margin: EdgeInsets.symmetric(vertical: 5),
+            //   child: Bubble(
+            //     color: Colors.blue,
+            //     elevation: 0,
+            //     padding: BubbleEdges.all(10.0),
+            //     nip: BubbleNip.rightTop,
+            //     child: Text(
+            //       message.content,
+            //       style: TextStyle(
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             child: Container(
-              width: 200,
-              margin: EdgeInsets.symmetric(vertical: 5),
-              child: Bubble(
-                color: Colors.blue,
-                elevation: 0,
-                padding: BubbleEdges.all(10.0),
-                nip: BubbleNip.rightTop,
-                child: Text(
-                  message.content,
-                  style: TextStyle(
-                    color: Colors.white,
+              margin: EdgeInsets.symmetric(vertical: 3),
+              child: Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: TwitterColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    message.content,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -102,18 +127,50 @@ class MessageContainer extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Container(
+                //   width: 200.0,
+                //   margin: EdgeInsets.only(left: 10.0),
+                //   child: Bubble(
+                //     color: Colors.yellow,
+                //     elevation: 0,
+                //     padding: const BubbleEdges.all(10.0),
+                //     nip: BubbleNip.leftTop,
+                //     child: Text(
+                //       message.content,
+                //       style: TextStyle(
+                //         color: Colors.black,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(width: 10),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.blue,
+                  backgroundImage: peerUserProfileImage.isEmpty
+                      ? null
+                      : NetworkImage(peerUserProfileImage),
+                ),
                 Container(
-                  width: 200.0,
-                  margin: EdgeInsets.only(left: 10.0),
-                  child: Bubble(
-                    color: Colors.yellow,
-                    elevation: 0,
-                    padding: const BubbleEdges.all(10.0),
-                    nip: BubbleNip.leftTop,
-                    child: Text(
-                      message.content,
-                      style: TextStyle(
-                        color: Colors.black,
+                  margin: EdgeInsets.symmetric(vertical: 3),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          topLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        message.content,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),

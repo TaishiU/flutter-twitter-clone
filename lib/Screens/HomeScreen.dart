@@ -413,7 +413,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 25),
                     Text(
-                      'Twitter Advertisement',
+                      'Twitter ads',
                       style: TextStyle(
                         fontSize: 18,
                       ),
