@@ -20,14 +20,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   Future<QuerySnapshot>? _users;
   TextEditingController _searchController = TextEditingController();
 
-  clearSearch() {
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => _searchController.clear());
-    setState(() {
-      _users = null;
-    });
-  }
-
   Widget buildUserTile({required User user}) {
     return ListTile(
       leading: CircleAvatar(
@@ -65,12 +57,11 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           width: MediaQuery.of(context).size.width * 0.7,
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
           decoration: BoxDecoration(
-            //color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextFormField(
             autofocus: true,
-            //controller: textEditingController,
+            controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
               hintStyle: TextStyle(
@@ -78,7 +69,18 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(bottom: 8),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() {
+                    _users = null;
+                  });
+                },
+              ),
             ),
             onChanged: (String name) {
               if (name.isNotEmpty) {
@@ -124,6 +126,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                   );
                 }
                 List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
+                /*ユーザー自身のアバターは削除*/
                 userListSnap.removeWhere((snapshot) =>
                     snapshot.get('userId') == widget.currentUserId);
                 return ListView(

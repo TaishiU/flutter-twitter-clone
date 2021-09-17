@@ -187,7 +187,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  Text(' follows you.'),
+                                                  Text(' follows you'),
                                                 ],
                                               ),
                                             if (activity.likes == true)
@@ -200,7 +200,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  Text(' likes your tweet!'),
+                                                  Text(' likes your Tweet'),
                                                 ],
                                               ),
                                             if (activity.comment == true)
@@ -213,7 +213,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  Text(' comments your tweet!'),
+                                                  Text(
+                                                      ' commented on your Tweet'),
                                                 ],
                                               ),
                                           ],

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Screens/MessageScreen.dart';
+import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
 
 class SelectChatUser extends StatefulWidget {
@@ -57,7 +57,7 @@ class _SelectChatUserState extends State<SelectChatUser> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MessageScreen(
+        builder: (context) => ChatScreen(
           currentUserId: currentUserId,
           convoId: convoId,
           peerUser: peerUser,
@@ -84,7 +84,7 @@ class _SelectChatUserState extends State<SelectChatUser> {
           ),
           child: TextFormField(
             autofocus: true,
-            //controller: textEditingController,
+            controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
               hintStyle: TextStyle(
@@ -92,7 +92,18 @@ class _SelectChatUserState extends State<SelectChatUser> {
                 fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(bottom: 8),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() {
+                    _users = null;
+                  });
+                },
+              ),
             ),
             onChanged: (String name) {
               if (name.isNotEmpty) {
@@ -116,6 +127,7 @@ class _SelectChatUserState extends State<SelectChatUser> {
                   );
                 }
                 List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
+                /*ユーザー自身のアバターは削除*/
                 userListSnap.removeWhere((snapshot) =>
                     snapshot.get('userId') == widget.currentUserId);
                 return ListView(

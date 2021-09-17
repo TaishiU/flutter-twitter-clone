@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
+import 'package:twitter_clone/Screens/MessageScreen.dart';
 import 'package:twitter_clone/Screens/NotificationsScreen.dart';
 import 'package:twitter_clone/Screens/SearchScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
@@ -83,7 +83,7 @@ class _FeedScreenState extends State<FeedScreen> {
         NotificationsScreen(
           currentUserId: widget.currentUserId,
         ),
-        ChatScreen(
+        MessageScreen(
           currentUserId: widget.currentUserId,
         ),
       ].elementAt(_selectedTab),

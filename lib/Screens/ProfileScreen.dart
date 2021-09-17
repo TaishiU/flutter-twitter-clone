@@ -5,9 +5,9 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
-import 'package:twitter_clone/Screens/MessageScreen.dart';
 import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
 import 'package:twitter_clone/Widget/ProfileImageView.dart';
@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MessageScreen(
+        builder: (context) => ChatScreen(
           currentUserId: currentUserId,
           convoId: convoId,
           peerUser: peerUser,
