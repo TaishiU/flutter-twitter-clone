@@ -8,7 +8,6 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class CreateTweetScreen extends StatefulWidget {
   final String currentUserId;
@@ -121,13 +120,32 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          'Tweet',
-          style: TextStyle(
-            color: TwitterColor,
-            fontSize: 20,
-          ),
-        ),
+        actions: [
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: ElevatedButton(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Tweet',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                primary: TwitterColor,
+                onPrimary: Colors.black,
+                shape: StadiumBorder(),
+              ),
+              onPressed: () {
+                handleTweet();
+              },
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         /*キーボード表示時のRenderFlexOverFlowedエラーの解消用にSingleChildScrollViewを使う*/
@@ -137,21 +155,58 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
             children: [
               SizedBox(height: 20),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  /* keyboardTypeとmaxLinesを上記のように指定することでテキスト折り返しが可能になる */
-                  maxLength: 140,
-                  decoration: InputDecoration(
-                    hintText: 'What\'s happening? ',
-                  ),
-                  validator: (input) => input!.trim().length < 1
-                      ? 'Please enter your Tweet'
-                      : null,
-                  onChanged: (value) {
-                    _tweetText = value;
-                  },
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: 5),
+                        StreamBuilder(
+                          stream:
+                              usersRef.doc(widget.currentUserId).snapshots(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircleAvatar(
+                                radius: 20,
+                                backgroundColor: TwitterColor,
+                              );
+                            }
+                            User user = User.fromDoc(snapshot.data);
+                            return CircleAvatar(
+                              radius: 20,
+                              backgroundColor: TwitterColor,
+                              backgroundImage: user.profileImage.isEmpty
+                                  ? null
+                                  : NetworkImage(user.profileImage),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: TextFormField(
+                        autofocus: true,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        /* keyboardTypeとmaxLinesを上記のように指定することでテキスト折り返しが可能になる */
+                        maxLength: 140,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'What\'s happening? ',
+                        ),
+                        validator: (input) => input!.trim().length < 1
+                            ? 'Please enter your Tweet'
+                            : null,
+                        onChanged: (value) {
+                          _tweetText = value;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 10),
@@ -230,13 +285,6 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                       ),
                     ),
               SizedBox(height: 50),
-              RoundedButton(
-                btnText: 'Tweet',
-                onBtnPressed: () {
-                  handleTweet();
-                },
-              ),
-              SizedBox(height: 5),
               _isLoading ? CircularProgressIndicator() : SizedBox.shrink(),
             ],
           ),

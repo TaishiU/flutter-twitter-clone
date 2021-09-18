@@ -4,12 +4,20 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/SearchUserScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
+import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
 class SearchScreen extends StatelessWidget {
   final String currentUserId;
-  const SearchScreen({Key? key, required this.currentUserId}) : super(key: key);
+  final String visitedUserId;
+
+  SearchScreen({
+    Key? key,
+    required this.currentUserId,
+    required this.visitedUserId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +49,7 @@ class SearchScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Text(
-                'Search...',
+                'Search keyword',
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.w400,
@@ -142,6 +150,27 @@ class SearchScreen extends StatelessWidget {
                 /*横の比率が2:1, 縦の比率が2:1*/
                 (index % 7 == 0) ? 2 : 1,
                 (index % 7 == 0) ? 2 : 1),
+          );
+        },
+      ),
+      drawer: DrawerContainer(
+        currentUserId: currentUserId,
+        visitedUserId: visitedUserId,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: TwitterColor,
+        child: Image.asset(
+          'assets/images/TweetLogo.png',
+          fit: BoxFit.cover,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateTweetScreen(
+                currentUserId: currentUserId,
+              ),
+            ),
           );
         },
       ),

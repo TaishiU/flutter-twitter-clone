@@ -277,7 +277,8 @@ class _TweetContainerState extends State<TweetContainer> {
                                     },
                                     child: Icon(
                                       Icons.mode_comment_outlined,
-                                      color: Colors.black,
+                                      size: 20,
+                                      color: Colors.grey.shade600,
                                     ),
                                   ),
                                   SizedBox(width: 8),
@@ -295,10 +296,15 @@ class _TweetContainerState extends State<TweetContainer> {
                                         if (!snapshot.hasData) {
                                           return SizedBox.shrink();
                                         }
-                                        return Text(
-                                          snapshot.data!.size.toString(),
-                                          /*Firestoreコレクションの要素数はsizeで取得できる*/
-                                        );
+                                        return snapshot.data!.size == 0
+                                            ? SizedBox.shrink()
+                                            : Text(
+                                                snapshot.data!.size.toString(),
+                                                /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                ),
+                                              );
                                       },
                                     ),
                                   ),
@@ -309,10 +315,16 @@ class _TweetContainerState extends State<TweetContainer> {
                                 children: [
                                   Icon(
                                     Icons.repeat,
-                                    color: Colors.black,
+                                    size: 20,
+                                    color: Colors.grey.shade600,
                                   ),
                                   SizedBox(width: 8),
-                                  Text('0'),
+                                  Text(
+                                    '',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
                                 ],
                               ),
                               SizedBox(width: 10),
@@ -325,35 +337,45 @@ class _TweetContainerState extends State<TweetContainer> {
                                     child: _isLiked
                                         ? Icon(
                                             Icons.favorite,
+                                            size: 20,
                                             color: Colors.red,
                                           )
                                         : Icon(
                                             Icons.favorite_border,
-                                            color: Colors.black,
+                                            size: 20,
+                                            color: Colors.grey.shade600,
                                           ),
                                   ),
                                   SizedBox(width: 8),
                                   Container(
                                     child: StreamBuilder(
-                                        stream: usersRef
-                                            .doc(widget.tweet.authorId)
-                                            .collection('tweets')
-                                            .doc(widget.tweet.tweetId)
-                                            .collection('likes')
-                                            .orderBy('timestamp',
-                                                descending: true)
-                                            .snapshots(),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<QuerySnapshot>
-                                                snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return SizedBox.shrink();
-                                          }
-                                          return Text(
-                                            snapshot.data!.size.toString(),
-                                            /*Firestoreコレクションの要素数はsizeで取得できる*/
-                                          );
-                                        }),
+                                      stream: usersRef
+                                          .doc(widget.tweet.authorId)
+                                          .collection('tweets')
+                                          .doc(widget.tweet.tweetId)
+                                          .collection('likes')
+                                          .orderBy('timestamp',
+                                              descending: true)
+                                          .snapshots(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return SizedBox.shrink();
+                                        }
+                                        return snapshot.data!.size == 0
+                                            ? SizedBox.shrink()
+                                            : Text(
+                                                snapshot.data!.size.toString(),
+                                                /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                                style: TextStyle(
+                                                  color: _isLiked
+                                                      ? Colors.red
+                                                      : Colors.grey,
+                                                ),
+                                              );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -371,7 +393,11 @@ class _TweetContainerState extends State<TweetContainer> {
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
                                       /*データがない間はアイコンボタンを表示するだけ*/
-                                      return Icon(Icons.share);
+                                      return Icon(
+                                        Icons.share,
+                                        size: 20,
+                                        color: Colors.grey.shade600,
+                                      );
                                     }
                                     Uri uri = snapshot.data!;
                                     return GestureDetector(
@@ -380,7 +406,11 @@ class _TweetContainerState extends State<TweetContainer> {
                                           '${widget.tweet.text}\n\n${uri.toString()}',
                                         );
                                       },
-                                      child: Icon(Icons.share),
+                                      child: Icon(
+                                        Icons.share,
+                                        size: 20,
+                                        color: Colors.grey.shade600,
+                                      ),
                                     );
                                   },
                                 ),
@@ -395,6 +425,7 @@ class _TweetContainerState extends State<TweetContainer> {
               ),
             ),
           ),
+          SizedBox(height: 5),
           Divider(),
         ],
       ),

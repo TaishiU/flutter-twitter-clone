@@ -6,7 +6,6 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User user;
@@ -117,16 +116,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        centerTitle: true,
+        centerTitle: false,
         leading: BackButton(
-          color: TwitterColor,
+          color: Colors.black,
         ),
         title: Text(
-          widget.user.name,
+          'Edit Profile',
           style: TextStyle(
-            color: TwitterColor,
+            color: Colors.black,
           ),
         ),
+        actions: [
+          TextButton(
+            child: Text(
+              'Save',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+              ),
+            ),
+            onPressed: () {
+              saveProfile();
+            },
+          ),
+        ],
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(
@@ -139,7 +152,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               handleImageFromGallery();
             },
             child: Stack(
-              alignment: Alignment.bottomRight,
               children: [
                 Container(
                   height: 150,
@@ -153,17 +165,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                   ),
                 ),
-                FloatingActionButton(
-                  backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.photo_camera,
-                    size: 30,
-                    color: Colors.black,
+                Container(
+                  height: 150,
+                  color: Colors.black54,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    _imagePickedType = 'cover';
-                    handleImageFromGallery();
-                  },
                 ),
               ],
             ),
@@ -199,6 +214,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 : displayProfileImage(),
                             //backgroundColor: TwitterColor,
                           ),
+                          CircleAvatar(
+                            radius: 42,
+                            backgroundColor: Colors.black54,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -236,19 +266,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           _bio = value!;
                         },
                       ),
+                      SizedBox(height: 30),
                       _isLoading
                           ? CircularProgressIndicator()
                           : SizedBox.shrink(),
                     ],
-                  ),
-                ),
-                SizedBox(height: 50),
-                Center(
-                  child: RoundedButton(
-                    btnText: 'Save',
-                    onBtnPressed: () {
-                      saveProfile();
-                    },
                   ),
                 ),
               ],

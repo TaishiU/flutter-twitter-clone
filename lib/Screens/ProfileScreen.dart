@@ -28,6 +28,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _profileSegmentedValue = 0;
   bool _isFollowing = false;
+  List<String> popUpMenuTitle = [
+    'Share',
+    'Draft',
+    'View Lists',
+    'View Moments',
+    'QR code'
+  ];
   List<String> categories = ['Tweet', 'Media', 'Likes'];
 
   @override
@@ -346,6 +353,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                           ),
                   ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        widget.currentUserId == widget.visitedUserId
+                            ? PopupMenuButton(
+                                icon: Container(
+                                  width: 35,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black54,
+                                  ),
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
+                                ),
+                                itemBuilder: (BuildContext context) {
+                                  return popUpMenuTitle.map((String title) {
+                                    return PopupMenuItem(
+                                      child: Text(title),
+                                      value: title,
+                                    );
+                                  }).toList();
+                                },
+                                onSelected: (selectedItem) {
+                                  if (selectedItem == 'Share') {
+                                    print('Success!');
+                                  }
+                                },
+                              )
+                            : SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               Container(
@@ -393,11 +439,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 15),
                                   child: Text(
-                                    'Edit',
+                                    'Edit Profile',
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
-                                      color: TwitterColor,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),
@@ -405,8 +451,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   primary: Colors.black,
                                   shape: StadiumBorder(),
                                   side: BorderSide(
-                                    color: TwitterColor,
-                                    width: 2,
+                                    color: Colors.grey.shade400,
+                                    width: 1,
                                   ),
                                 ),
                                 onPressed: () {
@@ -425,14 +471,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ElevatedButton(
                                         child: Icon(
                                           Icons.mail_outline,
-                                          color: TwitterColor,
+                                          color: Colors.black,
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.white,
                                           onPrimary: Colors.black,
                                           shape: CircleBorder(
                                             side: BorderSide(
-                                              color: TwitterColor,
+                                              color: Colors.grey.shade400,
                                               width: 1,
                                               style: BorderStyle.solid,
                                             ),
@@ -446,50 +492,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           );
                                         },
                                       ),
-                                      ElevatedButton(
+                                      OutlinedButton(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 10),
+                                              horizontal: 15),
                                           child: Text(
                                             'Following',
                                             style: TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                              color: Colors.black,
                                             ),
                                           ),
                                         ),
-                                        style: ElevatedButton.styleFrom(
-                                          primary: TwitterColor,
-                                          onPrimary: Colors.black,
+                                        style: OutlinedButton.styleFrom(
+                                          primary: Colors.black,
                                           shape: StadiumBorder(),
+                                          side: BorderSide(
+                                            color: Colors.grey.shade400,
+                                            width: 1,
+                                          ),
                                         ),
                                         onPressed: () {
-                                          unFollowUser(unFollowersUser: user);
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Unfollow'),
+                                                content: Text(
+                                                    'Do you want to Unfollow ${user.name}?'),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    style: TextButton.styleFrom(
+                                                      primary: Colors.black,
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    style: TextButton.styleFrom(
+                                                      primary: Colors.red,
+                                                    ),
+                                                    onPressed: () {
+                                                      unFollowUser(
+                                                        unFollowersUser: user,
+                                                      );
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                         },
                                       ),
                                     ],
                                   )
-                                : OutlinedButton(
+                                : ElevatedButton(
                                     child: Padding(
                                       padding:
-                                          EdgeInsets.symmetric(horizontal: 15),
+                                          EdgeInsets.symmetric(horizontal: 10),
                                       child: Text(
                                         'Follow',
                                         style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold,
-                                          color: TwitterColor,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                    style: OutlinedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(
                                       primary: Colors.black,
+                                      onPrimary: Colors.black,
                                       shape: StadiumBorder(),
-                                      side: BorderSide(
-                                        color: TwitterColor,
-                                        width: 2,
-                                      ),
                                     ),
                                     onPressed: () {
                                       followUser(followersUser: user);
@@ -681,7 +769,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                     ),
-                    Divider(),
+                    SizedBox(height: 5),
                     buildProfileWidget(user: user),
                   ],
                 ),

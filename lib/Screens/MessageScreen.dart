@@ -1,15 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/GetLastMessage.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
-import 'package:twitter_clone/Screens/SelectChatUser.dart';
+import 'package:twitter_clone/Screens/SelectChatUserScreen.dart';
+import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
 class MessageScreen extends StatelessWidget {
   final String currentUserId;
-  MessageScreen({Key? key, required this.currentUserId}) : super(key: key);
+  final String visitedUserId;
+
+  MessageScreen({
+    Key? key,
+    required this.currentUserId,
+    required this.visitedUserId,
+  }) : super(key: key);
 
   Widget buildUserTile({
     required BuildContext context,
@@ -81,40 +89,48 @@ class MessageScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
         centerTitle: true,
-        title: Text(
-          'Message',
-          style: TextStyle(
-            color: TwitterColor,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        SelectChatUser(currentUserId: currentUserId),
-                  ),
-                );
-              },
-              child: Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey.shade200,
+        elevation: 0.5,
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectChatUserScreen(
+                  currentUserId: currentUserId,
                 ),
-                child: Icon(
-                  Icons.search,
+              ),
+            );
+          },
+          child: Container(
+            height: 40,
+            width: MediaQuery.of(context).size.width * 0.7,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              child: Text(
+                'Search account and group',
+                style: TextStyle(
                   color: Colors.grey,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
                 ),
               ),
             ),
+          ),
+        ),
+        actions: [
+          SvgPicture.asset(
+            'assets/images/SettingLogo.svg',
+            width: 23,
+            height: 23,
+          ),
+          Container(
+            width: 15,
           ),
         ],
       ),
@@ -127,6 +143,62 @@ class MessageScreen extends StatelessWidget {
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.data!.docs.length == 0) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Send or receive messages',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'You can send a message directly to Twitter users.\nSince you select the recipient and send it, it will not be published on the timeline.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    ElevatedButton(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'Write a message',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: TwitterColor,
+                        onPrimary: Colors.black,
+                        shape: StadiumBorder(),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelectChatUserScreen(
+                              currentUserId: currentUserId,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
             );
           }
           List<DocumentSnapshot> listLastMessagesSnap = snapshot.data!.docs;
@@ -142,6 +214,27 @@ class MessageScreen extends StatelessWidget {
                 getLastMessage: getLastMessage,
               );
             }).toList(),
+          );
+        },
+      ),
+      drawer: DrawerContainer(
+        currentUserId: currentUserId,
+        visitedUserId: visitedUserId,
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.mail_outline,
+          size: 25,
+        ),
+        backgroundColor: TwitterColor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SelectChatUserScreen(
+                currentUserId: currentUserId,
+              ),
+            ),
           );
         },
       ),

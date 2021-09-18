@@ -1,18 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
+import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
 class NotificationsScreen extends StatefulWidget {
   final String currentUserId;
+  final String visitedUserId;
 
-  NotificationsScreen({Key? key, required this.currentUserId})
-      : super(key: key);
+  NotificationsScreen({
+    Key? key,
+    required this.currentUserId,
+    required this.visitedUserId,
+  }) : super(key: key);
 
   @override
   _NotificationsScreenState createState() => _NotificationsScreenState();
@@ -76,14 +83,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0.5,
         title: Text(
           'Notifications',
           style: TextStyle(
-            color: TwitterColor,
+            color: Colors.black,
           ),
         ),
+        actions: [
+          SvgPicture.asset(
+            'assets/images/SettingLogo.svg',
+            width: 23,
+            height: 23,
+          ),
+          Container(
+            width: 15,
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () {
@@ -244,6 +261,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ),
         //child: ,
+      ),
+      drawer: DrawerContainer(
+        currentUserId: widget.currentUserId,
+        visitedUserId: widget.visitedUserId,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: TwitterColor,
+        child: Image.asset(
+          'assets/images/TweetLogo.png',
+          fit: BoxFit.cover,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateTweetScreen(
+                currentUserId: widget.currentUserId,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

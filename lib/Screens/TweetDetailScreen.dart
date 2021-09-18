@@ -140,7 +140,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Thread',
+          'Tweet',
           style: TextStyle(
             color: TwitterColor,
           ),
@@ -295,7 +295,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               LikesUserContainer(
-                                            title: 'User',
+                                            title: 'Liked account',
                                             currentUserId: widget.currentUserId,
                                             likesListForTweet:
                                                 likesListForTweet,
@@ -342,7 +342,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => CommentUser(
-                                              title: 'User',
+                                              title: 'Commented account',
                                               currentUserId:
                                                   widget.currentUserId,
                                               commentListForTweet:
@@ -369,17 +369,21 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                         ),
                         Divider(),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             IconButton(
                               icon: Icon(
                                 Icons.mode_comment_outlined,
-                                color: Colors.black,
+                                color: Colors.grey.shade600,
                               ),
                               onPressed: () {},
                             ),
                             SizedBox(width: 10),
                             IconButton(
-                              icon: Icon(Icons.repeat),
+                              icon: Icon(
+                                Icons.repeat,
+                                color: Colors.grey.shade600,
+                              ),
                               onPressed: () {},
                             ),
                             SizedBox(width: 10),
@@ -387,7 +391,8 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               icon: _isLiked
                                   ? Icon(Icons.favorite)
                                   : Icon(Icons.favorite_border),
-                              color: _isLiked ? Colors.red : Colors.black,
+                              color:
+                                  _isLiked ? Colors.red : Colors.grey.shade600,
                               onPressed: () {
                                 likeOrUnLikeTweet();
                               },
@@ -407,13 +412,19 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                   if (!snapshot.hasData) {
                                     /*データがない間はアイコンボタンを表示するだけ*/
                                     return IconButton(
-                                      icon: Icon(Icons.share),
+                                      icon: Icon(
+                                        Icons.share,
+                                        color: Colors.grey.shade600,
+                                      ),
                                       onPressed: () {},
                                     );
                                   }
                                   Uri uri = snapshot.data!;
                                   return IconButton(
-                                    icon: Icon(Icons.share),
+                                    icon: Icon(
+                                      Icons.share,
+                                      color: Colors.grey.shade600,
+                                    ),
                                     onPressed: () {
                                       Share.share(
                                         '${widget.tweet.text}\n\n${uri.toString()}',

@@ -4,10 +4,11 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 class Auth {
   final _auth = FirebaseAuth.instance;
 
-  Future<bool> signUp(
-      {required String name,
-      required String email,
-      required String password}) async {
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
     try {
       final authResult = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -21,7 +22,6 @@ class Auth {
           userId: signedInUser.uid,
           name: name,
           email: email,
-          password: password,
         );
         return true;
       }

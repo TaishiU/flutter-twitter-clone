@@ -15,14 +15,12 @@ class Firestore {
     required String userId,
     required String name,
     required String email,
-    required String password,
   }) async {
     DocumentReference usersReference = usersRef.doc(userId);
     await usersReference.set({
       'userId': usersReference.id,
       'name': name,
       'email': email,
-      'password': password,
       'profileImage': '',
       'coverImage': '',
       'bio': '',
@@ -217,6 +215,11 @@ class Firestore {
 
   Future<void> deleteTweet(
       {required String userId, required String postId}) async {
+    await feedsRef
+        .doc(userId)
+        .collection('followingUserTweets')
+        .doc(postId)
+        .delete();
     await usersRef.doc(userId).collection('tweets').doc(postId).delete();
     await allTweetsRef.doc(postId).delete();
   }

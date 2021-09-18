@@ -79,12 +79,15 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         SearchScreen(
           currentUserId: widget.currentUserId,
+          visitedUserId: widget.currentUserId,
         ),
         NotificationsScreen(
           currentUserId: widget.currentUserId,
+          visitedUserId: widget.currentUserId,
         ),
         MessageScreen(
           currentUserId: widget.currentUserId,
+          visitedUserId: widget.currentUserId,
         ),
       ].elementAt(_selectedTab),
       bottomNavigationBar: CupertinoTabBar(

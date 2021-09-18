@@ -6,16 +6,18 @@ import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
 
-class SelectChatUser extends StatefulWidget {
+class SelectChatUserScreen extends StatefulWidget {
   final String currentUserId;
-  const SelectChatUser({Key? key, required this.currentUserId})
-      : super(key: key);
+  const SelectChatUserScreen({
+    Key? key,
+    required this.currentUserId,
+  }) : super(key: key);
 
   @override
-  _SelectChatUserState createState() => _SelectChatUserState();
+  _SelectChatUserScreenState createState() => _SelectChatUserScreenState();
 }
 
-class _SelectChatUserState extends State<SelectChatUser> {
+class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
   Future<QuerySnapshot>? _users;
   TextEditingController _searchController = TextEditingController();
 
@@ -174,28 +176,6 @@ class _SelectChatUserState extends State<SelectChatUser> {
                 );
               },
             ),
-      // body: StreamBuilder<QuerySnapshot>(
-      //   stream: usersRef.snapshots(),
-      //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      //     if (!snapshot.hasData) {
-      //       return Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     }
-      //     List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
-      //     userListSnap.removeWhere(
-      //         (snapshot) => snapshot.get('userId') == widget.currentUserId);
-      //     return ListView(
-      //       physics: BouncingScrollPhysics(
-      //         parent: AlwaysScrollableScrollPhysics(),
-      //       ),
-      //       children: userListSnap.map((userSnap) {
-      //         User peerUser = User.fromDoc(userSnap);
-      //         return buildUserTile(peerUser: peerUser);
-      //       }).toList(),
-      //     );
-      //   },
-      // ),
     );
   }
 }
