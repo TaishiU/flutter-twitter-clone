@@ -4,6 +4,7 @@ class Tweet {
   String? tweetId;
   String authorName;
   String authorId;
+  String authorBio;
   String authorProfileImage;
   String text;
   Map<String, String> images;
@@ -16,6 +17,7 @@ class Tweet {
     this.tweetId,
     required this.authorName,
     required this.authorId,
+    required this.authorBio,
     required this.authorProfileImage,
     required this.text,
     required this.images,
@@ -30,6 +32,7 @@ class Tweet {
       tweetId: postDoc.id,
       authorName: postDoc['authorName'],
       authorId: postDoc['authorId'],
+      authorBio: postDoc['authorBio'],
       authorProfileImage: postDoc['authorProfileImage'],
       text: postDoc['text'],
       images: Map<String, String>.from(postDoc['images']),

@@ -73,6 +73,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
       Tweet tweet = Tweet(
         authorName: user.name,
         authorId: user.userId,
+        authorBio: user.bio,
         authorProfileImage: user.profileImage,
         text: _tweetText,
         images: _images,

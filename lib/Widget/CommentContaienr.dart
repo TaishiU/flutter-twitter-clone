@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
@@ -139,10 +138,10 @@ class _CommentContainerState extends State<CommentContainer> {
                             },
                             onSelected: (selectedItem) {
                               if (selectedItem == 'Delete') {
-                                Firestore().deleteTweet(
-                                  userId: widget.currentUserId,
-                                  postId: widget.comment.commentId!,
-                                );
+                                // Firestore().deleteTweet(
+                                //   userId: widget.currentUserId,
+                                //   tweetId: widget.comment.commentId!,
+                                // );
                               }
                             },
                           )

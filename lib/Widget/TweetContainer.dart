@@ -167,6 +167,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                 );
                               },
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
                                     widget.tweet.authorName,
@@ -177,9 +178,16 @@ class _TweetContainerState extends State<TweetContainer> {
                                   ),
                                   SizedBox(width: 10),
                                   Text(
+                                    '@${widget.tweet.authorBio}・',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
                                     '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       color: Colors.grey,
                                     ),
                                   ),
@@ -221,7 +229,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                 if (selectedItem == 'Delete') {
                                   Firestore().deleteTweet(
                                     userId: widget.currentUserId,
-                                    postId: widget.tweet.tweetId!,
+                                    tweet: widget.tweet,
                                   );
                                 }
                               },

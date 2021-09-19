@@ -129,6 +129,7 @@ class Firestore {
       'tweetId': tweetReference.id,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
+      'authorBio': tweet.authorBio,
       'authorProfileImage': tweet.authorProfileImage,
       'text': tweet.text,
       'images': tweet.images,
@@ -142,14 +143,19 @@ class Firestore {
 
     // feedsコレクション
     /*①ユーザー自身のfeedsにツイートを格納*/
+    feedsRef.doc(tweet.authorId).set({
+      'name': tweet.authorName,
+      'userId': tweet.authorId,
+    });
     feedsRef
         .doc(tweet.authorId)
         .collection('followingUserTweets')
         .doc(tweetReferenceId)
         .set({
-      'tweetId': tweetReference.id,
+      'tweetId': tweetReferenceId,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
+      'authorBio': tweet.authorBio,
       'authorProfileImage': tweet.authorProfileImage,
       'text': tweet.text,
       'images': tweet.images,
@@ -177,6 +183,7 @@ class Firestore {
         'tweetId': tweetReference.id,
         'authorName': tweet.authorName,
         'authorId': tweet.authorId,
+        'authorBio': tweet.authorBio,
         'authorProfileImage': tweet.authorProfileImage,
         'text': tweet.text,
         'images': tweet.images,
@@ -193,6 +200,7 @@ class Firestore {
       'tweetId': tweetReferenceId,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
+      'authorBio': tweet.authorBio,
       'authorProfileImage': tweet.authorProfileImage,
       'text': tweet.text,
       'images': tweet.images,
@@ -213,15 +221,36 @@ class Firestore {
     return tweetSnap;
   }
 
-  Future<void> deleteTweet(
-      {required String userId, required String postId}) async {
+  Future<void> deleteTweet({
+    required String userId,
+    required Tweet tweet,
+  }) async {
+    // usersコレクション
+    await usersRef.doc(userId).collection('tweets').doc(tweet.tweetId).delete();
+
+    // feedsコレクション
+    /*①ユーザー自身のfeedsからツイートを削除*/
     await feedsRef
         .doc(userId)
         .collection('followingUserTweets')
-        .doc(postId)
+        .doc(tweet.tweetId)
         .delete();
-    await usersRef.doc(userId).collection('tweets').doc(postId).delete();
-    await allTweetsRef.doc(postId).delete();
+
+    /*フォロワーのリストを取得*/
+    QuerySnapshot followerSnapshot =
+        await usersRef.doc(tweet.authorId).collection('followers').get();
+
+    for (var docSnapshot in followerSnapshot.docs) {
+      /*②フォロワー１人ひとりのfeedsにツイートを格納*/
+      feedsRef
+          .doc(docSnapshot.id)
+          .collection('followingUserTweets')
+          .doc(tweet.tweetId)
+          .delete();
+
+      // allTweetsコレクション
+      await allTweetsRef.doc(tweet.tweetId).delete();
+    }
   }
 
   Future<void> likesForTweet({
@@ -302,6 +331,7 @@ class Firestore {
       'tweetId': tweet.tweetId,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
+      'authorBio': tweet.authorBio,
       'authorProfileImage': tweet.authorProfileImage,
       'text': tweet.text,
       'images': tweet.images,

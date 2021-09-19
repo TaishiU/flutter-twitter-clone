@@ -179,7 +179,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               child: Row(
                                 children: [
                                   CircleAvatar(
-                                    radius: 23,
+                                    radius: 25,
                                     backgroundColor: TwitterColor,
                                     backgroundImage: widget
                                             .tweet.authorProfileImage.isEmpty
@@ -188,12 +188,26 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                             widget.tweet.authorProfileImage),
                                   ),
                                   SizedBox(width: 10),
-                                  Text(
-                                    widget.tweet.authorName,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.tweet.authorName,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2),
+                                      Text(
+                                        '@${widget.tweet.authorBio}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -233,7 +247,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                 if (selectedItem == 'Delete') {
                                   Firestore().deleteTweet(
                                     userId: widget.currentUserId,
-                                    postId: widget.tweet.tweetId!,
+                                    tweet: widget.tweet,
                                   );
                                 }
                               },
