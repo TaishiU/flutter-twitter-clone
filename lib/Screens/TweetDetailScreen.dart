@@ -295,7 +295,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               LikesUserContainer(
-                                            title: 'Liked account',
+                                            title: 'Liked by',
                                             currentUserId: widget.currentUserId,
                                             likesListForTweet:
                                                 likesListForTweet,
@@ -342,7 +342,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => CommentUser(
-                                              title: 'Commented account',
+                                              title: 'Commented by',
                                               currentUserId:
                                                   widget.currentUserId,
                                               commentListForTweet:

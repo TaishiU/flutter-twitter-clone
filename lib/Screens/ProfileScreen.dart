@@ -116,17 +116,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
             List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
             if (allUserTweets.length == 0) {
-              return Center(
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    Text(
-                      'There is no tweet...',
-                      style: TextStyle(
-                        fontSize: 16,
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 30),
+                      Text(
+                        'You have\'t tweeted yet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 5),
+                      Text(
+                        'If you tweet, it will be displayed here.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      ElevatedButton(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'Create Tweet',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: TwitterColor,
+                          onPrimary: Colors.black,
+                          shape: StadiumBorder(),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateTweetScreen(
+                                currentUserId: widget.currentUserId,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -161,17 +203,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
             List<DocumentSnapshot> allUserMediaTweets = snapshot.data!.docs;
             if (allUserMediaTweets.length == 0) {
-              return Center(
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    Text(
-                      'There is no media...',
-                      style: TextStyle(
-                        fontSize: 16,
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 30),
+                      Text(
+                        'You haven\'t tweeted an image yet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 5),
+                      Text(
+                        'If you tweet with an image, it will be displayed here.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      ElevatedButton(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'Create Tweet',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: TwitterColor,
+                          onPrimary: Colors.black,
+                          shape: StadiumBorder(),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateTweetScreen(
+                                currentUserId: widget.currentUserId,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -205,17 +289,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
             List<DocumentSnapshot> allFavoriteTweets = snapshot.data!.docs;
             if (allFavoriteTweets.length == 0) {
-              return Center(
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    Text(
-                      'There is no favorite tweet...',
-                      style: TextStyle(
-                        fontSize: 16,
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 30),
+                      Text(
+                        'There are no tweets you\'ve liked yet.',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 5),
+                      Text(
+                        'If you tap the heart of a tweet you like,\nit will be displayed here.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }
@@ -626,7 +723,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
-                                        title: 'Following User',
+                                        title: 'Following',
                                         currentUserId: widget.currentUserId,
                                         listUserDocumentSnap: followingUserList,
                                       ),

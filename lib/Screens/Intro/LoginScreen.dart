@@ -132,6 +132,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         );
                       } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Error'),
+                              content: Text('Please log in again.'),
+                              actions: [
+                                TextButton(
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                         print('Login problem');
                       }
                     }

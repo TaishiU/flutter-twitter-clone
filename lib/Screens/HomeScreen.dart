@@ -48,8 +48,59 @@ class HomeScreen extends StatelessWidget {
             }
             List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
             if (allUserTweets.length == 0) {
-              return Center(
-                child: Text('There is no tweet...'),
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'You have\'t tweeted yet',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'If you tweet, it will be displayed here.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      ElevatedButton(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'Create Tweet',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: TwitterColor,
+                          onPrimary: Colors.black,
+                          shape: StadiumBorder(),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreateTweetScreen(
+                                currentUserId: currentUserId,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               );
             }
             return ListView(
