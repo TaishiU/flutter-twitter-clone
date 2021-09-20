@@ -516,36 +516,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        widget.currentUserId == widget.visitedUserId
-                            ? PopupMenuButton(
-                                icon: Container(
-                                  width: 35,
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black54,
-                                  ),
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: Colors.white,
-                                    size: 25,
-                                  ),
-                                ),
-                                itemBuilder: (BuildContext context) {
-                                  return popUpMenuTitle.map((String title) {
-                                    return PopupMenuItem(
-                                      child: Text(title),
-                                      value: title,
-                                    );
-                                  }).toList();
-                                },
-                                onSelected: (selectedItem) {
-                                  if (selectedItem == 'Share') {
-                                    print('Success!');
-                                  }
-                                },
-                              )
-                            : SizedBox.shrink(),
+                        PopupMenuButton(
+                          icon: Container(
+                            width: 35,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black54,
+                            ),
+                            child: Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
+                              size: 25,
+                            ),
+                          ),
+                          itemBuilder: (BuildContext context) {
+                            return popUpMenuTitle.map((String title) {
+                              return PopupMenuItem(
+                                child: Text(title),
+                                value: title,
+                              );
+                            }).toList();
+                          },
+                          onSelected: (selectedItem) {
+                            if (selectedItem == 'Share') {}
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -886,7 +882,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 20),
                     Container(
                       height: 30,
-                      color: Colors.transparent,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: categories.length,
@@ -898,7 +893,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               });
                             },
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 36),
+                              padding: EdgeInsets.symmetric(horizontal: 38),
                               child: Column(
                                 children: [
                                   Text(

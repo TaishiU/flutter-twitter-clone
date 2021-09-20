@@ -196,9 +196,9 @@ class _TweetContainerState extends State<TweetContainer> {
                             ),
                             PopupMenuButton(
                               icon: Icon(
-                                Icons.more_horiz,
-                                color: Colors.grey.shade500,
-                                size: 25,
+                                Icons.more_vert,
+                                color: Colors.grey..shade600,
+                                size: 20,
                               ),
                               itemBuilder: (_) {
                                 return <PopupMenuItem<String>>[
@@ -263,7 +263,6 @@ class _TweetContainerState extends State<TweetContainer> {
                         SizedBox(height: 15),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.65,
-                          color: Colors.transparent,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [

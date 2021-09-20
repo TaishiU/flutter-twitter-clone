@@ -214,9 +214,9 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                             ),
                             PopupMenuButton(
                               icon: Icon(
-                                Icons.more_horiz,
-                                color: Colors.grey.shade500,
-                                size: 25,
+                                Icons.more_vert,
+                                color: Colors.grey..shade600,
+                                size: 20,
                               ),
                               itemBuilder: (_) {
                                 return <PopupMenuItem<String>>[
@@ -455,10 +455,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                     ),
                   ),
                   Divider(),
-                  Container(
-                    height: 10,
-                    color: Colors.transparent,
-                  ),
                   Container(
                     child: StreamBuilder<QuerySnapshot>(
                       stream: usersRef

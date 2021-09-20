@@ -95,7 +95,7 @@ class DrawerContainer extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
-                                        title: 'Following User',
+                                        title: 'Following',
                                         currentUserId: currentUserId,
                                         listUserDocumentSnap: followingUserList,
                                       ),
@@ -253,8 +253,9 @@ class DrawerContainer extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    //title: ,
-                    content: Text('Do you want to Logout?'),
+                    title: Text('Logout'),
+                    content: Text(
+                        'Are you sure you want to log out?\nAll Twitter data will be deleted from this device.'),
                     actions: [
                       TextButton(
                         child: Text(
@@ -272,13 +273,13 @@ class DrawerContainer extends StatelessWidget {
                       ),
                       TextButton(
                         child: Text(
-                          'Logout',
+                          'Yes',
                           style: TextStyle(
                             fontSize: 15,
                           ),
                         ),
                         style: TextButton.styleFrom(
-                          primary: Colors.red,
+                          primary: Colors.black,
                         ),
                         onPressed: () {
                           Auth().logout();
