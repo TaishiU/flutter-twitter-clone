@@ -113,7 +113,7 @@ class MessageScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Text(
-                'Search account and group',
+                'Search account',
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.w400,

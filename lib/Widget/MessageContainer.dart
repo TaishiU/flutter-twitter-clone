@@ -35,7 +35,7 @@ class MessageContainer extends StatelessWidget {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text('Delete message'),
-                    content: Text('Do you want to Delete this message?'),
+                    content: Text('Do you want to delete this message?'),
                     actions: [
                       TextButton(
                         child: Text(
@@ -53,7 +53,7 @@ class MessageContainer extends StatelessWidget {
                       ),
                       TextButton(
                         child: Text(
-                          'Delete',
+                          'Yes',
                           style: TextStyle(
                             fontSize: 15,
                           ),
