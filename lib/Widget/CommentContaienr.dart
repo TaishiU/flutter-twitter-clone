@@ -67,7 +67,7 @@ class _CommentContainerState extends State<CommentContainer> {
             ),
             SizedBox(width: 10),
             Container(
-              width: MediaQuery.of(context).size.width * 0.79,
+              width: MediaQuery.of(context).size.width * 0.77,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
