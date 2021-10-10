@@ -26,10 +26,10 @@ class _ChatScreenState extends State<ChatScreen> {
   late String message;
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
+  FocusNode _focusNode = FocusNode();
 
   void onSendMessage({required String content}) async {
     if (content.trim() != '') {
-      textEditingController.clear();
       content = content.trim();
 
       /*ユーザー自身のプロフィール*/
@@ -134,7 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Padding(
                 padding:
-                    EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 20),
+                    EdgeInsets.only(right: 20, left: 20, top: 10, bottom: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -167,11 +167,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             message = input;
                           });
                         },
+                        focusNode: _focusNode,
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
                         onSendMessage(content: message);
+                        textEditingController.clear();
+                        _focusNode.unfocus();
                       },
                       child: Icon(
                         Icons.send_rounded,

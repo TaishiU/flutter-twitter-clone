@@ -34,6 +34,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
   late String _comment;
   final _formkey = GlobalKey<FormState>();
   TextEditingController _commentController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
   final DynamicLink dynamicLink = DynamicLink();
 
   @override
@@ -124,11 +125,6 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
         postUserId: widget.tweet.authorId,
       );
     }
-  }
-
-  clearComment() {
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => _commentController.clear());
   }
 
   @override
@@ -536,6 +532,7 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                               _comment = input;
                             });
                           },
+                          focusNode: _focusNode,
                         ),
                       ),
                     ),
@@ -546,7 +543,8 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                       ),
                       onPressed: () {
                         handleComment();
-                        clearComment();
+                        _commentController.clear();
+                        _focusNode.unfocus();
                       },
                     ),
                   ],
