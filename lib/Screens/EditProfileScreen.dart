@@ -100,6 +100,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         bio: _bio,
         profileImage: profileImageUrl,
         coverImage: coverImageUrl,
+        fcmToken: widget.user.fcmToken,
       );
       await Firestore().updateUserData(user: user);
       setState(() {

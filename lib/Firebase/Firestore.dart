@@ -15,6 +15,7 @@ class Firestore {
     required String userId,
     required String name,
     required String email,
+    required String? fcmToken,
   }) async {
     DocumentReference usersReference = usersRef.doc(userId);
     await usersReference.set({
@@ -24,6 +25,7 @@ class Firestore {
       'profileImage': '',
       'coverImage': '',
       'bio': '',
+      'fcmToken': fcmToken,
     });
   }
 

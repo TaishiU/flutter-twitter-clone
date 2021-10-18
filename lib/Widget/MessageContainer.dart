@@ -28,8 +28,8 @@ class MessageContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
-            onLongPress: () {
-              /*長押しでメッセージ削除のアラートを出す*/
+            onTap: () {
+              /*メッセージ削除のアラート*/
               showDialog(
                 context: context,
                 builder: (BuildContext context) {

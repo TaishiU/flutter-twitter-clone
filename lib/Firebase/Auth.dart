@@ -8,6 +8,7 @@ class Auth {
     required String name,
     required String email,
     required String password,
+    required String? fcmToken,
   }) async {
     try {
       final authResult = await _auth.createUserWithEmailAndPassword(
@@ -22,6 +23,7 @@ class Auth {
           userId: signedInUser.uid,
           name: name,
           email: email,
+          fcmToken: fcmToken,
         );
         return true;
       }

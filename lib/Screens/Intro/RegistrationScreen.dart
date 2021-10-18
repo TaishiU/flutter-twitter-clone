@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
@@ -15,6 +16,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String _email;
   late String _password;
   bool _isObscure = true;
+  FirebaseMessaging fcm = FirebaseMessaging.instance;
+  String? fcmToken;
+
+  @override
+  void initState() async {
+    super.initState();
+
+    fcmToken = await FirebaseMessaging.instance.getToken();
+    print('fcmToken: $fcmToken');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +124,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         name: _name,
                         email: _email,
                         password: _password,
+                        fcmToken: fcmToken,
                       );
                       if (isValid) {
                         Navigator.pushReplacement(

@@ -25,6 +25,8 @@ dependencies:
   firebase_storage: ^10.0.1
   cloud_functions: ^3.0.0
   firebase_dynamic_links: ^2.0.7
+  firebase_messaging: ^10.0.8
+  firebase_analytics: ^8.3.3
 
   # Tweet related
   image_picker: ^0.8.1+1
@@ -33,12 +35,18 @@ dependencies:
   uuid: ^3.0.4
   flutter_staggered_grid_view: ^0.4.0
 
+  # FCM related
+  flutter_local_notifications: ^9.0.0
+
   # Others
   flutter_launcher_icons: ^0.9.1
   flutter_native_splash: ^1.2.0
   share: ^2.0.4
   flutter_dotenv: ^5.0.1
   flutter_svg: ^0.22.0
+
+
+
 
 
 

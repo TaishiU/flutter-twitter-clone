@@ -7,6 +7,7 @@ class User {
   String bio;
   String profileImage;
   String coverImage;
+  String fcmToken;
 
   User({
     required this.userId,
@@ -15,6 +16,7 @@ class User {
     required this.bio,
     required this.profileImage,
     required this.coverImage,
+    required this.fcmToken,
   });
 
   factory User.fromDoc(DocumentSnapshot doc) {
@@ -25,6 +27,7 @@ class User {
       bio: doc['bio'],
       profileImage: doc['profileImage'],
       coverImage: doc['coverImage'],
+      fcmToken: doc['fcmToken'],
     );
   }
 }
