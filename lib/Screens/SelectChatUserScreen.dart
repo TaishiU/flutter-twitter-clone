@@ -1,5 +1,7 @@
+import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/User.dart';
@@ -18,8 +20,22 @@ class SelectChatUserScreen extends StatefulWidget {
 }
 
 class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
-  Future<QuerySnapshot>? _users;
+  String _searchName = '';
   TextEditingController _searchController = TextEditingController();
+  Future<List<AlgoliaObjectSnapshot>>? _algoliaResult;
+
+  Future<List<AlgoliaObjectSnapshot>> searchUser({required String name}) async {
+    final Algolia algolia = Algolia.init(
+      applicationId: dotenv.env['APPLICATIONID'] as String,
+      apiKey: dotenv.env['SEARCHAPIKEY'] as String,
+    );
+    AlgoliaQuery algoliaQuery = algolia.instance
+        .index(dotenv.env['ALGOLIAINDEXNAME'] as String)
+        .query(name);
+    AlgoliaQuerySnapshot algoliaQuerySnapshot = await algoliaQuery.getObjects();
+    List<AlgoliaObjectSnapshot> _algoliaList = algoliaQuerySnapshot.hits;
+    return _algoliaList;
+  }
 
   Widget buildUserTile({required User peerUser}) {
     return ListTile(
@@ -102,7 +118,7 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
                 onPressed: () {
                   _searchController.clear();
                   setState(() {
-                    _users = null;
+                    _algoliaResult = null;
                   });
                 },
               ),
@@ -110,14 +126,15 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
             onChanged: (String name) {
               if (name.isNotEmpty) {
                 setState(() {
-                  _users = Firestore().searchUsers(name: name);
+                  _searchName = name;
+                  _algoliaResult = searchUser(name: name);
                 });
               }
             },
           ),
         ),
       ),
-      body: _users == null
+      body: _algoliaResult == null
           ? StreamBuilder<QuerySnapshot>(
               stream: usersRef.limit(5).snapshots(),
               /*リミットは5件*/
@@ -144,33 +161,47 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
               },
             )
           : FutureBuilder(
-              future: _users,
+              future: _algoliaResult,
               builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                  AsyncSnapshot<List<AlgoliaObjectSnapshot>> snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                if (snapshot.data!.docs.length == 0) {
-                  return Center(
-                    child: Text(
-                      'No users found!',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                if (snapshot.data!.length == 0) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'There are no search results for "$_searchName".',
+                          style: TextStyle(
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'There are no search results for the word you entered. You may have entered the wrong word, or your search settings may not display what you think is sensitive.',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
-                List<DocumentSnapshot> usersListSnap = snapshot.data!.docs;
-                /* ユーザー自身は表示リストから削除 → removeWhere */
-                usersListSnap.removeWhere((snapshot) =>
-                    snapshot.get('userId') == widget.currentUserId);
+                List<AlgoliaObjectSnapshot> _result = snapshot.data!;
                 return ListView(
                   physics: BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
-                  children: usersListSnap.map((usersList) {
-                    User peerUser = User.fromDoc(usersList);
+                  children: _result.map((snap) {
+                    Map<String, dynamic> data = snap.data;
+                    User peerUser = User.fromAlgolia(data);
                     return buildUserTile(peerUser: peerUser);
                   }).toList(),
                 );

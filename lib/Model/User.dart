@@ -30,4 +30,16 @@ class User {
       fcmToken: doc['fcmToken'],
     );
   }
+
+  factory User.fromAlgolia(Map<String, dynamic> data) {
+    return User(
+      userId: data['userId'],
+      name: data['name'],
+      email: data['email'],
+      bio: data['bio'],
+      profileImage: data['profileImage'],
+      coverImage: data['coverImage'],
+      fcmToken: data['fcmToken'],
+    );
+  }
 }

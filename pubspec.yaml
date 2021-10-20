@@ -38,12 +38,16 @@ dependencies:
   # FCM related
   flutter_local_notifications: ^9.0.0
 
+  # Algolia
+  algolia: ^1.0.1
+
   # Others
   flutter_launcher_icons: ^0.9.1
   flutter_native_splash: ^1.2.0
   share: ^2.0.4
   flutter_dotenv: ^5.0.1
   flutter_svg: ^0.22.0
+
 
 
 
