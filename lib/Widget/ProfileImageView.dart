@@ -52,8 +52,24 @@ class _ProfileImageViewState extends State<ProfileImageView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.network(
-            widget.image,
+          Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.vertical,
+            onDismissed: (direction) {
+              Navigator.pop(context);
+            },
+            background: Container(
+              alignment: AlignmentDirectional.centerEnd,
+              color: Colors.black,
+            ),
+            child: Container(
+              color: Colors.black,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: Image.network(
+                widget.image,
+              ),
+            ),
           ),
         ],
       ),

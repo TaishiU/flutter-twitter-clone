@@ -261,7 +261,8 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                         widget.tweet.images.isEmpty
                             ? SizedBox.shrink()
                             : TweetImage(
-                                images: widget.tweet.images,
+                                currentUserId: widget.currentUserId,
+                                tweet: widget.tweet,
                                 containerHeight: 200,
                                 containerWith:
                                     MediaQuery.of(context).size.width,

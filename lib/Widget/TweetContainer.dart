@@ -248,7 +248,8 @@ class _TweetContainerState extends State<TweetContainer> {
                                 children: [
                                   SizedBox(height: 15),
                                   TweetImage(
-                                    images: widget.tweet.images,
+                                    currentUserId: widget.currentUserId,
+                                    tweet: widget.tweet,
                                     containerHeight: 180,
                                     containerWith:
                                         MediaQuery.of(context).size.width *

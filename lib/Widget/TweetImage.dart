@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetImage extends StatelessWidget {
-  final Map<String, String> images;
+  final String currentUserId;
+  final Tweet tweet;
   final double containerHeight;
   final double containerWith;
   final double imageHeight;
@@ -10,7 +12,8 @@ class TweetImage extends StatelessWidget {
 
   TweetImage({
     Key? key,
-    required this.images,
+    required this.currentUserId,
+    required this.tweet,
     required this.containerHeight,
     required this.containerWith,
     required this.imageHeight,
@@ -19,14 +22,14 @@ class TweetImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (images.isNotEmpty) {
-      if (images.length == 1) {
+    if (tweet.images.isNotEmpty) {
+      if (tweet.images.length == 1) {
         return _image1(context: context);
-      } else if (images.length == 2) {
+      } else if (tweet.images.length == 2) {
         return _image2(context: context);
-      } else if (images.length == 3) {
+      } else if (tweet.images.length == 3) {
         return _image3(context: context);
-      } else if (images.length == 4) {
+      } else if (tweet.images.length == 4) {
         return _image4(context: context);
       }
     }
@@ -40,8 +43,9 @@ class TweetImage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => TweetImageView(
+              currentUserId: currentUserId,
               tappedImageIndex: 0,
-              images: images,
+              tweet: tweet,
             ),
           ),
         );
@@ -53,7 +57,7 @@ class TweetImage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
             image: NetworkImage(
-              images['0']!,
+              tweet.images['0']!,
             ),
             fit: BoxFit.cover,
           ),
@@ -74,8 +78,9 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
+                    currentUserId: currentUserId,
                     tappedImageIndex: 0,
-                    images: images,
+                    tweet: tweet,
                   ),
                 ),
               );
@@ -89,7 +94,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    images['0']!,
+                    tweet.images['0']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -103,8 +108,9 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
+                    currentUserId: currentUserId,
                     tappedImageIndex: 1,
-                    images: images,
+                    tweet: tweet,
                   ),
                 ),
               );
@@ -118,7 +124,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    images['1']!,
+                    tweet.images['1']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -142,8 +148,9 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
+                    currentUserId: currentUserId,
                     tappedImageIndex: 0,
-                    images: images,
+                    tweet: tweet,
                   ),
                 ),
               );
@@ -157,7 +164,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    images['0']!,
+                    tweet.images['0']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -173,8 +180,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 1,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -188,7 +196,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['1']!,
+                        tweet.images['1']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -202,8 +210,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 2,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -217,7 +226,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['2']!,
+                        tweet.images['2']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -245,8 +254,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 0,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -260,7 +270,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['0']!,
+                        tweet.images['0']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -274,8 +284,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 2,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -289,7 +300,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['2']!,
+                        tweet.images['2']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -307,8 +318,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 1,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -322,7 +334,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['1']!,
+                        tweet.images['1']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -336,8 +348,9 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
+                        currentUserId: currentUserId,
                         tappedImageIndex: 3,
-                        images: images,
+                        tweet: tweet,
                       ),
                     ),
                   );
@@ -351,7 +364,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        images['3']!,
+                        tweet.images['3']!,
                       ),
                       fit: BoxFit.cover,
                     ),
