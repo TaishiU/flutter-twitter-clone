@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
@@ -271,12 +272,27 @@ class _TweetDetailScreenState extends State<TweetDetailScreen> {
                                     MediaQuery.of(context).size.width * 0.452,
                               ),
                         SizedBox(height: 15),
-                        Text(
-                          '${widget.tweet.timestamp.toDate().year.toString()}/${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}  ${widget.tweet.timestamp.toDate().hour.toString()}:${widget.tweet.timestamp.toDate().minute.toString()}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              '${widget.tweet.timestamp.toDate().year.toString()}/${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              DateFormat("HH:mm").format(
+                                /* DateTimeに変換 → toDate() */
+                                widget.tweet.timestamp.toDate(),
+                              ),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 5),
                         Divider(),

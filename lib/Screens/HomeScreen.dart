@@ -1,5 +1,8 @@
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
@@ -30,6 +33,89 @@ class HomeScreen extends StatelessWidget {
           width: 45,
           height: 45,
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: IconButton(
+              icon: Icon(
+                Icons.auto_awesome,
+                //color: TwitterColor,
+              ),
+              onPressed: () {
+                showAdaptiveActionSheet(
+                  context: context,
+                  title: Container(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 15),
+                        Stack(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.access_time,
+                                size: 30,
+                                color: TwitterColor,
+                              ),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 7,
+                              child: Icon(
+                                Icons.add,
+                                size: 12,
+                                color: Colors.pinkAccent,
+                              ),
+                            ),
+                            Positioned(
+                              top: 12,
+                              right: 1,
+                              child: Icon(
+                                Icons.add,
+                                size: 12,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15),
+                        Text(
+                          'The latest Tweet will be displayed in the timeline.',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: <BottomSheetAction>[
+                    BottomSheetAction(
+                      leading: Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: SvgPicture.asset(
+                          'assets/images/SettingLogo.svg',
+                          width: 23,
+                          height: 23,
+                        ),
+                      ),
+                      title: Text(
+                        'Show content settings',
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          Container(
+            width: 5,
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 5),

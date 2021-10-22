@@ -98,6 +98,11 @@ class _TweetContainerState extends State<TweetContainer> {
 
   @override
   Widget build(BuildContext context) {
+    // print('TweetAuthor: ${widget.tweet.authorName}');
+    // print('TweetText: ${widget.tweet.text}');
+    // print('isLiked: $_isLiked');
+    // print('******************************************');
+
     return Container(
       child: Column(
         children: [

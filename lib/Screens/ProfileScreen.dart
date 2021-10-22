@@ -318,6 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           stream: usersRef
               .doc(user.userId)
               .collection('favorite')
+              /*いいねを押した瞬間のタイム順*/
               .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
