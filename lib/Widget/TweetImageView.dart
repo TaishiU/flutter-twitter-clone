@@ -141,8 +141,11 @@ class _TweetImageViewState extends State<TweetImageView> {
                     color: Colors.black,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
-                    child: Image.network(
-                      widget.tweet.images['$i']!,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: Image.network(
+                        widget.tweet.images['$i']!,
+                      ),
                     ),
                   ),
                 ),
