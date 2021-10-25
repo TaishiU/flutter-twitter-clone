@@ -67,6 +67,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0.5,
+        leading: BackButton(color: Colors.black),
         title: Container(
           height: 40,
           width: MediaQuery.of(context).size.width * 0.7,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ProfileImageView extends StatefulWidget {
   final int tappedImageIndex;
@@ -66,8 +67,10 @@ class _ProfileImageViewState extends State<ProfileImageView> {
               color: Colors.black,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.9,
-              child: Image.network(
-                widget.image,
+              child: PhotoView(
+                imageProvider: NetworkImage(
+                  widget.image,
+                ),
               ),
             ),
           ),

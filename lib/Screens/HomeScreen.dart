@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 Icons.auto_awesome,
-                //color: TwitterColor,
+                color: Colors.black,
               ),
               onPressed: () {
                 showAdaptiveActionSheet(

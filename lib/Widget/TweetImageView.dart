@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
@@ -143,8 +144,8 @@ class _TweetImageViewState extends State<TweetImageView> {
                     height: MediaQuery.of(context).size.height,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: Image.network(
-                        widget.tweet.images['$i']!,
+                      child: PhotoView(
+                        imageProvider: NetworkImage(widget.tweet.images['$i']!),
                       ),
                     ),
                   ),

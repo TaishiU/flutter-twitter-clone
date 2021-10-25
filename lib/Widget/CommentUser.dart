@@ -24,6 +24,7 @@ class CommentUser extends StatelessWidget {
         elevation: 0.5,
         backgroundColor: Colors.white,
         centerTitle: true,
+        leading: BackButton(color: Colors.black),
         title: Text(
           title,
           style: TextStyle(

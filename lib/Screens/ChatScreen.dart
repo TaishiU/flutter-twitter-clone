@@ -69,6 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
+        leading: BackButton(color: Colors.black),
         title: Column(
           children: [
             Text(
@@ -76,6 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
+                color: Colors.black,
               ),
             ),
             Text(

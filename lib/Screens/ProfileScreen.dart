@@ -467,6 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        leading: BackButton(color: Colors.black),
         title: Image.asset(
           'assets/images/TwitterLogo.png',
           width: 45,
