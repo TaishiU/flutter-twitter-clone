@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Firebase/Storage.dart';
@@ -26,15 +26,16 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
 
   handleImageFromGallery() async {
     try {
-      PickedFile? imageFile =
-          await ImagePicker().getImage(source: ImageSource.gallery);
-      if (imageFile != null) {
+      final FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
+
+      if (result != null) {
         setState(() {
-          _tweetImageList.add(File(imageFile.path));
+          _tweetImageList.add(File(result.files.single.path!));
         });
       }
     } catch (e) {
-      print('image_pickerエラー');
+      print('FilePickerエラー');
     }
   }
 
