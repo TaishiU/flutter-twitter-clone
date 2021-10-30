@@ -66,4 +66,24 @@ class Storage {
     String downloadTweetImageUrl = await taskSnapshot.ref.getDownloadURL();
     return downloadTweetImageUrl;
   }
+
+  Future<String> uploadChatImage(
+      {required String userId, required File imageFile}) async {
+    String uniqueId = Uuid().v4();
+    final tempDirection = await getTemporaryDirectory();
+    final path = tempDirection.path;
+    final compressedChatImage = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      '$path/img_$uniqueId.jpeg',
+      quality: 70,
+    );
+
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref()
+        .child('images/chats/$userId/chatImage_$uniqueId.jpeg')
+        .putFile(compressedChatImage!);
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    String downloadChatImageUrl = await taskSnapshot.ref.getDownloadURL();
+    return downloadChatImageUrl;
+  }
 }

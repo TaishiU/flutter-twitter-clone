@@ -430,6 +430,8 @@ class Firestore {
       'idTo': message.idTo,
       'timestamp': message.timestamp,
       'content': message.content,
+      'image': message.image,
+      'hasImage': message.hasImage,
       'read': false,
       'users': [currentUser.userId, peerUser.userId],
     });
@@ -451,6 +453,8 @@ class Firestore {
           'idTo': message.idTo,
           'timestamp': message.timestamp,
           'content': message.content,
+          'image': message.image,
+          'hasImage': message.hasImage,
           'read': false,
         },
       );

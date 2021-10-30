@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Message {
   final String? convoId;
-  final String content;
+  final String? content;
+  final String? image;
+  bool hasImage;
   final String userFrom;
   final String userTo;
   final String idFrom;
@@ -13,6 +15,8 @@ class Message {
   Message({
     this.convoId,
     required this.content,
+    required this.image,
+    required this.hasImage,
     required this.userFrom,
     required this.userTo,
     required this.idFrom,
@@ -25,6 +29,8 @@ class Message {
     return Message(
       convoId: doc['convoId'],
       content: doc['content'],
+      image: doc['image'],
+      hasImage: doc['hasImage'],
       userFrom: doc['userFrom'],
       userTo: doc['userTo'],
       idFrom: doc['idFrom'],

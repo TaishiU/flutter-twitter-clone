@@ -25,40 +25,65 @@ class MessageScreen extends StatelessWidget {
   }) {
     /*user1Idがユーザー自身のidと一致するか*/
     final _isOwner = currentUserId == getLastMessage.user1Id;
-    return Container(
-      /*未読状態のメッセージには背景色(青色)を設定する*/
-      color: !getLastMessage.read && getLastMessage.idTo == currentUserId
-          ? TwitterColor
-          : Colors.transparent,
-      child: ListTile(
-        leading: CircleAvatar(
-          radius: 23,
-          backgroundColor: TwitterColor,
-          backgroundImage: _isOwner
-              ? NetworkImage(getLastMessage.user2ProfileImage)
-              : NetworkImage(getLastMessage.user1ProfileImage),
-        ),
-        title: Text(
-          _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
-        ),
-        subtitle: DefaultTextStyle(
-          style: TextStyle(color: Colors.black),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          child: Text(getLastMessage.content),
-        ),
-        trailing: Text(
-          '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
-        ),
-        onTap: () {
-          moveToChatScreen(
-            context: context,
-            convoId: getLastMessage.convoId!,
-            peerUserId:
-                _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
-          );
-        },
+    final _notRead =
+        !getLastMessage.read && getLastMessage.idTo == currentUserId;
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 23,
+        backgroundImage: _isOwner
+            ? NetworkImage(getLastMessage.user2ProfileImage)
+            : NetworkImage(getLastMessage.user1ProfileImage),
       ),
+      title: Text(
+        _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
+        style: TextStyle(
+          fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      subtitle: DefaultTextStyle(
+        style: TextStyle(color: Colors.black),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        child: getLastMessage.content != null
+            ? Text(
+                getLastMessage.content!,
+                style: TextStyle(
+                  fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+                  color: Colors.black,
+                ),
+              )
+            : _isOwner
+                ? Text(
+                    'You sent the image.',
+                    style: TextStyle(
+                      fontWeight:
+                          _notRead ? FontWeight.bold : FontWeight.normal,
+                      color: Colors.grey,
+                    ),
+                  )
+                : Text(
+                    '${getLastMessage.userFrom} sent the image.',
+                    style: TextStyle(
+                      fontWeight:
+                          _notRead ? FontWeight.bold : FontWeight.normal,
+                      color: Colors.grey,
+                    ),
+                  ),
+      ),
+      trailing: Text(
+        '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
+        style: TextStyle(
+          fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      onTap: () {
+        moveToChatScreen(
+          context: context,
+          convoId: getLastMessage.convoId!,
+          peerUserId:
+              _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
+        );
+      },
     );
   }
 

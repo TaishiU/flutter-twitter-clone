@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GetLastMessage {
-  final String content;
+  final String? content;
   final String? convoId;
   final String idFrom;
   final String idTo;

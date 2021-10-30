@@ -34,7 +34,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
         });
       }
     } catch (e) {
-      print('FilePickerエラー');
+      print('ImagePickerエラー');
     }
   }
 

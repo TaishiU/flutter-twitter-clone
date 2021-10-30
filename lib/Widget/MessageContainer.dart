@@ -75,106 +75,106 @@ class MessageContainer extends StatelessWidget {
                 },
               );
             },
-            // child: Container(
-            //   width: 200,
-            //   margin: EdgeInsets.symmetric(vertical: 5),
-            //   child: Bubble(
-            //     color: Colors.blue,
-            //     elevation: 0,
-            //     padding: BubbleEdges.all(10.0),
-            //     nip: BubbleNip.rightTop,
-            //     child: Text(
-            //       message.content,
-            //       style: TextStyle(
-            //         color: Colors.white,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 3),
-              child: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: TwitterColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
+            child: message.content != null && message.hasImage == false
+                ? Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 3),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: TwitterColor,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        message.content!,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 3),
+                      height: 230,
+                      width: 180,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            message.image!,
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    message.content,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ),
         ],
       );
     } else if (message.idFrom == peerUserId && message.idTo == currentUserId) {
       /*相手ユーザーのメッセージは左側に表示*/
       return Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: EdgeInsets.symmetric(vertical: 3),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Container(
-                //   width: 200.0,
-                //   margin: EdgeInsets.only(left: 10.0),
-                //   child: Bubble(
-                //     color: Colors.yellow,
-                //     elevation: 0,
-                //     padding: const BubbleEdges.all(10.0),
-                //     nip: BubbleNip.leftTop,
-                //     child: Text(
-                //       message.content,
-                //       style: TextStyle(
-                //         color: Colors.black,
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(width: 10),
                 CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.blue,
+                  radius: 18,
                   backgroundImage: peerUserProfileImage.isEmpty
                       ? null
                       : NetworkImage(peerUserProfileImage),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 3),
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
+                message.content != null && message.hasImage == false
+                    ? Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Container(
+                          //margin: EdgeInsets.symmetric(vertical: 3),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            message.content!,
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Container(
+                          // margin: EdgeInsets.symmetric(vertical: 3),
+                          height: 230,
+                          width: 180,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                message.image!,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        message.content,
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ],
