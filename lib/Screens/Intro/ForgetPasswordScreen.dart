@@ -22,8 +22,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0.5,
+        leading: BackButton(color: Colors.black),
         title: Text(
-          'Forget Password',
+          'Forgot Password',
           style: TextStyle(
             color: TwitterColor,
           ),

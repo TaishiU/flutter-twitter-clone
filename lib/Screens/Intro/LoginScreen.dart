@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0.5,
+        leading: BackButton(color: Colors.black),
         title: Text(
           'Login',
           style: TextStyle(
