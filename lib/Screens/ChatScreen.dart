@@ -29,9 +29,9 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late String message;
   late String _imagePickedType;
-  File? _chatImage;
+  //File? _chatImage;
+  List<File>? _chatImageList = [];
   final TextEditingController textEditingController = TextEditingController();
-  final ScrollController listScrollController = ScrollController();
   FocusNode _focusNode = FocusNode();
 
   handleImage() async {
@@ -40,31 +40,29 @@ class _ChatScreenState extends State<ChatScreen> {
         final imageFile =
             await ImagePicker().pickImage(source: ImageSource.camera);
         if (imageFile != null) {
-          setState(() {
-            _chatImage = File(imageFile.path);
-          });
+          _chatImageList!.add(File(imageFile.path));
         }
       } else if (_imagePickedType == 'gallery') {
-        final imageFile =
-            await ImagePicker().pickImage(source: ImageSource.gallery);
-        if (imageFile != null) {
-          setState(() {
-            _chatImage = File(imageFile.path);
-          });
+        final imageFileList = await ImagePicker().pickMultiImage();
+        if (imageFileList != null) {
+          for (var image in imageFileList) {
+            _chatImageList!.add(File(image.path));
+          }
         }
       }
 
-      String _chatImageUrl;
-      bool _hasImage;
+      Map<String, String> _images = {};
+      bool _hasImage = false;
 
-      if (_chatImage == null) {
-        _chatImageUrl = '';
-        _hasImage = false;
-      } else {
-        _chatImageUrl = await Storage().uploadChatImage(
-            userId: widget.currentUserId, imageFile: _chatImage!);
+      /*画像がある場合*/
+      if (_chatImageList!.length != 0) {
+        _images = await _uploadImage();
+        /* _uploadImage()メソッドは下にある↓ */
         _hasImage = true;
       }
+
+      /*画像がない場合*/
+      /*上記で宣言した「_images = {}, hasImage = false」がFirestoreに保存される*/
 
       DocumentSnapshot userProfileDoc =
           await Firestore().getUserProfile(userId: widget.currentUserId);
@@ -73,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
       Message message = Message(
         convoId: widget.convoId,
         content: null,
-        image: _chatImageUrl,
+        images: _images,
         hasImage: _hasImage,
         userFrom: user.name,
         userTo: widget.peerUser.name,
@@ -87,6 +85,8 @@ class _ChatScreenState extends State<ChatScreen> {
         peerUser: widget.peerUser,
         message: message,
       );
+      /*リストを初期化*/
+      _chatImageList = [];
       print('chatImageの送信に成功しました！');
     } catch (e) {
       print('ImagePickerエラー');
@@ -94,9 +94,26 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<Map<String, String>> _uploadImage() async {
+    Map<String, String> _images = {}; /*Storage格納後に返却されるURLを格納*/
+    Map<int, File> _pickedImages = _chatImageList!.asMap();
+    if (_pickedImages.isNotEmpty) {
+      for (var _pickedImage in _pickedImages.entries) {
+        String _chatImageUrl = await Storage().uploadChatImage(
+            userId: widget.currentUserId, imageFile: _pickedImage.value);
+        /* Mapの「key = value」の型 */
+        _images[_pickedImage.key.toString()] = _chatImageUrl;
+      }
+    }
+    return _images;
+  }
+
   void onSendMessage({required String content}) async {
     if (content.trim() != '') {
       content = content.trim();
+
+      Map<String, String> _images = {};
+      bool _hasImage = false;
 
       /*ユーザー自身のプロフィール*/
       DocumentSnapshot userProfileDoc =
@@ -106,8 +123,8 @@ class _ChatScreenState extends State<ChatScreen> {
       Message message = Message(
         convoId: widget.convoId,
         content: content,
-        image: null,
-        hasImage: false,
+        images: _images,
+        hasImage: _hasImage,
         userFrom: user.name,
         userTo: widget.peerUser.name,
         idFrom: widget.currentUserId,
@@ -119,12 +136,6 @@ class _ChatScreenState extends State<ChatScreen> {
         currentUser: user,
         peerUser: widget.peerUser,
         message: message,
-      );
-
-      listScrollController.animateTo(
-        0.0,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
       );
     }
   }

@@ -35,8 +35,8 @@ class Tweet {
       authorBio: postDoc['authorBio'],
       authorProfileImage: postDoc['authorProfileImage'],
       text: postDoc['text'],
-      images: Map<String, String>.from(postDoc['images']),
       /* Map型のデータをFirestoreから取得する際は「Map<String,dynamic>.from(snapshot.data["songs"])」とする */
+      images: Map<String, String>.from(postDoc['images']),
       hasImage: postDoc['hasImage'],
       timestamp: postDoc['timestamp'],
       likes: postDoc['likes'],

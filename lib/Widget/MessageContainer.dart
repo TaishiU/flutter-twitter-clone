@@ -76,6 +76,7 @@ class MessageContainer extends StatelessWidget {
               );
             },
             child: message.content != null && message.hasImage == false
+                /*テキストのみの場合*/
                 ? Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Container(
@@ -99,17 +100,18 @@ class MessageContainer extends StatelessWidget {
                       ),
                     ),
                   )
+                /*画像がある場合*/
                 : Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 3),
                       height: 230,
-                      width: 180,
+                      width: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                         image: DecorationImage(
                           image: NetworkImage(
-                            message.image!,
+                            message.images['0']!,
                           ),
                           fit: BoxFit.cover,
                         ),
@@ -163,12 +165,12 @@ class MessageContainer extends StatelessWidget {
                         child: Container(
                           // margin: EdgeInsets.symmetric(vertical: 3),
                           height: 230,
-                          width: 180,
+                          width: 200,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                             image: DecorationImage(
                               image: NetworkImage(
-                                message.image!,
+                                message.images['0']!,
                               ),
                               fit: BoxFit.cover,
                             ),
