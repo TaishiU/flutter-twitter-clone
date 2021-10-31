@@ -8,7 +8,7 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Widget/MessageContainer.dart';
+import 'package:twitter_clone/Widget/ChatContainer.dart';
 
 class ChatScreen extends StatefulWidget {
   final String currentUserId;
@@ -87,7 +87,6 @@ class _ChatScreenState extends State<ChatScreen> {
       );
       /*リストを初期化*/
       _chatImageList = [];
-      print('chatImageの送信に成功しました！');
     } catch (e) {
       print('ImagePickerエラー');
       print('chatImageの送信に失敗しました...');
@@ -200,7 +199,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       children: listMessageSnap.map((listMessage) {
                         Message message = Message.fromDoc(listMessage);
-                        return MessageContainer(
+                        return ChatContainer(
                           currentUserId: widget.currentUserId,
                           peerUserId: widget.peerUser.userId,
                           peerUserProfileImage: widget.peerUser.profileImage,
