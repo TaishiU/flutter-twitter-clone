@@ -28,19 +28,30 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late String message;
+  late String _imagePickedType;
   File? _chatImage;
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
   FocusNode _focusNode = FocusNode();
 
-  handleImageFromGallery() async {
+  handleImage() async {
     try {
-      final imageFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (imageFile != null) {
-        setState(() {
-          _chatImage = File(imageFile.path);
-        });
+      if (_imagePickedType == 'camera') {
+        final imageFile =
+            await ImagePicker().pickImage(source: ImageSource.camera);
+        if (imageFile != null) {
+          setState(() {
+            _chatImage = File(imageFile.path);
+          });
+        }
+      } else if (_imagePickedType == 'gallery') {
+        final imageFile =
+            await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (imageFile != null) {
+          setState(() {
+            _chatImage = File(imageFile.path);
+          });
+        }
       }
 
       String _chatImageUrl;
@@ -215,7 +226,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        // handleImageFromCamera();
+                        _imagePickedType = 'camera';
+                        handleImage();
                       },
                       child: Icon(
                         Icons.camera_alt_outlined,
@@ -224,7 +236,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        handleImageFromGallery();
+                        _imagePickedType = 'gallery';
+                        handleImage();
                       },
                       child: Icon(
                         Icons.image_outlined,

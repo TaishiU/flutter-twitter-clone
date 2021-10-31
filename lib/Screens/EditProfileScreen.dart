@@ -54,8 +54,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   handleImageFromGallery() async {
     try {
-      PickedFile? imageFile =
-          await ImagePicker().getImage(source: ImageSource.gallery);
+      final imageFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
       if (imageFile != null) {
         if (_imagePickedType == 'cover') {
           setState(() {
