@@ -29,7 +29,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late String message;
   late String _imagePickedType;
-  //File? _chatImage;
   List<File>? _chatImageList = [];
   final TextEditingController textEditingController = TextEditingController();
   FocusNode _focusNode = FocusNode();
@@ -197,6 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
+                      //reverse: true,
                       children: listMessageSnap.map((listMessage) {
                         Message message = Message.fromDoc(listMessage);
                         return ChatContainer(
@@ -207,6 +207,22 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       }).toList(),
                     ),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   physics: NeverScrollableScrollPhysics(),
+                    //   //reverse: true,
+                    //   itemCount: listMessageSnap.length,
+                    //   itemBuilder: (BuildContext context, int index) {
+                    //     Message message =
+                    //         Message.fromDoc(listMessageSnap[index]);
+                    //     return ChatContainer(
+                    //       currentUserId: widget.currentUserId,
+                    //       peerUserId: widget.peerUser.userId,
+                    //       peerUserProfileImage: widget.peerUser.profileImage,
+                    //       message: message,
+                    //     );
+                    //   },
+                    // ),
                     Container(
                       height: 70,
                       color: Colors.transparent,
@@ -229,8 +245,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               child: Padding(
-                padding:
-                    EdgeInsets.only(right: 20, left: 20, top: 10, bottom: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -242,6 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Icon(
                         Icons.camera_alt_outlined,
                         color: Colors.blue,
+                        size: 27,
                       ),
                     ),
                     GestureDetector(
@@ -252,6 +268,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Icon(
                         Icons.image_outlined,
                         color: Colors.blue,
+                        size: 27,
                       ),
                     ),
                     Container(
@@ -262,7 +279,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: TextFormField(
-                        //autofocus: true,
                         controller: textEditingController,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
@@ -278,17 +294,22 @@ class _ChatScreenState extends State<ChatScreen> {
                         focusNode: _focusNode,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        onSendMessage(content: message);
-                        textEditingController.clear();
-                        _focusNode.unfocus();
-                      },
-                      child: Icon(
-                        Icons.send_rounded,
-                        color: Colors.blue,
-                      ),
-                    ),
+                    textEditingController.text.length > 0
+                        ? GestureDetector(
+                            onTap: () {
+                              onSendMessage(content: message);
+                              textEditingController.clear();
+                              _focusNode.unfocus();
+                            },
+                            child: Icon(
+                              Icons.send_rounded,
+                              color: Colors.blue,
+                            ),
+                          )
+                        : Icon(
+                            Icons.send_rounded,
+                            color: Colors.grey,
+                          ),
                   ],
                 ),
               ),

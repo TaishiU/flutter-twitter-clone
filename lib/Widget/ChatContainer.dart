@@ -126,7 +126,7 @@ class ChatContainer extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(width: 10),
                 CircleAvatar(
