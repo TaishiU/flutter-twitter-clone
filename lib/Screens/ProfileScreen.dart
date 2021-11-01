@@ -62,42 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Map<int, Widget> _profileTabs = <int, Widget>{
-    0: Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        'Tweet',
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
-        ),
-      ),
-    ),
-    1: Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        'Media',
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
-        ),
-      ),
-    ),
-    2: Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        'Likes',
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
-        ),
-      ),
-    ),
-  };
-
   Widget buildProfileWidget({required User user}) {
     switch (_profileSegmentedValue) {
       case 0:
