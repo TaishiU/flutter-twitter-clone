@@ -273,7 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     Container(
                       height: 40,
-                      width: MediaQuery.of(context).size.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.55,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(20),
