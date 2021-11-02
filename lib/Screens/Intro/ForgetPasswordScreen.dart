@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Provider/Provider.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 
-class ForgetPasswordScreen extends StatefulWidget {
-  const ForgetPasswordScreen({Key? key}) : super(key: key);
+class ForgetPasswordScreen extends HookWidget {
+  ForgetPasswordScreen({Key? key}) : super(key: key);
 
-  @override
-  _ForgetPasswordScreenState createState() => _ForgetPasswordScreenState();
-}
-
-class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final _formkey = GlobalKey<FormState>();
-  late String _email;
+
   @override
   Widget build(BuildContext context) {
+    final _email = useProvider(emailProvider).state;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -54,7 +54,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       icon: Icon(Icons.email_outlined),
                     ),
                     onChanged: (value) {
-                      _email = value;
+                      context.read(emailProvider).state = value;
                     },
                     keyboardType: TextInputType.emailAddress,
                     validator: (String? input) {
