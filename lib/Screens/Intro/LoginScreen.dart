@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Provider/Provider.dart';
 import 'package:twitter_clone/Screens/Intro/ForgetPasswordScreen.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 import 'package:twitter_clone/main.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
+class LoginScreen extends HookWidget {
+  LoginScreen({Key? key}) : super(key: key);
 
-class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
-  late String _email;
-  late String _password;
-  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
+    final _email = useProvider(emailProvider).state;
+    final _password = useProvider(passwordProvider).state;
+    final _isObscure = useProvider(isObscureProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     icon: Icon(Icons.email_outlined),
                   ),
                   onChanged: (value) {
-                    _email = value;
+                    context.read(emailProvider).state = value;
                   },
                   keyboardType: TextInputType.emailAddress,
                   validator: (String? input) {
@@ -70,14 +71,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         _isObscure ? Icons.visibility_off : Icons.visibility,
                       ),
                       onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
+                        context
+                            .read(isObscureProvider.notifier)
+                            .update(!_isObscure);
                       },
                     ),
                   ),
                   onChanged: (value) {
-                    _password = value;
+                    context.read(passwordProvider).state = value;
                   },
                   keyboardType: TextInputType.visiblePassword,
                   validator: (String? input) {

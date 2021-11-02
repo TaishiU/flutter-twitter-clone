@@ -1,36 +1,37 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Auth.dart';
+import 'package:twitter_clone/Provider/Provider.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 import 'package:twitter_clone/main.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
-}
+class RegistrationScreen extends HookWidget {
+  RegistrationScreen({Key? key}) : super(key: key);
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formkey = GlobalKey<FormState>();
-  late String _name;
-  late String _email;
-  late String _password;
-  bool _isObscure = true;
-  FirebaseMessaging fcm = FirebaseMessaging.instance;
-  String? fcmToken;
-
-  void getFcmToken() async {
-    fcmToken = await FirebaseMessaging.instance.getToken();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getFcmToken();
-  }
 
   @override
   Widget build(BuildContext context) {
+    final _name = useProvider(nameProvider).state;
+    final _email = useProvider(emailProvider).state;
+    final _password = useProvider(passwordProvider).state;
+    final _isObscure = useProvider(isObscureProvider);
+
+    String? _fcmToken;
+
+    void getFcmToken() async {
+      print('ゼロ状態fcmToken: $_fcmToken');
+      _fcmToken = await FirebaseMessaging.instance.getToken();
+      print('初期fcmToken: $_fcmToken');
+    }
+
+    useEffect(() {
+      getFcmToken();
+    }, []);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -59,7 +60,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       icon: Icon(Icons.person),
                     ),
                     onChanged: (value) {
-                      _name = value;
+                      context.read(nameProvider).state = value;
                     },
                     validator: (String? input) {
                       if (input!.isEmpty) {
@@ -74,7 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     icon: Icon(Icons.email_outlined),
                   ),
                   onChanged: (value) {
-                    _email = value;
+                    context.read(emailProvider).state = value;
                   },
                   keyboardType: TextInputType.emailAddress,
                   validator: (String? input) {
@@ -98,14 +99,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         _isObscure ? Icons.visibility_off : Icons.visibility,
                       ),
                       onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
+                        context
+                            .read(isObscureProvider.notifier)
+                            .update(!_isObscure);
                       },
                     ),
                   ),
                   onChanged: (value) {
-                    _password = value;
+                    context.read(passwordProvider).state = value;
                   },
                   keyboardType: TextInputType.visiblePassword,
                   validator: (String? input) {
@@ -127,7 +128,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         name: _name,
                         email: _email,
                         password: _password,
-                        fcmToken: fcmToken,
+                        fcmToken: _fcmToken,
                       );
                       if (isValid) {
                         Navigator.pushReplacement(
