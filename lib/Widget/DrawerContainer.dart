@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
+import 'package:twitter_clone/Service/AuthService.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
 
 class DrawerContainer extends StatelessWidget {
@@ -19,6 +19,8 @@ class DrawerContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService _authService = AuthService();
+
     return Drawer(
       child: ListView(
         children: [
@@ -197,55 +199,39 @@ class DrawerContainer extends StatelessWidget {
                 ),
               );
             },
-            child: drawerContainer(
+            child: drawerIconContainer(
               icon: Icons.person_outline,
               title: 'profile',
             ),
           ),
-          drawerContainer(
+          drawerIconContainer(
             icon: Icons.article_outlined,
             title: 'Lists',
           ),
-          drawerContainer(
+          drawerIconContainer(
             icon: Icons.where_to_vote_outlined,
             title: 'Topic',
           ),
-          drawerContainer(
+          drawerIconContainer(
             icon: Icons.bookmark_border,
             title: 'Bookmark',
           ),
-          drawerContainer(
+          drawerIconContainer(
             icon: Icons.local_fire_department_outlined,
             title: 'Moment',
           ),
-          drawerContainer(
+          drawerIconContainer(
             icon: Icons.attach_money,
             title: 'Earn Money',
           ),
           Divider(),
-          Container(
-            color: Colors.transparent,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
-                'Setting and Privacy',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
+          drawerTextContainer(
+            title: 'Setting and Privacy',
+            color: Colors.black,
           ),
-          Container(
-            color: Colors.transparent,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
-                'Help center',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
+          drawerTextContainer(
+            title: 'Help center',
+            color: Colors.black,
           ),
           GestureDetector(
             onTap: () {
@@ -282,7 +268,7 @@ class DrawerContainer extends StatelessWidget {
                           primary: Colors.black,
                         ),
                         onPressed: () {
-                          Auth().logout();
+                          _authService.logout();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -296,18 +282,9 @@ class DrawerContainer extends StatelessWidget {
                 },
               );
             },
-            child: Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Text(
-                  'Logout',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
+            child: drawerTextContainer(
+              title: 'Logout',
+              color: Colors.red,
             ),
           ),
         ],
@@ -315,7 +292,7 @@ class DrawerContainer extends StatelessWidget {
     );
   }
 
-  Widget drawerContainer({
+  Widget drawerIconContainer({
     required IconData icon,
     required String title,
   }) {
@@ -327,7 +304,6 @@ class DrawerContainer extends StatelessWidget {
           children: [
             Icon(
               icon,
-              // Icons.attach_money,
               color: Colors.grey,
               size: 30,
             ),
@@ -339,6 +315,25 @@ class DrawerContainer extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget drawerTextContainer({
+    required String title,
+    required Color color,
+  }) {
+    return Container(
+      color: Colors.transparent,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            color: color,
+          ),
         ),
       ),
     );

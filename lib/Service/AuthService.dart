@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
+import 'package:twitter_clone/Repository/AuthRepository.dart';
 
-class Auth {
+class AuthService {
   final _auth = FirebaseAuth.instance;
+  final AuthRepository _authRepository = AuthRepository();
 
   Future<bool> signUp({
     required String name,
@@ -19,7 +20,7 @@ class Auth {
       User? signedInUser = authResult.user;
 
       if (signedInUser != null) {
-        Firestore().registerUser(
+        _authRepository.registerUser(
           userId: signedInUser.uid,
           name: name,
           email: email,
@@ -30,7 +31,7 @@ class Auth {
       return false;
     } catch (e) {
       print(e);
-      print('something wrong...');
+      print('Auth sign up, something wrong...');
       return false;
     }
   }

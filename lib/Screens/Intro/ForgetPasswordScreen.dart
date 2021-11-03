@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Provider/Provider.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
+import 'package:twitter_clone/Service/AuthService.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 
 class ForgetPasswordScreen extends HookWidget {
@@ -15,6 +15,7 @@ class ForgetPasswordScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _email = useProvider(emailProvider).state;
+    final AuthService _authService = AuthService();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -75,8 +76,8 @@ class ForgetPasswordScreen extends HookWidget {
                     onBtnPressed: () async {
                       _formkey.currentState!.save();
                       if (_formkey.currentState!.validate()) {
-                        String result =
-                            await Auth().sendPasswordResetEmail(email: _email);
+                        String result = await _authService
+                            .sendPasswordResetEmail(email: _email);
                         if (result == 'success') {
                           Navigator.pushReplacement(
                             context,
