@@ -9,7 +9,8 @@ final emailProvider = StateProvider.autoDispose((ref) => '');
 
 final passwordProvider = StateProvider.autoDispose((ref) => '');
 
-final isObscureProvider = StateNotifierProvider<IsObscureController, bool>(
+final isObscureProvider =
+    StateNotifierProvider.autoDispose<IsObscureController, bool>(
   /*初期値はtrueにして目隠し状態にする*/
   (ref) => IsObscureController(true),
 );

@@ -11,23 +11,23 @@ class Firestore {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /*プロフィール関連*/
-  Future<void> registerUser({
-    required String userId,
-    required String name,
-    required String email,
-    required String? fcmToken,
-  }) async {
-    DocumentReference usersReference = usersRef.doc(userId);
-    await usersReference.set({
-      'userId': usersReference.id,
-      'name': name,
-      'email': email,
-      'profileImage': '',
-      'coverImage': '',
-      'bio': '',
-      'fcmToken': fcmToken,
-    });
-  }
+  // Future<void> registerUser({
+  //   required String userId,
+  //   required String name,
+  //   required String email,
+  //   required String? fcmToken,
+  // }) async {
+  //   DocumentReference usersReference = usersRef.doc(userId);
+  //   await usersReference.set({
+  //     'userId': usersReference.id,
+  //     'name': name,
+  //     'email': email,
+  //     'profileImage': '',
+  //     'coverImage': '',
+  //     'bio': '',
+  //     'fcmToken': fcmToken,
+  //   });
+  // }
 
   Future<DocumentSnapshot> getUserProfile({
     required String userId,

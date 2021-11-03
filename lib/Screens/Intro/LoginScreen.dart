@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Auth.dart';
 import 'package:twitter_clone/Provider/Provider.dart';
 import 'package:twitter_clone/Screens/Intro/ForgetPasswordScreen.dart';
+import 'package:twitter_clone/Service/AuthService.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 import 'package:twitter_clone/main.dart';
 
@@ -18,6 +18,7 @@ class LoginScreen extends HookWidget {
     final _email = useProvider(emailProvider).state;
     final _password = useProvider(passwordProvider).state;
     final _isObscure = useProvider(isObscureProvider);
+    final AuthService _authService = AuthService();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -122,7 +123,7 @@ class LoginScreen extends HookWidget {
                   onBtnPressed: () async {
                     _formkey.currentState!.save();
                     if (_formkey.currentState!.validate()) {
-                      bool isValid = await Auth().login(
+                      bool isValid = await _authService.login(
                         email: _email,
                         password: _password,
                       );
