@@ -1,24 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Service/AuthService.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
 
-class DrawerContainer extends StatelessWidget {
-  final String currentUserId;
-  final String visitedUserId;
-
-  DrawerContainer({
-    Key? key,
-    required this.currentUserId,
-    required this.visitedUserId,
-  }) : super(key: key);
-
+class DrawerContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
     final AuthService _authService = AuthService();
 
     return Drawer(
@@ -40,13 +35,15 @@ class DrawerContainer extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        /*visitedUserId情報を更新*/
+                        context
+                            .read(visitedUserIdProvider.notifier)
+                            .update(userId: user.userId);
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileScreen(
-                              currentUserId: currentUserId,
-                              visitedUserId: visitedUserId,
-                            ),
+                            builder: (context) => ProfileScreen(),
                           ),
                         );
                       },
@@ -98,7 +95,7 @@ class DrawerContainer extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Following',
-                                        currentUserId: currentUserId,
+                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followingUserList,
                                       ),
                                     ),
@@ -150,7 +147,7 @@ class DrawerContainer extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
-                                        currentUserId: currentUserId,
+                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followersUserList,
                                       ),
                                     ),
@@ -192,10 +189,7 @@ class DrawerContainer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    currentUserId: currentUserId,
-                    visitedUserId: visitedUserId,
-                  ),
+                  builder: (context) => ProfileScreen(),
                 ),
               );
             },

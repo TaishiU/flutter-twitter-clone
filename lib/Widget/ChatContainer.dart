@@ -9,6 +9,7 @@ class ChatContainer extends StatelessWidget {
   final String peerUserId;
   final String peerUserProfileImage;
   final Message message;
+
   ChatContainer({
     Key? key,
     required this.currentUserId,
@@ -183,7 +184,7 @@ class ChatContainer extends StatelessWidget {
           children: [
             SizedBox(height: 100),
             Text(
-              'error!!!',
+              'ChatContainer error...',
               style: TextStyle(
                 fontSize: 30,
               ),

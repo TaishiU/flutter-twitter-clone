@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/DynamicLink.dart';
@@ -7,11 +9,13 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/TweetProvider.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Widget/TweetImage.dart';
 
-class TweetContainer extends StatefulWidget {
+class TweetContainer extends HookWidget {
   final String currentUserId;
   final Tweet tweet;
 
@@ -22,86 +26,66 @@ class TweetContainer extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TweetContainerState createState() => _TweetContainerState();
-}
+  Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+    final bool _isLiked = useProvider(isLikedProvider);
+    final DynamicLink dynamicLink = DynamicLink();
 
-class _TweetContainerState extends State<TweetContainer> {
-  bool _isLiked = false;
-  final DynamicLink dynamicLink = DynamicLink();
+    /*ツイートにいいねをしているか判断するメソッド*/
+    setupIsLiked() async {
+      bool isLikedTweet = await Firestore().isLikedTweet(
+        currentUserId: currentUserId!,
+        tweetAuthorId: tweet.authorId,
+        tweetId: tweet.tweetId!,
+      );
 
-  @override
-  void initState() {
-    super.initState();
-    setupIsLiked();
-  }
-
-  /*ツイートにいいねをしているか判断するメソッド*/
-  setupIsLiked() async {
-    bool isLikedTweet = await Firestore().isLikedTweet(
-      currentUserId: widget.currentUserId,
-      tweetAuthorId: widget.tweet.authorId,
-      tweetId: widget.tweet.tweetId!,
-    );
-    if (mounted) {
       if (isLikedTweet == true) {
-        setState(() {
-          _isLiked = true;
-        });
+        context.read(isLikedProvider.notifier).update(isLiked: true);
       } else {
-        setState(() {
-          _isLiked = false;
-        });
+        context.read(isLikedProvider.notifier).update(isLiked: false);
       }
     }
-  }
 
-  likeOrUnLikeTweet() async {
-    if (!_isLiked) {
-      /*いいねされていない時*/
-      setState(() {
-        _isLiked = true;
-      });
-      DocumentSnapshot userProfileDoc =
-          await Firestore().getUserProfile(userId: widget.currentUserId);
-      User user = User.fromDoc(userProfileDoc);
-      Likes likes = Likes(
-        likesUserId: user.userId,
-        likesUserName: user.name,
-        likesUserProfileImage: user.profileImage,
-        likesUserBio: user.bio,
-        timestamp: Timestamp.fromDate(DateTime.now()),
-      );
-      Firestore().likesForTweet(
-        likes: likes,
-        postId: widget.tweet.tweetId!,
-        postUserId: widget.tweet.authorId,
-      );
-      Firestore().favoriteTweet(
-        currentUserId: widget.currentUserId,
-        name: user.name,
-        tweet: widget.tweet,
-      );
-    } else if (_isLiked) {
-      /*いいねされている時*/
-      setState(() {
-        _isLiked = false;
-      });
-      DocumentSnapshot userProfileDoc =
-          await Firestore().getUserProfile(userId: widget.currentUserId);
-      User user = User.fromDoc(userProfileDoc);
-      Firestore().unLikesForTweet(
-        tweet: widget.tweet,
-        unlikesUser: user,
-      );
+    useEffect(() {
+      setupIsLiked();
+    }, []);
+
+    likeOrUnLikeTweet() async {
+      if (!_isLiked) {
+        /*いいねされていない時*/
+        context.read(isLikedProvider.notifier).update(isLiked: true);
+        DocumentSnapshot userProfileDoc =
+            await Firestore().getUserProfile(userId: currentUserId!);
+        User user = User.fromDoc(userProfileDoc);
+        Likes likes = Likes(
+          likesUserId: user.userId,
+          likesUserName: user.name,
+          likesUserProfileImage: user.profileImage,
+          likesUserBio: user.bio,
+          timestamp: Timestamp.fromDate(DateTime.now()),
+        );
+        Firestore().likesForTweet(
+          likes: likes,
+          postId: tweet.tweetId!,
+          postUserId: tweet.authorId,
+        );
+        Firestore().favoriteTweet(
+          currentUserId: currentUserId,
+          name: user.name,
+          tweet: tweet,
+        );
+      } else if (_isLiked) {
+        /*いいねされている時*/
+        context.read(isLikedProvider.notifier).update(isLiked: false);
+        DocumentSnapshot userProfileDoc =
+            await Firestore().getUserProfile(userId: currentUserId!);
+        User user = User.fromDoc(userProfileDoc);
+        Firestore().unLikesForTweet(
+          tweet: tweet,
+          unlikesUser: user,
+        );
+      }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // print('TweetAuthor: ${widget.tweet.authorName}');
-    // print('TweetText: ${widget.tweet.text}');
-    // print('isLiked: $_isLiked');
-    // print('******************************************');
 
     return Container(
       child: Column(
@@ -112,9 +96,7 @@ class _TweetContainerState extends State<TweetContainer> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetDetailScreen(
-                    currentUserId: widget.currentUserId,
-                    tweet: widget.tweet,
-                    //user: widget.user,
+                    tweet: tweet,
                   ),
                 ),
               );
@@ -129,23 +111,24 @@ class _TweetContainerState extends State<TweetContainer> {
                       SizedBox(height: 8),
                       GestureDetector(
                         onTap: () {
+                          /*visitedUserId情報を更新*/
+                          context
+                              .read(visitedUserIdProvider.notifier)
+                              .update(userId: tweet.authorId);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                currentUserId: widget.currentUserId,
-                                visitedUserId: widget.tweet.authorId,
-                              ),
+                              builder: (context) => ProfileScreen(),
                             ),
                           );
                         },
                         child: CircleAvatar(
                           radius: 23,
                           backgroundColor: TwitterColor,
-                          backgroundImage: widget
-                                  .tweet.authorProfileImage.isEmpty
+                          backgroundImage: tweet.authorProfileImage.isEmpty
                               ? null
-                              : NetworkImage(widget.tweet.authorProfileImage),
+                              : NetworkImage(tweet.authorProfileImage),
                         ),
                       ),
                     ],
@@ -164,10 +147,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ProfileScreen(
-                                      currentUserId: widget.currentUserId,
-                                      visitedUserId: widget.tweet.authorId,
-                                    ),
+                                    builder: (context) => ProfileScreen(),
                                   ),
                                 );
                               },
@@ -175,7 +155,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    widget.tweet.authorName,
+                                    tweet.authorName,
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
@@ -183,14 +163,14 @@ class _TweetContainerState extends State<TweetContainer> {
                                   ),
                                   SizedBox(width: 10),
                                   Text(
-                                    '@${widget.tweet.authorBio}・',
+                                    '@${tweet.authorBio}・',
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.grey,
                                     ),
                                   ),
                                   Text(
-                                    '${widget.tweet.timestamp.toDate().month.toString()}/${widget.tweet.timestamp.toDate().day.toString()}',
+                                    '${tweet.timestamp.toDate().month.toString()}/${tweet.timestamp.toDate().day.toString()}',
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.grey,
@@ -233,8 +213,8 @@ class _TweetContainerState extends State<TweetContainer> {
                               onSelected: (selectedItem) {
                                 if (selectedItem == 'Delete') {
                                   Firestore().deleteTweet(
-                                    userId: widget.currentUserId,
-                                    tweet: widget.tweet,
+                                    userId: currentUserId!,
+                                    tweet: tweet,
                                   );
                                 }
                               },
@@ -242,19 +222,19 @@ class _TweetContainerState extends State<TweetContainer> {
                           ],
                         ),
                         Text(
-                          widget.tweet.text,
+                          tweet.text,
                           style: TextStyle(
                             fontSize: 15,
                           ),
                         ),
-                        widget.tweet.images.isEmpty
+                        tweet.images.isEmpty
                             ? SizedBox.shrink()
                             : Column(
                                 children: [
                                   SizedBox(height: 15),
                                   TweetImage(
-                                    currentUserId: widget.currentUserId,
-                                    tweet: widget.tweet,
+                                    currentUserId: currentUserId!,
+                                    tweet: tweet,
                                     containerHeight: 180,
                                     containerWith:
                                         MediaQuery.of(context).size.width *
@@ -281,8 +261,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               TweetDetailScreen(
-                                            currentUserId: widget.currentUserId,
-                                            tweet: widget.tweet,
+                                            tweet: tweet,
                                             //user: widget.user,
                                           ),
                                         ),
@@ -298,9 +277,9 @@ class _TweetContainerState extends State<TweetContainer> {
                                   Container(
                                     child: StreamBuilder(
                                       stream: usersRef
-                                          .doc(widget.tweet.authorId)
+                                          .doc(tweet.authorId)
                                           .collection('tweets')
-                                          .doc(widget.tweet.tweetId)
+                                          .doc(tweet.tweetId)
                                           .collection('comments')
                                           .snapshots(),
                                       builder: (BuildContext context,
@@ -363,9 +342,9 @@ class _TweetContainerState extends State<TweetContainer> {
                                   Container(
                                     child: StreamBuilder(
                                       stream: usersRef
-                                          .doc(widget.tweet.authorId)
+                                          .doc(tweet.authorId)
                                           .collection('tweets')
-                                          .doc(widget.tweet.tweetId)
+                                          .doc(tweet.tweetId)
                                           .collection('likes')
                                           .orderBy('timestamp',
                                               descending: true)
@@ -396,11 +375,11 @@ class _TweetContainerState extends State<TweetContainer> {
                               Container(
                                 child: FutureBuilder<Uri>(
                                   future: dynamicLink.createDynamicLink(
-                                    tweetId: widget.tweet.tweetId!,
-                                    tweetAuthorId: widget.tweet.authorId,
-                                    tweetText: widget.tweet.text,
-                                    imageUrl: widget.tweet.hasImage
-                                        ? widget.tweet.images['0']!
+                                    tweetId: tweet.tweetId!,
+                                    tweetAuthorId: tweet.authorId,
+                                    tweetText: tweet.text,
+                                    imageUrl: tweet.hasImage
+                                        ? tweet.images['0']!
                                         : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
                                   ),
                                   builder: (context, snapshot) {
@@ -416,7 +395,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                     return GestureDetector(
                                       onTap: () {
                                         Share.share(
-                                          '${widget.tweet.text}\n\n${uri.toString()}',
+                                          '${tweet.text}\n\n${uri.toString()}',
                                         );
                                       },
                                       child: Icon(

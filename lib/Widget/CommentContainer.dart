@@ -1,39 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Provider/TweetProvider.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class CommentContainer extends StatefulWidget {
-  final String currentUserId;
+class CommentContainer extends HookWidget {
   final Comment comment;
 
-  const CommentContainer({
+  CommentContainer({
     Key? key,
-    required this.currentUserId,
     required this.comment,
   }) : super(key: key);
 
   @override
-  _CommentContainerState createState() => _CommentContainerState();
-}
-
-class _CommentContainerState extends State<CommentContainer> {
-  bool _isLiked = false;
-
-  likeTweet() {
-    if (_isLiked) {
-      setState(() {
-        _isLiked = false;
-      });
-    } else {
-      setState(() {
-        _isLiked = true;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final bool _isLiked = useProvider(isLikedProvider);
+
+    likeTweet() {
+      if (_isLiked) {
+        context.read(isLikedProvider.notifier).update(isLiked: false);
+      } else {
+        context.read(isLikedProvider.notifier).update(isLiked: true);
+      }
+    }
+
     return Column(
       children: [
         Row(
@@ -44,23 +37,24 @@ class _CommentContainerState extends State<CommentContainer> {
                 SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
+                    /*visitedUserId情報を更新*/
+                    context
+                        .read(visitedUserIdProvider.notifier)
+                        .update(userId: comment.commentUserId);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileScreen(
-                          currentUserId: widget.currentUserId,
-                          visitedUserId: widget.comment.commentUserId,
-                        ),
+                        builder: (context) => ProfileScreen(),
                       ),
                     );
                   },
                   child: CircleAvatar(
                     radius: 23,
                     backgroundColor: TwitterColor,
-                    backgroundImage: widget
-                            .comment.commentUserProfileImage.isEmpty
+                    backgroundImage: comment.commentUserProfileImage.isEmpty
                         ? null
-                        : NetworkImage(widget.comment.commentUserProfileImage),
+                        : NetworkImage(comment.commentUserProfileImage),
                   ),
                 ),
               ],
@@ -79,17 +73,14 @@ class _CommentContainerState extends State<CommentContainer> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                currentUserId: widget.currentUserId,
-                                visitedUserId: widget.comment.commentUserId,
-                              ),
+                              builder: (context) => ProfileScreen(),
                             ),
                           );
                         },
                         child: Row(
                           children: [
                             Text(
-                              widget.comment.commentUserName,
+                              comment.commentUserName,
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -97,14 +88,14 @@ class _CommentContainerState extends State<CommentContainer> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              '@${widget.comment.commentUserBio}・',
+                              '@${comment.commentUserBio}・',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey,
                               ),
                             ),
                             Text(
-                              '${widget.comment.timestamp.toDate().month.toString()}/${widget.comment.timestamp.toDate().day.toString()}',
+                              '${comment.timestamp.toDate().month.toString()}/${comment.timestamp.toDate().day.toString()}',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.grey,
@@ -146,7 +137,7 @@ class _CommentContainerState extends State<CommentContainer> {
                     ],
                   ),
                   Text(
-                    widget.comment.commentText,
+                    comment.commentText,
                     style: TextStyle(
                       fontSize: 15,
                     ),

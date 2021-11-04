@@ -49,10 +49,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProfileScreen(
-              currentUserId: widget.currentUserId,
-              visitedUserId: user.userId,
-            ),
+            builder: (context) => ProfileScreen(),
           ),
         );
       },
