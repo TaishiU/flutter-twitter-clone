@@ -1,115 +1,111 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/GetLastMessage.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/SelectChatUserScreen.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
-class MessageScreen extends StatelessWidget {
-  final String currentUserId;
-  final String visitedUserId;
-
-  MessageScreen({
-    Key? key,
-    required this.currentUserId,
-    required this.visitedUserId,
-  }) : super(key: key);
-
-  Widget buildUserTile({
-    required BuildContext context,
-    required GetLastMessage getLastMessage,
-  }) {
-    /*user1Idがユーザー自身のidと一致するか*/
-    final _isOwner = currentUserId == getLastMessage.user1Id;
-    final _notRead =
-        !getLastMessage.read && getLastMessage.idTo == currentUserId;
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 23,
-        backgroundImage: _isOwner
-            ? NetworkImage(getLastMessage.user2ProfileImage)
-            : NetworkImage(getLastMessage.user1ProfileImage),
-      ),
-      title: Text(
-        _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
-        style: TextStyle(
-          fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      subtitle: DefaultTextStyle(
-        style: TextStyle(color: Colors.black),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        child: getLastMessage.content != null
-            ? Text(
-                getLastMessage.content!,
-                style: TextStyle(
-                  fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.black,
-                ),
-              )
-            : _isOwner
-                ? Text(
-                    'You sent the image.',
-                    style: TextStyle(
-                      fontWeight:
-                          _notRead ? FontWeight.bold : FontWeight.normal,
-                      color: Colors.grey,
-                    ),
-                  )
-                : Text(
-                    '${getLastMessage.userFrom} sent the image.',
-                    style: TextStyle(
-                      fontWeight:
-                          _notRead ? FontWeight.bold : FontWeight.normal,
-                      color: Colors.grey,
-                    ),
-                  ),
-      ),
-      trailing: Text(
-        '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
-        style: TextStyle(
-          fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      onTap: () {
-        moveToChatScreen(
-          context: context,
-          convoId: getLastMessage.convoId!,
-          peerUserId:
-              _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
-        );
-      },
-    );
-  }
-
-  moveToChatScreen({
-    required BuildContext context,
-    required String convoId,
-    required String peerUserId,
-  }) async {
-    /*相手ユーザーのプロフィール*/
-    DocumentSnapshot userProfileDoc =
-        await Firestore().getUserProfile(userId: peerUserId);
-    User peerUser = User.fromDoc(userProfileDoc);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatScreen(
-          currentUserId: currentUserId,
-          convoId: convoId,
-          peerUser: peerUser,
-        ),
-      ),
-    );
-  }
-
+class MessageScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+
+    moveToChatScreen({
+      required BuildContext context,
+      required String convoId,
+      required String peerUserId,
+    }) async {
+      /*相手ユーザーのプロフィール*/
+      DocumentSnapshot userProfileDoc =
+          await Firestore().getUserProfile(userId: peerUserId);
+      User peerUser = User.fromDoc(userProfileDoc);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            currentUserId: currentUserId!,
+            convoId: convoId,
+            peerUser: peerUser,
+          ),
+        ),
+      );
+    }
+
+    Widget buildUserTile({
+      required BuildContext context,
+      required GetLastMessage getLastMessage,
+    }) {
+      /*user1Idがユーザー自身のidと一致するか*/
+      final _isOwner = currentUserId == getLastMessage.user1Id;
+      final _notRead =
+          !getLastMessage.read && getLastMessage.idTo == currentUserId;
+      return ListTile(
+        leading: CircleAvatar(
+          radius: 23,
+          backgroundImage: _isOwner
+              ? NetworkImage(getLastMessage.user2ProfileImage)
+              : NetworkImage(getLastMessage.user1ProfileImage),
+        ),
+        title: Text(
+          _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
+          style: TextStyle(
+            fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        subtitle: DefaultTextStyle(
+          style: TextStyle(color: Colors.black),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          child: getLastMessage.content != null
+              ? Text(
+                  getLastMessage.content!,
+                  style: TextStyle(
+                    fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+                    color: Colors.black,
+                  ),
+                )
+              : _isOwner
+                  ? Text(
+                      'You sent the image.',
+                      style: TextStyle(
+                        fontWeight:
+                            _notRead ? FontWeight.bold : FontWeight.normal,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : Text(
+                      '${getLastMessage.userFrom} sent the image.',
+                      style: TextStyle(
+                        fontWeight:
+                            _notRead ? FontWeight.bold : FontWeight.normal,
+                        color: Colors.grey,
+                      ),
+                    ),
+        ),
+        trailing: Text(
+          '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
+          style: TextStyle(
+            fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        onTap: () {
+          moveToChatScreen(
+            context: context,
+            convoId: getLastMessage.convoId!,
+            peerUserId:
+                _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
+          );
+        },
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -122,7 +118,7 @@ class MessageScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => SelectChatUserScreen(
-                  currentUserId: currentUserId,
+                  currentUserId: currentUserId!,
                 ),
               ),
             );
@@ -215,7 +211,7 @@ class MessageScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => SelectChatUserScreen(
-                              currentUserId: currentUserId,
+                              currentUserId: currentUserId!,
                             ),
                           ),
                         );
@@ -242,10 +238,7 @@ class MessageScreen extends StatelessWidget {
           );
         },
       ),
-      drawer: DrawerContainer(
-        currentUserId: currentUserId,
-        visitedUserId: visitedUserId,
-      ),
+      drawer: DrawerContainer(),
       floatingActionButton: FloatingActionButton(
         child: Icon(
           Icons.mail_outline,
@@ -257,7 +250,7 @@ class MessageScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => SelectChatUserScreen(
-                currentUserId: currentUserId,
+                currentUserId: currentUserId!,
               ),
             ),
           );

@@ -1,26 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/SearchUserScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
-class SearchScreen extends StatelessWidget {
-  final String currentUserId;
-  final String visitedUserId;
-
-  SearchScreen({
-    Key? key,
-    required this.currentUserId,
-    required this.visitedUserId,
-  }) : super(key: key);
-
+class SearchScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,7 +29,7 @@ class SearchScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => SearchUserScreen(
-                  currentUserId: currentUserId,
+                  currentUserId: currentUserId!,
                 ),
               ),
             );
@@ -103,9 +99,7 @@ class SearchScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetDetailScreen(
-                        currentUserId: currentUserId,
                         tweet: tweet,
-                        //user: user,
                       ),
                     ),
                   );
@@ -153,10 +147,7 @@ class SearchScreen extends StatelessWidget {
           );
         },
       ),
-      drawer: DrawerContainer(
-        currentUserId: currentUserId,
-        visitedUserId: visitedUserId,
-      ),
+      drawer: DrawerContainer(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: TwitterColor,
         child: Image.asset(
@@ -168,7 +159,7 @@ class SearchScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => CreateTweetScreen(
-                currentUserId: currentUserId,
+                currentUserId: currentUserId!,
               ),
             ),
           );

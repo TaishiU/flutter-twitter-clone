@@ -43,7 +43,6 @@ class TweetImage extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => TweetImageView(
-              currentUserId: currentUserId,
               tappedImageIndex: 0,
               tweet: tweet,
             ),
@@ -78,7 +77,6 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
-                    currentUserId: currentUserId,
                     tappedImageIndex: 0,
                     tweet: tweet,
                   ),
@@ -108,7 +106,6 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
-                    currentUserId: currentUserId,
                     tappedImageIndex: 1,
                     tweet: tweet,
                   ),
@@ -148,7 +145,6 @@ class TweetImage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TweetImageView(
-                    currentUserId: currentUserId,
                     tappedImageIndex: 0,
                     tweet: tweet,
                   ),
@@ -180,7 +176,6 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 1,
                         tweet: tweet,
                       ),
@@ -210,7 +205,6 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 2,
                         tweet: tweet,
                       ),
@@ -254,7 +248,6 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 0,
                         tweet: tweet,
                       ),
@@ -284,7 +277,6 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 2,
                         tweet: tweet,
                       ),
@@ -318,7 +310,6 @@ class TweetImage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 1,
                         tweet: tweet,
                       ),
@@ -347,8 +338,11 @@ class TweetImage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
+//                       builder: (context) => TweetImageView(
+// 4                       tappedImageIndex: 3,
+//                         tweet: tweet,
+//                       ),
                       builder: (context) => TweetImageView(
-                        currentUserId: currentUserId,
                         tappedImageIndex: 3,
                         tweet: tweet,
                       ),

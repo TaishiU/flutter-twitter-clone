@@ -52,10 +52,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProfileScreen(
-            currentUserId: widget.currentUserId,
-            visitedUserId: user.userId,
-          ),
+          builder: (context) => ProfileScreen(),
         ),
       );
     }
@@ -69,7 +66,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => TweetDetailScreen(
-            currentUserId: widget.currentUserId,
             tweet: tweet,
           ),
         ),
@@ -262,10 +258,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
         //child: ,
       ),
-      drawer: DrawerContainer(
-        currentUserId: widget.currentUserId,
-        visitedUserId: widget.visitedUserId,
-      ),
+      drawer: DrawerContainer(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: TwitterColor,
         child: Image.asset(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ProfileImageView extends StatefulWidget {
+class ProfileImageView extends StatelessWidget {
   final int tappedImageIndex;
   final String image;
 
@@ -12,14 +12,9 @@ class ProfileImageView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ProfileImageViewState createState() => _ProfileImageViewState();
-}
-
-class _ProfileImageViewState extends State<ProfileImageView> {
-  @override
   Widget build(BuildContext context) {
     PageController _pageController = PageController(
-      initialPage: widget.tappedImageIndex,
+      initialPage: tappedImageIndex,
     );
 
     return Scaffold(
@@ -42,13 +37,13 @@ class _ProfileImageViewState extends State<ProfileImageView> {
       body: PageView(
         controller: _pageController,
         children: [
-          profileImage(),
+          profileImage(context: context),
         ],
       ),
     );
   }
 
-  profileImage() {
+  profileImage({required BuildContext context}) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +64,7 @@ class _ProfileImageViewState extends State<ProfileImageView> {
               height: MediaQuery.of(context).size.height * 0.9,
               child: PhotoView(
                 imageProvider: NetworkImage(
-                  widget.image,
+                  image,
                 ),
               ),
             ),

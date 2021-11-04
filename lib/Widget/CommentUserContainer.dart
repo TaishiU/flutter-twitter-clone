@@ -1,15 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
-class CommentUser extends StatelessWidget {
+class CommentUserContainer extends HookWidget {
   final String title;
   final String currentUserId;
   final List<DocumentSnapshot> commentListForTweet;
 
-  CommentUser({
+  CommentUserContainer({
     Key? key,
     required this.title,
     required this.currentUserId,
@@ -47,13 +50,15 @@ class CommentUser extends StatelessWidget {
               Comment comment = Comment.fromDoc(commentForTweet);
               return GestureDetector(
                 onTap: () {
+                  /*visitedUserId情報を更新*/
+                  context
+                      .read(visitedUserIdProvider.notifier)
+                      .update(userId: comment.commentUserId);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(
-                        currentUserId: currentUserId,
-                        visitedUserId: comment.commentUserId,
-                      ),
+                      builder: (context) => ProfileScreen(),
                     ),
                   );
                 },

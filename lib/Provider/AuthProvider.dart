@@ -1,7 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-final userProvider = StateProvider((ref) => FirebaseAuth.instance.currentUser);
 
 final nameProvider = StateProvider.autoDispose((ref) => '');
 
@@ -19,4 +16,13 @@ class IsObscureController extends StateNotifier<bool> {
   IsObscureController(bool isObscure) : super(isObscure);
 
   void update(bool isObscure) => state = isObscure;
+}
+
+final bottomTabProvider = StateNotifierProvider<BottomTabController, int>(
+  (ref) => BottomTabController(0),
+);
+
+class BottomTabController extends StateNotifier<int> {
+  BottomTabController(int index) : super(index);
+  void update({required int index}) => state = index;
 }

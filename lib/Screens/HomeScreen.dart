@@ -2,26 +2,26 @@ import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
 
-class HomeScreen extends StatelessWidget {
-  final String currentUserId;
-  final String visitedUserId;
-
-  HomeScreen({
-    Key? key,
-    required this.currentUserId,
-    required this.visitedUserId,
-  }) : super(key: key);
-
+class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+
+    // print('HomeScreen, currentUserId: $currentUserId');
+    // print('HomeScreen, visitedUserId: $visitedUserId');
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -178,7 +178,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => CreateTweetScreen(
-                                currentUserId: currentUserId,
+                                currentUserId: currentUserId!,
                               ),
                             ),
                           );
@@ -218,19 +218,21 @@ class HomeScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: listSnap.length,
                         itemBuilder: (BuildContext context, int index) {
+                          User user = User.fromDoc(listSnap[index]);
                           return Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 0),
                             child: GestureDetector(
                               onTap: () {
+                                /*visitedUserId情報を更新*/
+                                context
+                                    .read(visitedUserIdProvider.notifier)
+                                    .update(userId: user.userId);
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ProfileScreen(
-                                      currentUserId: currentUserId,
-                                      visitedUserId:
-                                          listSnap[index].get('userId'),
-                                    ),
+                                    builder: (context) => ProfileScreen(),
                                   ),
                                 );
                               },
@@ -245,14 +247,6 @@ class HomeScreen extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: TwitterColor,
-                                          // gradient: LinearGradient(
-                                          //   begin: FractionalOffset.bottomLeft,
-                                          //   end: FractionalOffset.topRight,
-                                          //   colors: [
-                                          //     Colors.red,
-                                          //     Colors.yellow,
-                                          //   ],
-                                          // ),
                                         ),
                                       ),
                                       CircleAvatar(
@@ -263,7 +257,7 @@ class HomeScreen extends StatelessWidget {
                                         radius: 25,
                                         backgroundColor: TwitterColor,
                                         backgroundImage: NetworkImage(
-                                          listSnap[index].get('profileImage'),
+                                          user.profileImage,
                                         ),
                                       ),
                                     ],
@@ -289,7 +283,7 @@ class HomeScreen extends StatelessWidget {
                     children: allUserTweets.map((allTweets) {
                       Tweet tweet = Tweet.fromDoc(allTweets);
                       return TweetContainer(
-                        currentUserId: currentUserId,
+                        currentUserId: currentUserId!,
                         tweet: tweet,
                       );
                     }).toList(),
@@ -300,10 +294,7 @@ class HomeScreen extends StatelessWidget {
           },
         ),
       ),
-      drawer: DrawerContainer(
-        currentUserId: currentUserId,
-        visitedUserId: visitedUserId,
-      ),
+      drawer: DrawerContainer(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: TwitterColor,
         child: Image.asset(
@@ -315,7 +306,7 @@ class HomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => CreateTweetScreen(
-                currentUserId: currentUserId,
+                currentUserId: currentUserId!,
               ),
             ),
           );
