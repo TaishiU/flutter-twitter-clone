@@ -114,9 +114,7 @@ class ProfileScreen extends HookWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CreateTweetScreen(
-                                        currentUserId: currentUserId!,
-                                      ),
+                                      builder: (context) => CreateTweetScreen(),
                                     ),
                                   );
                                 },
@@ -221,9 +219,7 @@ class ProfileScreen extends HookWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CreateTweetScreen(
-                                        currentUserId: currentUserId!,
-                                      ),
+                                      builder: (context) => CreateTweetScreen(),
                                     ),
                                   );
                                 },
@@ -875,9 +871,7 @@ class ProfileScreen extends HookWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateTweetScreen(
-                      currentUserId: currentUserId!,
-                    ),
+                    builder: (context) => CreateTweetScreen(),
                   ),
                 );
               },

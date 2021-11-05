@@ -269,9 +269,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateTweetScreen(
-                currentUserId: widget.currentUserId,
-              ),
+              builder: (context) => CreateTweetScreen(),
             ),
           );
         },

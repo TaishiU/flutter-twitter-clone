@@ -18,6 +18,11 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    // final createTweetState = useProvider(createTweetProvider);
+    // final _createTweetIsLoading = createTweetState.isLoading;
+
+    // print('_tweetImageList: $_tweetImageList');
+    // print('_isLoading: $_isLoading');
 
     // print('HomeScreen, currentUserId: $currentUserId');
     // print('HomeScreen, visitedUserId: $visitedUserId');
@@ -177,9 +182,7 @@ class HomeScreen extends HookWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CreateTweetScreen(
-                                currentUserId: currentUserId!,
-                              ),
+                              builder: (context) => CreateTweetScreen(),
                             ),
                           );
                         },
@@ -194,6 +197,9 @@ class HomeScreen extends HookWidget {
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               children: [
+                // _createTweetIsLoading
+                //     ? LinearProgressIndicator()
+                //     : SizedBox.shrink(),
                 Container(
                   height: 83,
                   child: StreamBuilder<QuerySnapshot>(
@@ -305,9 +311,7 @@ class HomeScreen extends HookWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateTweetScreen(
-                currentUserId: currentUserId!,
-              ),
+              builder: (context) => CreateTweetScreen(),
             ),
           );
         },
