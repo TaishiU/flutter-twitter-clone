@@ -356,13 +356,22 @@ class CreateTweetScreen extends HookWidget {
                             tweetText: _tweetText,
                           );
 
-                      //Navigator.of(context).pop();
-
                       /*falseが帰ってきたら前のページに戻る*/
                       if (isFalse == false) {
-                        Navigator.of(context).pop();
-                        //TODO ボトムシートを出す
+                        final snackBar = SnackBar(
+                          backgroundColor: TwitterColor,
+                          content: Text(
+                            'You sent a tweet, successfully🎉',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
+                        Navigator.of(context).pop();
                       } else {
                         print('create tweet error...');
                         print('isFalse: $isFalse');
@@ -536,25 +545,25 @@ class CreateTweetScreen extends HookWidget {
                       ),
                     ),
               SizedBox(height: 50),
-              Container(
-                height: 100,
-                width: 200,
-                child: ElevatedButton(
-                  child: Text(
-                    _isLoading == true ? 'ture' : 'false',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: _isLoading == true ? Colors.red : TwitterColor,
-                    onPrimary: Colors.black,
-                    shape: const StadiumBorder(),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
+              // Container(
+              //   height: 100,
+              //   width: 200,
+              //   child: ElevatedButton(
+              //     child: Text(
+              //       _isLoading == true ? 'ture' : 'false',
+              //       style: TextStyle(
+              //         fontSize: 30,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //     style: ElevatedButton.styleFrom(
+              //       primary: _isLoading == true ? Colors.red : TwitterColor,
+              //       onPrimary: Colors.black,
+              //       shape: const StadiumBorder(),
+              //     ),
+              //     onPressed: () {},
+              //   ),
+              // ),
               SizedBox(height: 20),
               _isLoading ? CircularProgressIndicator() : SizedBox.shrink(),
             ],
