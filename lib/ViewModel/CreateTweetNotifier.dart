@@ -91,7 +91,8 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
   Future<Map<String, String>> _uploadImage({
     required String? currentUserId,
   }) async {
-    Map<String, String> _images = {}; /*Storage格納後に返却されるURLを格納*/
+    /*Storage格納後に返却されるURLを格納*/
+    Map<String, String> _images = {};
     Map<int, File> _pickedImages = state.tweetImageList.asMap();
     if (_pickedImages.isNotEmpty) {
       for (var _pickedImage in _pickedImages.entries) {
