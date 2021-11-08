@@ -3,6 +3,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final _authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
+// final userProvider =
+//     Provider<User>((ref) => ref.watch(_authProvider).currentUser);
+
+// final userProvider = StateNotifierProvider<UserController, User>(
+//       (ref) => UserController(),
+// );
+// class UserController extends StateNotifier<User> {
+//   UserController(User user) : super(user);
+//   void update({required User user}) => state = user;
+// }
+
 final userIdStreamProvider = StreamProvider<String?>((ref) {
   return ref.watch(_authProvider).authStateChanges().map((User? user) {
     if (user != null) {
