@@ -76,7 +76,6 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ChatScreen(
-          currentUserId: currentUserId,
           convoId: convoId,
           peerUser: peerUser,
         ),

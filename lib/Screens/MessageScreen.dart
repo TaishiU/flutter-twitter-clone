@@ -30,7 +30,6 @@ class MessageScreen extends HookWidget {
         context,
         MaterialPageRoute(
           builder: (context) => ChatScreen(
-            currentUserId: currentUserId!,
             convoId: convoId,
             peerUser: peerUser,
           ),
