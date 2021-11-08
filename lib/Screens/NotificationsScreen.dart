@@ -1,80 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
+import 'package:twitter_clone/ViewModel/NotificationsNotifier.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
 
-class NotificationsScreen extends StatefulWidget {
-  final String currentUserId;
-  final String visitedUserId;
-
-  NotificationsScreen({
-    Key? key,
-    required this.currentUserId,
-    required this.visitedUserId,
-  }) : super(key: key);
-
-  @override
-  _NotificationsScreenState createState() => _NotificationsScreenState();
-}
-
-class _NotificationsScreenState extends State<NotificationsScreen> {
-  List<Activity> _activities = [];
-
-  setupActivities() async {
-    List<Activity> activities =
-        await Firestore().getActivity(currentUserid: widget.currentUserId);
-    if (mounted) {
-      setState(() {
-        _activities = activities;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    setupActivities();
-  }
-
-  moveToProfileOrTweetDetail({
-    required Activity activity,
-    required User user,
-  }) async {
-    if (activity.follow == true) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProfileScreen(),
-        ),
-      );
-    }
-    if (activity.likes == true || activity.comment == true) {
-      DocumentSnapshot tweetSnap = await Firestore().getTweet(
-        tweetId: activity.tweetId,
-        tweetAuthorId: widget.currentUserId,
-      );
-      Tweet tweet = Tweet.fromDoc(tweetSnap);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TweetDetailScreen(
-            tweet: tweet,
-          ),
-        ),
-      );
-    }
-  }
+class NotificationsScreen extends HookWidget {
+  NotificationsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+    final notificationsState = useProvider(notificationsProvider);
+    final _activitiesList = notificationsState.activitiesList;
+
+    useEffect(() {
+      context.read(notificationsProvider.notifier).setupActivities();
+    }, []);
+
+    moveToProfileOrTweetDetail({
+      required Activity activity,
+      required User user,
+    }) async {
+      if (activity.follow == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(),
+          ),
+        );
+      }
+      if (activity.likes == true || activity.comment == true) {
+        DocumentSnapshot tweetSnap = await Firestore().getTweet(
+          tweetId: activity.tweetId,
+          tweetAuthorId: currentUserId!,
+        );
+        Tweet tweet = Tweet.fromDoc(tweetSnap);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TweetDetailScreen(
+              tweet: tweet,
+            ),
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -100,7 +82,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () {
-          return setupActivities();
+          return context.read(notificationsProvider.notifier).setupActivities();
         },
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(
@@ -115,9 +97,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: _activities.length,
+                itemCount: _activitiesList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  Activity activity = _activities[index];
+                  Activity activity = _activitiesList[index];
                   return FutureBuilder(
                     future: usersRef.doc(activity.fromUserId).get(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -256,7 +238,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ],
           ),
         ),
-        //child: ,
       ),
       drawer: DrawerContainer(),
       floatingActionButton: FloatingActionButton(
