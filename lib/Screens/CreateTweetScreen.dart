@@ -34,6 +34,7 @@ class CreateTweetScreen extends HookWidget {
             color: Colors.black,
           ),
           onPressed: () {
+            context.read(createTweetProvider.notifier).resetImageList();
             Navigator.pop(context);
           },
         ),
@@ -54,37 +55,44 @@ class CreateTweetScreen extends HookWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: TwitterColor,
+                      primary: _isLoading == true
+                          ? Colors.lightBlue.shade200
+                          : TwitterColor,
                       onPrimary: Colors.black,
                       shape: StadiumBorder(),
                     ),
                     onPressed: () async {
-                      final isFalse = await context
-                          .read(createTweetProvider.notifier)
-                          .handleTweet(
-                            currentUserId: currentUserId,
-                            tweetText: _tweetText,
-                          );
+                      if (_isLoading == false) {
+                        final isFalse = await context
+                            .read(createTweetProvider.notifier)
+                            .handleTweet(
+                              currentUserId: currentUserId,
+                              tweetText: _tweetText,
+                            );
 
-                      /*falseが帰ってきたら前のページに戻る*/
-                      if (isFalse == false) {
-                        final snackBar = SnackBar(
-                          backgroundColor: TwitterColor,
-                          content: Text(
-                            'You sent a tweet, successfully🎉',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
+                        /*falseが帰ってきたら前のページに戻る*/
+                        if (isFalse == false) {
+                          final snackBar = SnackBar(
+                            backgroundColor: TwitterColor,
+                            content: Text(
+                              'You sent a tweet, successfully🎉',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                        Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        } else {
+                          print('create tweet error...');
+                          print('isFalse: $isFalse');
+                        }
                       } else {
-                        print('create tweet error...');
-                        print('isFalse: $isFalse');
+                        print('投稿中なのでボタンをクリックしても無効です');
+                        print('投稿中の_isLoading: $_isLoading}');
                       }
                     },
                   )
@@ -263,6 +271,3 @@ class CreateTweetScreen extends HookWidget {
     );
   }
 }
-
-//TODO ツイート投稿中はボタンを無効にしたい
-//https://www.youtube.com/watch?v=Z-FLekHk7LQ (YouTube)

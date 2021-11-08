@@ -41,6 +41,13 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     state = state.copyWith(tweetImageList: newList);
   }
 
+  void resetImageList() {
+    final List<File> resetList = [];
+    state = state.copyWith(tweetImageList: resetList);
+    print('前のページに戻ったので、tweetImageListを初期化しました！');
+    print('state.tweetImageList: ${state.tweetImageList}');
+  }
+
   Future<bool> handleTweet({
     required String? currentUserId,
     required String tweetText,
@@ -80,6 +87,12 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     );
 
     Firestore().createTweet(tweet: tweet);
+
+    //state.tweetImageListを初期化
+    final List<File> resetList = [];
+    state = state.copyWith(tweetImageList: resetList);
+    print('投稿が終了し、tweetImageListを初期化しました！');
+    print('state.tweetImageList: ${state.tweetImageList}');
 
     //isLoading: false
     state = state.copyWith(isLoading: false);
