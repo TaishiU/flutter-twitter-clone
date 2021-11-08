@@ -163,10 +163,7 @@ class FeedScreen extends HookWidget {
       body: [
         HomeScreen(),
         SearchScreen(),
-        NotificationsScreen(
-          currentUserId: currentUserId!,
-          visitedUserId: currentUserId,
-        ),
+        NotificationsScreen(),
         MessageScreen(),
       ].elementAt(bottomTabIndex),
       bottomNavigationBar: CupertinoTabBar(
