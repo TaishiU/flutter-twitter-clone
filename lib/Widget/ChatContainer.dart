@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Message.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Widget/ChatImage.dart';
 
-class ChatContainer extends StatelessWidget {
-  final String currentUserId;
+class ChatContainer extends HookWidget {
   final String peerUserId;
   final String peerUserProfileImage;
   final Message message;
 
   ChatContainer({
     Key? key,
-    required this.currentUserId,
     required this.peerUserId,
     required this.message,
     required this.peerUserProfileImage,
@@ -20,6 +21,8 @@ class ChatContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
+
     if (!message.read && message.idTo == currentUserId) {
       /*会話を未読から既読へ変更*/
       Firestore().updateMessageRead(message: message);
@@ -108,7 +111,7 @@ class ChatContainer extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 3),
                       child: ChatImage(
-                        currentUserId: currentUserId,
+                        currentUserId: currentUserId!,
                         message: message,
                         containerHeight: 230,
                         containerWith: 200,
@@ -163,7 +166,7 @@ class ChatContainer extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 3),
                           child: ChatImage(
-                            currentUserId: currentUserId,
+                            currentUserId: currentUserId!,
                             message: message,
                             containerHeight: 230,
                             containerWith: 200,
