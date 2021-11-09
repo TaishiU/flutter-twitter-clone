@@ -27,14 +27,14 @@ class TweetDetailScreen extends HookWidget {
     required this.tweet,
   }) : super(key: key);
 
+  final _formkey = GlobalKey<FormState>();
+  final TextEditingController _commentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final bool _isLiked = useProvider(isLikedProvider);
     final String _comment = useProvider(commentProvider).state;
-
-    final _formkey = GlobalKey<FormState>();
-    final TextEditingController _commentController = TextEditingController();
     final FocusNode _focusNode = FocusNode();
     final DynamicLink dynamicLink = DynamicLink();
 

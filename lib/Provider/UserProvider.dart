@@ -56,3 +56,7 @@ class ProfileIndexController extends StateNotifier<int> {
   ProfileIndexController(int index) : super(index);
   void update({required int index}) => state = index;
 }
+
+final profileNameProvider = StateProvider.autoDispose((ref) => '');
+
+final profileBioProvider = StateProvider.autoDispose((ref) => '');

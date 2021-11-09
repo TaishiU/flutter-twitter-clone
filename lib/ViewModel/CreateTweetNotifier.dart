@@ -7,15 +7,17 @@ import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/State/CreateTweetState.dart';
 
 final createTweetProvider =
     StateNotifierProvider<CreateTweetNotifier, CreateTweetState>(
-  (ref) => CreateTweetNotifier(),
+  (ref) => CreateTweetNotifier(ref.read),
 );
 
 class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
-  CreateTweetNotifier() : super(const CreateTweetState());
+  final Reader _read;
+  CreateTweetNotifier(this._read) : super(const CreateTweetState());
 
   void handleImageFromGallery() async {
     try {
@@ -49,15 +51,15 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
   }
 
   Future<bool> handleTweet({
-    required String? currentUserId,
     required String tweetText,
   }) async {
-    //isLoading: true
     state = state.copyWith(isLoading: true);
     print('投稿開始、isLoading: ${state.isLoading}');
 
     Map<String, String> _images = {};
     bool hasImage = false;
+
+    final String? currentUserId = _read(currentUserIdProvider);
 
     /*画像がある場合*/
     if (state.tweetImageList.length != 0) {
@@ -94,7 +96,6 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     print('投稿が終了し、tweetImageListを初期化しました！');
     print('state.tweetImageList: ${state.tweetImageList}');
 
-    //isLoading: false
     state = state.copyWith(isLoading: false);
     print('投稿終了、isLoading: ${state.isLoading}');
     //isLoading: falseを返す

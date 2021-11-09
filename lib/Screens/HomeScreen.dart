@@ -18,6 +18,8 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    //final String visitedUserId = useProvider(visitedUserIdProvider);
+
     // final createTweetState = useProvider(createTweetProvider);
     // final _createTweetIsLoading = createTweetState.isLoading;
 
@@ -234,6 +236,11 @@ class HomeScreen extends HookWidget {
                                 context
                                     .read(visitedUserIdProvider.notifier)
                                     .update(userId: user.userId);
+                                print('currentUserId: $currentUserId');
+                                // print(
+                                //     'HomeScreen, visitedUserId: $visitedUserId');
+                                print('userName: ${user.name}');
+                                print('userId: ${user.userId}');
 
                                 Navigator.push(
                                   context,
