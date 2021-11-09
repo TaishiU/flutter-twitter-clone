@@ -14,6 +14,7 @@ class DrawerContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final String visitedUserId = useProvider(visitedUserIdProvider);
     final AuthService _authService = AuthService();
 
     return Drawer(
@@ -39,6 +40,7 @@ class DrawerContainer extends HookWidget {
                         context
                             .read(visitedUserIdProvider.notifier)
                             .update(userId: user.userId);
+                        print('DrawerContainer, visitedUserId: $visitedUserId');
 
                         Navigator.push(
                           context,

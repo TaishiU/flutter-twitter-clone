@@ -66,7 +66,6 @@ class CreateTweetScreen extends HookWidget {
                         final isFalse = await context
                             .read(createTweetProvider.notifier)
                             .handleTweet(
-                              currentUserId: currentUserId,
                               tweetText: _tweetText,
                             );
 
@@ -92,7 +91,7 @@ class CreateTweetScreen extends HookWidget {
                         }
                       } else {
                         print('投稿中なのでボタンをクリックしても無効です');
-                        print('投稿中の_isLoading: $_isLoading}');
+                        print('投稿中の_isLoading: $_isLoading');
                       }
                     },
                   )

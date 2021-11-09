@@ -402,6 +402,8 @@ class ProfileScreen extends HookWidget {
 
     final _isOwner = currentUserId == visitedUserId;
 
+    print('ProfileScreen, visitedUserId: $visitedUserId');
+
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
