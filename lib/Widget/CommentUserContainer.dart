@@ -9,13 +9,11 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class CommentUserContainer extends HookWidget {
   final String title;
-  final String currentUserId;
   final List<DocumentSnapshot> commentListForTweet;
 
   CommentUserContainer({
     Key? key,
     required this.title,
-    required this.currentUserId,
     required this.commentListForTweet,
   }) : super(key: key);
 

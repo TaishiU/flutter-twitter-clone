@@ -252,7 +252,6 @@ class TweetDetailScreen extends HookWidget {
                         tweet.images.isEmpty
                             ? SizedBox.shrink()
                             : TweetImage(
-                                currentUserId: currentUserId!,
                                 tweet: tweet,
                                 containerHeight: 200,
                                 containerWith:
@@ -313,7 +312,6 @@ class TweetDetailScreen extends HookWidget {
                                           builder: (context) =>
                                               LikesUserContainer(
                                             title: 'Liked by',
-                                            currentUserId: currentUserId!,
                                             likesListForTweet:
                                                 likesListForTweet,
                                           ),
@@ -361,7 +359,6 @@ class TweetDetailScreen extends HookWidget {
                                           builder: (context) =>
                                               CommentUserContainer(
                                                   title: 'Commented by',
-                                                  currentUserId: currentUserId!,
                                                   commentListForTweet:
                                                       commentListForTweet),
                                         ),

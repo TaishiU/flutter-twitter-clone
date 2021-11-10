@@ -16,12 +16,10 @@ import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Widget/TweetImage.dart';
 
 class TweetContainer extends HookWidget {
-  final String currentUserId;
   final Tweet tweet;
 
   TweetContainer({
     Key? key,
-    required this.currentUserId,
     required this.tweet,
   }) : super(key: key);
 
@@ -233,7 +231,6 @@ class TweetContainer extends HookWidget {
                                 children: [
                                   SizedBox(height: 15),
                                   TweetImage(
-                                    currentUserId: currentUserId!,
                                     tweet: tweet,
                                     containerHeight: 180,
                                     containerWith:

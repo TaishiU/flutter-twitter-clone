@@ -3,7 +3,6 @@ import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
 
 class TweetImage extends StatelessWidget {
-  final String currentUserId;
   final Tweet tweet;
   final double containerHeight;
   final double containerWith;
@@ -12,7 +11,6 @@ class TweetImage extends StatelessWidget {
 
   TweetImage({
     Key? key,
-    required this.currentUserId,
     required this.tweet,
     required this.containerHeight,
     required this.containerWith,
