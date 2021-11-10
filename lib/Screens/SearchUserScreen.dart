@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class SearchUserScreen extends StatefulWidget {
@@ -46,6 +48,11 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       title: Text(user.name),
       subtitle: Text('@${user.bio}'),
       onTap: () {
+        /*visitedUserId情報を更新*/
+        context
+            .read(visitedUserIdProvider.notifier)
+            .update(userId: user.userId);
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -100,6 +107,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 setState(() {
                   _searchName = name;
                   _algoliaResult = searchUser(name: name);
+                  print('_algoliaResult: $_algoliaResult');
                 });
               }
             },
@@ -116,6 +124,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           ),
         ],
       ),
+      // body: Center(child: Text('_algoliaResult: $_algoliaResult')),
       body: _algoliaResult == null
           ? StreamBuilder<QuerySnapshot>(
               stream: usersRef.limit(5).snapshots(),

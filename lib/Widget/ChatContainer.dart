@@ -111,7 +111,6 @@ class ChatContainer extends HookWidget {
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 3),
                       child: ChatImage(
-                        currentUserId: currentUserId!,
                         message: message,
                         containerHeight: 230,
                         containerWith: 200,
@@ -166,7 +165,6 @@ class ChatContainer extends HookWidget {
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 3),
                           child: ChatImage(
-                            currentUserId: currentUserId!,
                             message: message,
                             containerHeight: 230,
                             containerWith: 200,

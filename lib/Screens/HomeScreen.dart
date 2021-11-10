@@ -296,7 +296,6 @@ class HomeScreen extends HookWidget {
                     children: allUserTweets.map((allTweets) {
                       Tweet tweet = Tweet.fromDoc(allTweets);
                       return TweetContainer(
-                        currentUserId: currentUserId!,
                         tweet: tweet,
                       );
                     }).toList(),

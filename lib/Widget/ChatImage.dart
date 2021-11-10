@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:twitter_clone/Model/Message.dart';
 
-class ChatImage extends StatelessWidget {
-  final String currentUserId;
+class ChatImage extends HookWidget {
   final Message message;
   final double containerHeight;
   final double containerWith;
@@ -11,7 +11,6 @@ class ChatImage extends StatelessWidget {
 
   ChatImage({
     Key? key,
-    required this.currentUserId,
     required this.message,
     required this.containerHeight,
     required this.containerWith,

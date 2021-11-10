@@ -9,13 +9,11 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class ListUserContainer extends HookWidget {
   final String title;
-  final String currentUserId;
   final List<DocumentSnapshot> listUserDocumentSnap;
 
   ListUserContainer({
     Key? key,
     required this.title,
-    required this.currentUserId,
     required this.listUserDocumentSnap,
   }) : super(key: key);
 

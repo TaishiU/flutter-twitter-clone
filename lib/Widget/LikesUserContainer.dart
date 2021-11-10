@@ -9,13 +9,11 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class LikesUserContainer extends HookWidget {
   final String title;
-  final String currentUserId;
   final List<DocumentSnapshot> likesListForTweet;
 
   LikesUserContainer({
     Key? key,
     required this.title,
-    required this.currentUserId,
     required this.likesListForTweet,
   }) : super(key: key);
 

@@ -97,7 +97,6 @@ class DrawerContainer extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Following',
-                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followingUserList,
                                       ),
                                     ),
@@ -149,7 +148,6 @@ class DrawerContainer extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
-                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followersUserList,
                                       ),
                                     ),

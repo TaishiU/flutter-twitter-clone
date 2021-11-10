@@ -149,7 +149,6 @@ class ProfileScreen extends HookWidget {
                 children: allUserTweets.map((userTweets) {
                   Tweet tweet = Tweet.fromDoc(userTweets);
                   return TweetContainer(
-                    currentUserId: currentUserId!,
                     tweet: tweet,
                   );
                 }).toList(),
@@ -254,7 +253,6 @@ class ProfileScreen extends HookWidget {
                 children: allUserMediaTweets.map((userTweet) {
                   Tweet tweet = Tweet.fromDoc(userTweet);
                   return TweetContainer(
-                    currentUserId: currentUserId!,
                     tweet: tweet,
                   );
                 }).toList(),
@@ -332,7 +330,6 @@ class ProfileScreen extends HookWidget {
                 children: allFavoriteTweets.map((favoriteTweet) {
                   Tweet tweet = Tweet.fromDoc(favoriteTweet);
                   return TweetContainer(
-                    currentUserId: currentUserId!,
                     tweet: tweet,
                   );
                 }).toList(),
@@ -726,7 +723,6 @@ class ProfileScreen extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Following',
-                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followingUserList,
                                       ),
                                     ),
@@ -778,7 +774,6 @@ class ProfileScreen extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
-                                        currentUserId: currentUserId!,
                                         listUserDocumentSnap: followersUserList,
                                       ),
                                     ),
