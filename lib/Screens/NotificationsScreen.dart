@@ -4,11 +4,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
@@ -23,6 +23,7 @@ class NotificationsScreen extends HookWidget {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final notificationsState = useProvider(notificationsProvider);
     final _activitiesList = notificationsState.activitiesList;
+    final TweetRepository _tweetRepository = TweetRepository();
 
     useEffect(() {
       context.read(notificationsProvider.notifier).setupActivities();
@@ -41,7 +42,7 @@ class NotificationsScreen extends HookWidget {
         );
       }
       if (activity.likes == true || activity.comment == true) {
-        DocumentSnapshot tweetSnap = await Firestore().getTweet(
+        DocumentSnapshot tweetSnap = await _tweetRepository.getTweet(
           tweetId: activity.tweetId,
           tweetAuthorId: currentUserId!,
         );
@@ -154,12 +155,13 @@ class NotificationsScreen extends HookWidget {
                                               children: [
                                                 CircleAvatar(
                                                   backgroundColor: TwitterColor,
-                                                  backgroundImage:
-                                                      user.profileImage.isEmpty
-                                                          ? null
-                                                          : NetworkImage(
-                                                              user.profileImage,
-                                                            ),
+                                                  backgroundImage: user
+                                                          .profileImageUrl
+                                                          .isEmpty
+                                                      ? null
+                                                      : NetworkImage(
+                                                          user.profileImageUrl,
+                                                        ),
                                                 ),
                                                 SizedBox(width: 10),
                                                 Text(

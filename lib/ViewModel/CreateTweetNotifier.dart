@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
-import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/TweetRepository.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
+import 'package:twitter_clone/Service/StorageService.dart';
 import 'package:twitter_clone/State/CreateTweetState.dart';
 
 final createTweetProvider =
@@ -18,6 +19,10 @@ final createTweetProvider =
 class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
   final Reader _read;
   CreateTweetNotifier(this._read) : super(const CreateTweetState());
+
+  final UserRepository _userRepository = UserRepository();
+  final TweetRepository _tweetRepository = TweetRepository();
+  final StorageService _storageService = StorageService();
 
   void handleImageFromGallery() async {
     try {
@@ -56,14 +61,18 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     state = state.copyWith(isLoading: true);
     print('投稿開始、isLoading: ${state.isLoading}');
 
-    Map<String, String> _images = {};
+    Map<String, String> _imagesUrl = {};
+    Map<String, String> _imagesPath = {};
     bool hasImage = false;
 
     final String? currentUserId = _read(currentUserIdProvider);
 
     /*画像がある場合*/
     if (state.tweetImageList.length != 0) {
-      _images = await _uploadImage(currentUserId: currentUserId!);
+      Map<String, Map<String, String>> data =
+          await _uploadImage(currentUserId: currentUserId!);
+      _imagesUrl = data['urlData']!;
+      _imagesPath = data['pathData']!;
       /* _uploadImage()メソッド↓ */
       hasImage = true;
     }
@@ -72,23 +81,24 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     /*上記で宣言した「_images = {}, hasImage = false」がFirestoreに保存される*/
 
     DocumentSnapshot userProfileDoc =
-        await Firestore().getUserProfile(userId: currentUserId!);
+        await _userRepository.getUserProfile(userId: currentUserId!);
     User user = User.fromDoc(userProfileDoc);
 
     Tweet tweet = Tweet(
       authorName: user.name,
       authorId: user.userId,
       authorBio: user.bio,
-      authorProfileImage: user.profileImage,
+      authorProfileImage: user.profileImageUrl,
       text: tweetText,
-      images: _images,
+      imagesUrl: _imagesUrl,
+      imagesPath: _imagesPath,
       hasImage: hasImage,
       timestamp: Timestamp.fromDate(DateTime.now()),
       likes: 0,
       reTweets: 0,
     );
 
-    Firestore().createTweet(tweet: tweet);
+    _tweetRepository.createTweet(tweet: tweet);
 
     //state.tweetImageListを初期化
     final List<File> resetList = [];
@@ -102,20 +112,28 @@ class CreateTweetNotifier extends StateNotifier<CreateTweetState> {
     return state.isLoading;
   }
 
-  Future<Map<String, String>> _uploadImage({
+  Future<Map<String, Map<String, String>>> _uploadImage({
     required String? currentUserId,
   }) async {
-    /*Storage格納後に返却されるURLを格納*/
-    Map<String, String> _images = {};
+    Map<String, String> _imagesUrl = {}; /*Storage格納後に返却されるURLを格納*/
+    Map<String, String> _imagesPath = {}; /*Storage格納後に返却されるPathを格納*/
+    Map<String, Map<String, String>> _imagesData = {};
     Map<int, File> _pickedImages = state.tweetImageList.asMap();
     if (_pickedImages.isNotEmpty) {
       for (var _pickedImage in _pickedImages.entries) {
-        String _tweetImageUrl = await Storage().uploadTweetImage(
+        Map<String, String> data = await _storageService.uploadTweetImage(
             userId: currentUserId!, imageFile: _pickedImage.value);
-        /* Mapの「key = value」の型 */
-        _images[_pickedImage.key.toString()] = _tweetImageUrl;
+        String _tweetImageUrl = data['url']!;
+        String _tweetImagePath = data['path']!;
+        _imagesUrl[_pickedImage.key.toString()] = _tweetImageUrl;
+        _imagesPath[_pickedImage.key.toString()] = _tweetImagePath;
+
+        _imagesData = {
+          'urlData': _imagesUrl,
+          'pathData': _imagesPath,
+        };
       }
     }
-    return _images;
+    return _imagesData;
   }
 }

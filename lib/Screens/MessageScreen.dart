@@ -4,10 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/GetLastMessage.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/SelectChatUserScreen.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
@@ -16,6 +16,7 @@ class MessageScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final UserRepository _userRepository = UserRepository();
 
     moveToChatScreen({
       required BuildContext context,
@@ -24,7 +25,7 @@ class MessageScreen extends HookWidget {
     }) async {
       /*相手ユーザーのプロフィール*/
       DocumentSnapshot userProfileDoc =
-          await Firestore().getUserProfile(userId: peerUserId);
+          await _userRepository.getUserProfile(userId: peerUserId);
       User peerUser = User.fromDoc(userProfileDoc);
       Navigator.push(
         context,

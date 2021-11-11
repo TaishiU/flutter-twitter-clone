@@ -40,8 +40,8 @@ class EditProfileScreen extends HookWidget {
 
     displayCoverImage() {
       if (_coverImage == null) {
-        if (user.coverImage.isNotEmpty) {
-          return NetworkImage(user.coverImage);
+        if (user.coverImageUrl.isNotEmpty) {
+          return NetworkImage(user.coverImageUrl);
         }
       } else {
         return FileImage(_coverImage);
@@ -50,8 +50,8 @@ class EditProfileScreen extends HookWidget {
 
     displayProfileImage() {
       if (_profileImage == null) {
-        if (user.profileImage.isNotEmpty) {
-          return NetworkImage(user.profileImage);
+        if (user.profileImageUrl.isNotEmpty) {
+          return NetworkImage(user.profileImageUrl);
         }
       } else {
         return FileImage(_profileImage);
@@ -123,7 +123,7 @@ class EditProfileScreen extends HookWidget {
                   height: 150,
                   decoration: BoxDecoration(
                     color: TwitterColor,
-                    image: user.coverImage.isEmpty && _coverImage == null
+                    image: user.coverImageUrl.isEmpty && _coverImage == null
                         ? null
                         : DecorationImage(
                             image: displayCoverImage() as ImageProvider,
@@ -174,7 +174,7 @@ class EditProfileScreen extends HookWidget {
                           CircleAvatar(
                             radius: 42,
                             backgroundColor: TwitterColor,
-                            backgroundImage: user.profileImage.isEmpty &&
+                            backgroundImage: user.profileImageUrl.isEmpty &&
                                     _profileImage == null
                                 ? null
                                 : displayProfileImage() as ImageProvider,

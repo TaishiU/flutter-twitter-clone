@@ -270,7 +270,7 @@ class HomeScreen extends HookWidget {
                                         radius: 25,
                                         backgroundColor: TwitterColor,
                                         backgroundImage: NetworkImage(
-                                          user.profileImage,
+                                          user.profileImageUrl,
                                         ),
                                       ),
                                     ],

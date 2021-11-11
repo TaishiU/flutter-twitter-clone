@@ -87,7 +87,7 @@ class ChatScreen extends HookWidget {
                         Message message = Message.fromDoc(listMessage);
                         return ChatContainer(
                           peerUserId: peerUser.userId,
-                          peerUserProfileImage: peerUser.profileImage,
+                          peerUserProfileImage: peerUser.profileImageUrl,
                           message: message,
                         );
                       }).toList(),

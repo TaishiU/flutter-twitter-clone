@@ -149,9 +149,9 @@ class CreateTweetScreen extends HookWidget {
                             return CircleAvatar(
                               radius: 20,
                               backgroundColor: TwitterColor,
-                              backgroundImage: user.profileImage.isEmpty
+                              backgroundImage: user.profileImageUrl.isEmpty
                                   ? null
-                                  : NetworkImage(user.profileImage),
+                                  : NetworkImage(user.profileImageUrl),
                             );
                           },
                         ),

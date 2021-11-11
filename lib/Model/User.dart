@@ -5,8 +5,10 @@ class User {
   String name;
   String email;
   String bio;
-  String profileImage;
-  String coverImage;
+  String profileImageUrl;
+  String profileImagePath;
+  String coverImageUrl;
+  String coverImagePath;
   String fcmToken;
 
   User({
@@ -14,8 +16,10 @@ class User {
     required this.name,
     required this.email,
     required this.bio,
-    required this.profileImage,
-    required this.coverImage,
+    required this.profileImageUrl,
+    required this.profileImagePath,
+    required this.coverImageUrl,
+    required this.coverImagePath,
     required this.fcmToken,
   });
 
@@ -25,8 +29,10 @@ class User {
       name: doc['name'],
       email: doc['email'],
       bio: doc['bio'],
-      profileImage: doc['profileImage'],
-      coverImage: doc['coverImage'],
+      profileImageUrl: doc['profileImageUrl'],
+      profileImagePath: doc['profileImagePath'],
+      coverImageUrl: doc['coverImageUrl'],
+      coverImagePath: doc['coverImagePath'],
       fcmToken: doc['fcmToken'],
     );
   }
@@ -37,8 +43,10 @@ class User {
       name: data['name'],
       email: data['email'],
       bio: data['bio'],
-      profileImage: data['profileImage'],
-      coverImage: data['coverImage'],
+      profileImageUrl: data['profileImageUrl'],
+      profileImagePath: data['profileImagePath'],
+      coverImageUrl: data['coverImageUrl'],
+      coverImagePath: data['coverImagePath'],
       fcmToken: data['fcmToken'],
     );
   }

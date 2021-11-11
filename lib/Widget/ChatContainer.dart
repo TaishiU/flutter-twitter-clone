@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/MessageRepository.dart';
+import 'package:twitter_clone/Service/StorageService.dart';
 import 'package:twitter_clone/Widget/ChatImage.dart';
 
 class ChatContainer extends HookWidget {
@@ -22,10 +23,12 @@ class ChatContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final MessageRepository _messageRepository = MessageRepository();
+    final StorageService _storageService = StorageService();
 
     if (!message.read && message.idTo == currentUserId) {
       /*会話を未読から既読へ変更*/
-      Firestore().updateMessageRead(message: message);
+      _messageRepository.updateMessageRead(message: message);
     }
     if (message.idFrom == currentUserId && message.idTo == peerUserId) {
       /*ユーザー自身のメッセージは右側に表示*/
@@ -33,7 +36,7 @@ class ChatContainer extends HookWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
-            onTap: () {
+            onLongPress: () {
               /*メッセージ削除のアラート*/
               showDialog(
                 context: context,
@@ -67,11 +70,12 @@ class ChatContainer extends HookWidget {
                           primary: Colors.red,
                         ),
                         onPressed: () async {
-                          await messagesRef
-                              .doc(message.convoId)
-                              .collection('allMessages')
-                              .doc(message.timestamp.toString())
-                              .delete();
+                          _messageRepository.deleteMessageForText(
+                            message: message,
+                          );
+                          _storageService.deleteMessageForImage(
+                            imagesPath: message.imagesPath,
+                          );
                           Navigator.pop(context);
                         },
                       ),

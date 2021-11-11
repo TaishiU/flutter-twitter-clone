@@ -6,13 +6,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/DynamicLink.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/TweetRepository.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
+import 'package:twitter_clone/Service/DynamicLinkService.dart';
 
 class TweetImageView extends HookWidget {
   final int tappedImageIndex;
@@ -28,11 +29,13 @@ class TweetImageView extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final bool _isLiked = useProvider(isLikedProvider);
-    final DynamicLink dynamicLink = DynamicLink();
+    final UserRepository _userRepository = UserRepository();
+    final TweetRepository _tweetRepository = TweetRepository();
+    final DynamicLinkService _dynamicLinkService = DynamicLinkService();
 
     /*ツイートにいいねをしているか判断するメソッド*/
     setupIsLiked() async {
-      bool isLikedTweet = await Firestore().isLikedTweet(
+      bool isLikedTweet = await _tweetRepository.isLikedTweet(
         currentUserId: currentUserId!,
         tweetAuthorId: tweet.authorId,
         tweetId: tweet.tweetId!,
@@ -54,21 +57,21 @@ class TweetImageView extends HookWidget {
         /*いいねされていない時*/
         context.read(isLikedProvider.notifier).update(isLiked: true);
         DocumentSnapshot userProfileDoc =
-            await Firestore().getUserProfile(userId: currentUserId!);
+            await _userRepository.getUserProfile(userId: currentUserId!);
         User user = User.fromDoc(userProfileDoc);
         Likes likes = Likes(
           likesUserId: user.userId,
           likesUserName: user.name,
-          likesUserProfileImage: user.profileImage,
+          likesUserProfileImage: user.profileImageUrl,
           likesUserBio: user.bio,
           timestamp: Timestamp.fromDate(DateTime.now()),
         );
-        Firestore().likesForTweet(
+        _tweetRepository.likesForTweet(
           likes: likes,
           postId: tweet.tweetId!,
           postUserId: tweet.authorId,
         );
-        Firestore().favoriteTweet(
+        _tweetRepository.favoriteTweet(
           currentUserId: currentUserId,
           name: user.name,
           tweet: tweet,
@@ -77,9 +80,9 @@ class TweetImageView extends HookWidget {
         /*いいねされている時*/
         context.read(isLikedProvider.notifier).update(isLiked: false);
         DocumentSnapshot userProfileDoc =
-            await Firestore().getUserProfile(userId: currentUserId!);
+            await _userRepository.getUserProfile(userId: currentUserId!);
         User user = User.fromDoc(userProfileDoc);
-        Firestore().unLikesForTweet(
+        _tweetRepository.unLikesForTweet(
           tweet: tweet,
           unlikesUser: user,
         );
@@ -110,7 +113,7 @@ class TweetImageView extends HookWidget {
               context.read(selectedPageProvider.notifier).update(index: index);
             },
             children: [
-              for (var i = 0; i < tweet.images.length; i++)
+              for (var i = 0; i < tweet.imagesUrl.length; i++)
                 Dismissible(
                   key: UniqueKey(),
                   direction: DismissDirection.vertical,
@@ -128,7 +131,7 @@ class TweetImageView extends HookWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       child: PhotoView(
-                        imageProvider: NetworkImage(tweet.images['$i']!),
+                        imageProvider: NetworkImage(tweet.imagesUrl['$i']!),
                       ),
                     ),
                   ),
@@ -250,12 +253,12 @@ class TweetImageView extends HookWidget {
                     SizedBox(width: 10),
                     Container(
                       child: FutureBuilder<Uri>(
-                        future: dynamicLink.createDynamicLink(
+                        future: _dynamicLinkService.createDynamicLink(
                           tweetId: tweet.tweetId!,
                           tweetAuthorId: tweet.authorId,
                           tweetText: tweet.text,
                           imageUrl: tweet.hasImage
-                              ? tweet.images['0']!
+                              ? tweet.imagesUrl['0']!
                               : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
                         ),
                         builder: (context, snapshot) {

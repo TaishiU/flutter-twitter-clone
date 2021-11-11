@@ -51,9 +51,9 @@ class DrawerContainer extends HookWidget {
                       },
                       child: CircleAvatar(
                         radius: 28,
-                        backgroundImage: user.profileImage.isEmpty
+                        backgroundImage: user.profileImageUrl.isEmpty
                             ? null
-                            : NetworkImage(user.profileImage),
+                            : NetworkImage(user.profileImageUrl),
                         backgroundColor: TwitterColor,
                       ),
                     ),
