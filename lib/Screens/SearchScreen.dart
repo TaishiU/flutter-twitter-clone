@@ -104,12 +104,12 @@ class SearchScreen extends HookWidget {
                     ),
                   );
                 },
-                child: tweet.images.length == 1
+                child: tweet.imagesUrl.length == 1
                     ? Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(
-                              tweet.images['0']!,
+                              tweet.imagesUrl['0']!,
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -122,7 +122,7 @@ class SearchScreen extends HookWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  tweet.images['0']!,
+                                  tweet.imagesUrl['0']!,
                                 ),
                                 fit: BoxFit.cover,
                               ),

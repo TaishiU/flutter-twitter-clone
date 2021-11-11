@@ -20,14 +20,14 @@ class ChatImage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.images.isNotEmpty) {
-      if (message.images.length == 1) {
+    if (message.imagesUrl.isNotEmpty) {
+      if (message.imagesUrl.length == 1) {
         return _image1(context: context);
-      } else if (message.images.length == 2) {
+      } else if (message.imagesUrl.length == 2) {
         return _image2(context: context);
-      } else if (message.images.length == 3) {
+      } else if (message.imagesUrl.length == 3) {
         return _image3(context: context);
-      } else if (message.images.length == 4) {
+      } else if (message.imagesUrl.length == 4) {
         return _image4(context: context);
       }
     }
@@ -42,7 +42,7 @@ class ChatImage extends HookWidget {
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
           image: NetworkImage(
-            message.images['0']!,
+            message.imagesUrl['0']!,
           ),
           fit: BoxFit.cover,
         ),
@@ -65,7 +65,7 @@ class ChatImage extends HookWidget {
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                  message.images['0']!,
+                  message.imagesUrl['0']!,
                 ),
                 fit: BoxFit.cover,
               ),
@@ -81,7 +81,7 @@ class ChatImage extends HookWidget {
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                  message.images['1']!,
+                  message.imagesUrl['1']!,
                 ),
                 fit: BoxFit.cover,
               ),
@@ -107,7 +107,7 @@ class ChatImage extends HookWidget {
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                  message.images['0']!,
+                  message.imagesUrl['0']!,
                 ),
                 fit: BoxFit.cover,
               ),
@@ -125,7 +125,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['1']!,
+                      message.imagesUrl['1']!,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -141,7 +141,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['2']!,
+                      message.imagesUrl['2']!,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -171,7 +171,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['0']!,
+                      message.imagesUrl['0']!,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -187,7 +187,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['2']!,
+                      message.imagesUrl['2']!,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -207,7 +207,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['1']!,
+                      message.imagesUrl['1']!,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -223,7 +223,7 @@ class ChatImage extends HookWidget {
                   ),
                   image: DecorationImage(
                     image: NetworkImage(
-                      message.images['3']!,
+                      message.imagesUrl['3']!,
                     ),
                     fit: BoxFit.cover,
                   ),

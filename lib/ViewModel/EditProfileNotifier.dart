@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
-import 'package:twitter_clone/Firebase/Storage.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
+import 'package:twitter_clone/Service/StorageService.dart';
 import 'package:twitter_clone/State/EditProfileState.dart';
 
 final editProfileProvider =
@@ -14,6 +14,9 @@ final editProfileProvider =
 
 class EditProfileNotifier extends StateNotifier<EditProfileState> {
   EditProfileNotifier() : super(const EditProfileState());
+
+  final UserRepository _userRepository = UserRepository();
+  final StorageService _storageService = StorageService();
 
   Future<void> handleImageFromGallery({
     required String type,
@@ -44,19 +47,28 @@ class EditProfileNotifier extends StateNotifier<EditProfileState> {
     required String bio,
   }) async {
     state = state.copyWith(isLoading: true);
-    String profileImageUrl = '';
-    String coverImageUrl = '';
+    String _profileImageUrl = '';
+    String _profileImagePath = '';
+    String _coverImageUrl = '';
+    String _coverImagePath = '';
     if (state.profileImage == null) {
-      profileImageUrl = user.profileImage;
+      _profileImageUrl = user.profileImageUrl;
+      _profileImagePath = user.profileImagePath;
     } else {
-      profileImageUrl = await Storage().uploadProfileImage(
-          userId: user.userId, imageFile: state.profileImage!);
+      Map<String, String> profileData =
+          await _storageService.uploadProfileImage(
+              userId: user.userId, imageFile: state.profileImage!);
+      _profileImageUrl = profileData['url']!;
+      _profileImagePath = profileData['path']!;
     }
     if (state.coverImage == null) {
-      coverImageUrl = user.coverImage;
+      _coverImageUrl = user.coverImageUrl;
+      _coverImagePath = user.coverImagePath;
     } else {
-      coverImageUrl = await Storage()
-          .uploadCoverImage(userId: user.userId, imageFile: state.coverImage!);
+      Map<String, String> coverData = await _storageService.uploadCoverImage(
+          userId: user.userId, imageFile: state.coverImage!);
+      _coverImageUrl = coverData['url']!;
+      _coverImagePath = coverData['path']!;
     }
 
     User userData = User(
@@ -64,11 +76,13 @@ class EditProfileNotifier extends StateNotifier<EditProfileState> {
       name: name,
       email: user.email,
       bio: bio,
-      profileImage: profileImageUrl,
-      coverImage: coverImageUrl,
+      profileImageUrl: _profileImageUrl,
+      profileImagePath: _profileImagePath,
+      coverImageUrl: _coverImageUrl,
+      coverImagePath: _coverImagePath,
       fcmToken: user.fcmToken,
     );
-    await Firestore().updateUserData(user: userData);
+    await _userRepository.updateUserData(user: userData);
     print('プロフィール情報を保存しました！');
 
     state = state.copyWith(isLoading: false);

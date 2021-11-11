@@ -20,14 +20,14 @@ class TweetImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (tweet.images.isNotEmpty) {
-      if (tweet.images.length == 1) {
+    if (tweet.imagesUrl.isNotEmpty) {
+      if (tweet.imagesUrl.length == 1) {
         return _image1(context: context);
-      } else if (tweet.images.length == 2) {
+      } else if (tweet.imagesUrl.length == 2) {
         return _image2(context: context);
-      } else if (tweet.images.length == 3) {
+      } else if (tweet.imagesUrl.length == 3) {
         return _image3(context: context);
-      } else if (tweet.images.length == 4) {
+      } else if (tweet.imagesUrl.length == 4) {
         return _image4(context: context);
       }
     }
@@ -54,7 +54,7 @@ class TweetImage extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
             image: NetworkImage(
-              tweet.images['0']!,
+              tweet.imagesUrl['0']!,
             ),
             fit: BoxFit.cover,
           ),
@@ -90,7 +90,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    tweet.images['0']!,
+                    tweet.imagesUrl['0']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -119,7 +119,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    tweet.images['1']!,
+                    tweet.imagesUrl['1']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -158,7 +158,7 @@ class TweetImage extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    tweet.images['0']!,
+                    tweet.imagesUrl['0']!,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -189,7 +189,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['1']!,
+                        tweet.imagesUrl['1']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -218,7 +218,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['2']!,
+                        tweet.imagesUrl['2']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -261,7 +261,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['0']!,
+                        tweet.imagesUrl['0']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -290,7 +290,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['2']!,
+                        tweet.imagesUrl['2']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -323,7 +323,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['1']!,
+                        tweet.imagesUrl['1']!,
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -356,7 +356,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     image: DecorationImage(
                       image: NetworkImage(
-                        tweet.images['3']!,
+                        tweet.imagesUrl['3']!,
                       ),
                       fit: BoxFit.cover,
                     ),

@@ -42,8 +42,9 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       leading: CircleAvatar(
         radius: 23,
         backgroundColor: TwitterColor,
-        backgroundImage:
-            user.profileImage.isEmpty ? null : NetworkImage(user.profileImage),
+        backgroundImage: user.profileImageUrl.isEmpty
+            ? null
+            : NetworkImage(user.profileImageUrl),
       ),
       title: Text(user.name),
       subtitle: Text('@${user.bio}'),

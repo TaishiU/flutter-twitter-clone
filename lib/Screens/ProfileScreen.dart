@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
@@ -23,6 +23,7 @@ class ProfileScreen extends HookWidget {
     final String visitedUserId = useProvider(visitedUserIdProvider);
     final bool _isFollowing = useProvider(isFollowingProvider);
     final int _profileIndex = useProvider(profileIndexProvider);
+    final UserRepository _userRepository = UserRepository();
 
     List<String> popUpMenuTitle = [
       'Share',
@@ -35,7 +36,7 @@ class ProfileScreen extends HookWidget {
 
     /*ユーザーをフォローしているか判断するメソッド*/
     setupIsFollowing() async {
-      bool isFollowingUser = await Firestore().isFollowingUser(
+      bool isFollowingUser = await _userRepository.isFollowingUser(
         currentUserId: currentUserId!,
         visitedUserId: visitedUserId,
       );
@@ -355,7 +356,7 @@ class ProfileScreen extends HookWidget {
     }) async {
       /*ユーザー自身のプロフィール*/
       DocumentSnapshot userProfileDoc =
-          await Firestore().getUserProfile(userId: currentUserId);
+          await _userRepository.getUserProfile(userId: currentUserId);
       User currentUser = User.fromDoc(userProfileDoc);
       /*会話Id（トークルームのId）を取得する*/
       String convoId = HelperFunctions.getConvoIDFromHash(
@@ -376,10 +377,10 @@ class ProfileScreen extends HookWidget {
     followUser({required User followersUser}) async {
       context.read(isFollowingProvider.notifier).update(isFollowing: true);
       DocumentSnapshot followingUserSnap =
-          await Firestore().getUserProfile(userId: currentUserId!);
+          await _userRepository.getUserProfile(userId: currentUserId!);
       User followingUser = User.fromDoc(followingUserSnap);
 
-      await Firestore().followUser(
+      await _userRepository.followUser(
         followingUser: followingUser,
         followersUser: followersUser,
       );
@@ -388,10 +389,10 @@ class ProfileScreen extends HookWidget {
     unFollowUser({required User unFollowersUser}) async {
       context.read(isFollowingProvider.notifier).update(isFollowing: false);
       DocumentSnapshot unFollowingUserSnap =
-          await Firestore().getUserProfile(userId: currentUserId!);
+          await _userRepository.getUserProfile(userId: currentUserId!);
       User unFollowingUser = User.fromDoc(unFollowingUserSnap);
 
-      await Firestore().unFollowUser(
+      await _userRepository.unFollowUser(
         unFollowingUser: unFollowingUser,
         unFollowersUser: unFollowersUser,
       );
@@ -431,13 +432,13 @@ class ProfileScreen extends HookWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (user.coverImage.isNotEmpty)
+                  if (user.coverImageUrl.isNotEmpty)
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProfileImageView(
                           tappedImageIndex: 0,
-                          image: user.coverImage,
+                          image: user.coverImageUrl,
                         ),
                       ),
                     );
@@ -446,10 +447,10 @@ class ProfileScreen extends HookWidget {
                   height: 150,
                   decoration: BoxDecoration(
                     color: TwitterColor,
-                    image: user.coverImage.isEmpty
+                    image: user.coverImageUrl.isEmpty
                         ? null
                         : DecorationImage(
-                            image: NetworkImage(user.coverImage),
+                            image: NetworkImage(user.coverImageUrl),
                             fit: BoxFit.cover,
                           ),
                   ),
@@ -502,13 +503,13 @@ class ProfileScreen extends HookWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            if (user.profileImage.isNotEmpty)
+                            if (user.profileImageUrl.isNotEmpty)
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProfileImageView(
                                     tappedImageIndex: 0,
-                                    image: user.profileImage,
+                                    image: user.profileImageUrl,
                                   ),
                                 ),
                               );
@@ -522,9 +523,9 @@ class ProfileScreen extends HookWidget {
                               ),
                               CircleAvatar(
                                 radius: 42,
-                                backgroundImage: user.profileImage.isEmpty
+                                backgroundImage: user.profileImageUrl.isEmpty
                                     ? null
-                                    : NetworkImage(user.profileImage),
+                                    : NetworkImage(user.profileImageUrl),
                                 backgroundColor: TwitterColor,
                               ),
                             ],

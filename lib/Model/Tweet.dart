@@ -7,7 +7,8 @@ class Tweet {
   String authorBio;
   String authorProfileImage;
   String text;
-  Map<String, String> images;
+  Map<String, String> imagesUrl;
+  Map<String, String> imagesPath;
   bool hasImage;
   Timestamp timestamp;
   int likes;
@@ -20,7 +21,8 @@ class Tweet {
     required this.authorBio,
     required this.authorProfileImage,
     required this.text,
-    required this.images,
+    required this.imagesUrl,
+    required this.imagesPath,
     required this.hasImage,
     required this.timestamp,
     required this.likes,
@@ -36,7 +38,8 @@ class Tweet {
       authorProfileImage: postDoc['authorProfileImage'],
       text: postDoc['text'],
       /* Map型のデータをFirestoreから取得する際は「Map<String,dynamic>.from(snapshot.data["songs"])」とする */
-      images: Map<String, String>.from(postDoc['images']),
+      imagesUrl: Map<String, String>.from(postDoc['imagesUrl']),
+      imagesPath: Map<String, String>.from(postDoc['imagesPath']),
       hasImage: postDoc['hasImage'],
       timestamp: postDoc['timestamp'],
       likes: postDoc['likes'],

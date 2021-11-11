@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:twitter_clone/Repository/AuthRepository.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
-  final AuthRepository _authRepository = AuthRepository();
+  final UserRepository _userRepository = UserRepository();
 
   Future<bool> signUp({
     required String name,
@@ -20,7 +20,7 @@ class AuthService {
       User? signedInUser = authResult.user;
 
       if (signedInUser != null) {
-        _authRepository.registerUser(
+        _userRepository.registerUser(
           userId: signedInUser.uid,
           name: name,
           email: email,

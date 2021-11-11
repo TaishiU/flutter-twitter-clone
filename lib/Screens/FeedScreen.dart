@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/AuthProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/TweetRepository.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/HomeScreen.dart';
 import 'package:twitter_clone/Screens/MessageScreen.dart';
@@ -26,6 +27,8 @@ class FeedScreen extends HookWidget {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final String visitedUserId = useProvider(visitedUserIdProvider);
     final bottomTabIndex = useProvider(bottomTabProvider);
+    final UserRepository _userRepository = UserRepository();
+    final TweetRepository _tweetRepository = TweetRepository();
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     commonDynamicLink({required PendingDynamicLinkData dynamicLink}) async {
@@ -34,7 +37,7 @@ class FeedScreen extends HookWidget {
         String? tweetId = deepLink.queryParameters['tweetId'];
         String? tweetAuthorId = deepLink.queryParameters['tweetAuthorId'];
 
-        DocumentSnapshot tweetSnap = await Firestore().getTweet(
+        DocumentSnapshot tweetSnap = await _tweetRepository.getTweet(
           tweetId: tweetId!,
           tweetAuthorId: tweetAuthorId!,
         );
@@ -86,7 +89,7 @@ class FeedScreen extends HookWidget {
     }) async {
       /*相手ユーザーのプロフィール*/
       DocumentSnapshot peerUserProfileDoc =
-          await Firestore().getUserProfile(userId: peerUserId);
+          await _userRepository.getUserProfile(userId: peerUserId);
       User peerUser = User.fromDoc(peerUserProfileDoc);
       Navigator.push(
         context,

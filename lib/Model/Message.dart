@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Message {
   String? convoId;
   String? content;
-  Map<String, String> images;
+  Map<String, String> imagesUrl;
+  Map<String, String> imagesPath;
   bool hasImage;
   String userFrom;
   String userTo;
@@ -15,7 +16,8 @@ class Message {
   Message({
     this.convoId,
     required this.content,
-    required this.images,
+    required this.imagesUrl,
+    required this.imagesPath,
     required this.hasImage,
     required this.userFrom,
     required this.userTo,
@@ -30,7 +32,8 @@ class Message {
       convoId: doc['convoId'],
       content: doc['content'],
       /* Map型のデータをFirestoreから取得する際は「Map<String,dynamic>.from(snapshot.data["songs"])」とする */
-      images: Map<String, String>.from(doc['images']),
+      imagesUrl: Map<String, String>.from(doc['imagesUrl']),
+      imagesPath: Map<String, String>.from(doc['imagesPath']),
       hasImage: doc['hasImage'],
       userFrom: doc['userFrom'],
       userTo: doc['userTo'],

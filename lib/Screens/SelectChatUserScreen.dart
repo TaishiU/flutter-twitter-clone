@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Firebase/Firestore.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
 
@@ -23,6 +23,7 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
   String _searchName = '';
   TextEditingController _searchController = TextEditingController();
   Future<List<AlgoliaObjectSnapshot>>? _algoliaResult;
+  final UserRepository _userRepository = UserRepository();
 
   Future<List<AlgoliaObjectSnapshot>> searchUser({required String name}) async {
     final Algolia algolia = Algolia.init(
@@ -42,9 +43,9 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
       leading: CircleAvatar(
         radius: 23,
         backgroundColor: TwitterColor,
-        backgroundImage: peerUser.profileImage.isEmpty
+        backgroundImage: peerUser.profileImageUrl.isEmpty
             ? null
-            : NetworkImage(peerUser.profileImage),
+            : NetworkImage(peerUser.profileImageUrl),
       ),
       title: Text(peerUser.name),
       subtitle: Text('@${peerUser.bio}'),
@@ -65,7 +66,7 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
   }) async {
     /*ユーザー自身のプロフィール*/
     DocumentSnapshot userProfileDoc =
-        await Firestore().getUserProfile(userId: currentUserId);
+        await _userRepository.getUserProfile(userId: currentUserId);
     User currentUser = User.fromDoc(userProfileDoc);
     /*会話Id（トークルームのId）を取得する*/
     String convoId = HelperFunctions.getConvoIDFromHash(

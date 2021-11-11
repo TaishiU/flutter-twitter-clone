@@ -24,18 +24,6 @@ class SelectedPageController extends StateNotifier<int> {
   void update({required int index}) => state = index;
 }
 
-final isObscureProvider =
-    StateNotifierProvider.autoDispose<IsObscureController, bool>(
-  /*初期値はtrueにして目隠し状態にする*/
-  (ref) => IsObscureController(true),
-);
-
-class IsObscureController extends StateNotifier<bool> {
-  IsObscureController(bool isObscure) : super(isObscure);
-
-  void update(bool isObscure) => state = isObscure;
-}
-
 final isLoadingProvider =
     StateNotifierProvider.autoDispose<IsLoadingController, bool>(
   (ref) => IsLoadingController(false),
