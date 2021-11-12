@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 final _authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
@@ -49,3 +52,12 @@ class ProfileIndexController extends StateNotifier<int> {
 final profileNameProvider = StateProvider.autoDispose((ref) => '');
 
 final profileBioProvider = StateProvider.autoDispose((ref) => '');
+
+final followingUsersStreamProvider = StreamProvider((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return _firestore
+      .collection('users')
+      .doc(currentUserId)
+      .collection('following')
+      .snapshots();
+});

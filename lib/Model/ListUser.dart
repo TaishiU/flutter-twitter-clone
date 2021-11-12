@@ -4,14 +4,14 @@ class ListUser {
   String? userId;
   String name;
   String bio;
-  String profileImage;
+  String profileImageUrl;
   Timestamp timestamp;
 
   ListUser({
     this.userId,
     required this.name,
     required this.bio,
-    required this.profileImage,
+    required this.profileImageUrl,
     required this.timestamp,
   });
 
@@ -20,7 +20,7 @@ class ListUser {
       userId: doc.id,
       name: doc['name'],
       bio: doc['bio'],
-      profileImage: doc['profileImage'],
+      profileImageUrl: doc['profileImageUrl'],
       timestamp: doc['timestamp'],
     );
   }
