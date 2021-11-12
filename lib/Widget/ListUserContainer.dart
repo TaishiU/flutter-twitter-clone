@@ -71,9 +71,9 @@ class ListUserContainer extends HookWidget {
                             CircleAvatar(
                               radius: 23,
                               backgroundColor: TwitterColor,
-                              backgroundImage: listUser.profileImage.isEmpty
+                              backgroundImage: listUser.profileImageUrl.isEmpty
                                   ? null
-                                  : NetworkImage(listUser.profileImage),
+                                  : NetworkImage(listUser.profileImageUrl),
                             ),
                             SizedBox(width: 15),
                             Column(

@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
@@ -18,6 +17,7 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final asyncFollowingUsers = useProvider(followingUsersStreamProvider);
     //final String visitedUserId = useProvider(visitedUserIdProvider);
 
     // final createTweetState = useProvider(createTweetProvider);
@@ -199,97 +199,183 @@ class HomeScreen extends HookWidget {
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               children: [
-                // _createTweetIsLoading
-                //     ? LinearProgressIndicator()
-                //     : SizedBox.shrink(),
-                Container(
-                  height: 83,
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: usersRef.limit(8).snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) {
-                        return SizedBox.shrink();
-                      }
-                      List<DocumentSnapshot> listSnap = snapshot.data!.docs;
-                      /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
-                      listSnap.removeWhere((snapshot) =>
-                          snapshot.get('userId') == currentUserId);
-                      /* プロフィール画像を登録していないアバターは表示リストから削除 */
-                      listSnap.removeWhere(
-                          (snapshot) => snapshot.get('profileImage') == '');
+                asyncFollowingUsers.when(
+                  loading: () => const CircularProgressIndicator(),
+                  error: (error, stack) => Center(child: Text('Error: $error')),
+                  data: (query) {
+                    List<DocumentSnapshot> listSnap = query.docs;
 
-                      return ListView.builder(
-                        physics: BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics(),
-                        ),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: listSnap.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          User user = User.fromDoc(listSnap[index]);
-                          return Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 0),
-                            child: GestureDetector(
-                              onTap: () {
-                                /*visitedUserId情報を更新*/
-                                context
-                                    .read(visitedUserIdProvider.notifier)
-                                    .update(userId: user.userId);
-                                print('currentUserId: $currentUserId');
-                                // print(
-                                //     'HomeScreen, visitedUserId: $visitedUserId');
-                                print('userName: ${user.name}');
-                                print('userId: ${user.userId}');
+                    /* プロフィール画像を登録していないアバターは表示リストから削除 */
+                    listSnap.removeWhere(
+                        (snapshot) => snapshot.get('profileImageUrl') == '');
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProfileScreen(),
+                    return listSnap.length >= 1
+                        ? Column(
+                            children: [
+                              Container(
+                                height: 83,
+                                child: ListView.builder(
+                                  physics: BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
                                   ),
-                                );
-                              },
-                              child: Column(
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        height: 57,
-                                        width: 57,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: TwitterColor,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: listSnap.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 3),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          /*visitedUserId情報を更新*/
+                                          context
+                                              .read(visitedUserIdProvider
+                                                  .notifier)
+                                              .update(
+                                                  userId: listSnap[index]
+                                                      ['userId']);
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen(),
+                                            ),
+                                          );
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Container(
+                                                  height: 57,
+                                                  width: 57,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: TwitterColor,
+                                                  ),
+                                                ),
+                                                CircleAvatar(
+                                                  radius: 27,
+                                                  backgroundColor: Colors.white,
+                                                ),
+                                                CircleAvatar(
+                                                  radius: 25,
+                                                  backgroundColor: TwitterColor,
+                                                  backgroundImage: NetworkImage(
+                                                    listSnap[index]
+                                                        ['profileImageUrl'],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(listSnap[index]['name']),
+                                          ],
                                         ),
                                       ),
-                                      CircleAvatar(
-                                        radius: 27,
-                                        backgroundColor: Colors.white,
-                                      ),
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor: TwitterColor,
-                                        backgroundImage: NetworkImage(
-                                          user.profileImageUrl,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(listSnap[index].get('name')),
-                                ],
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                              Container(
+                                height: 3,
+                                color: Colors.grey.shade300,
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink();
+                  },
                 ),
-                Container(
-                  height: 3,
-                  color: Colors.grey.shade300,
-                ),
+                // Container(
+                //   height: 83,
+                //   child: StreamBuilder<QuerySnapshot>(
+                //     stream: usersRef.limit(8).snapshots(),
+                //     builder: (BuildContext context,
+                //         AsyncSnapshot<QuerySnapshot> snapshot) {
+                //       if (!snapshot.hasData) {
+                //         return SizedBox.shrink();
+                //       }
+                //       List<DocumentSnapshot> listSnap = snapshot.data!.docs;
+                //       /* ユーザー自身のアバターは表示リストから削除 → removeWhere */
+                //       listSnap.removeWhere((snapshot) =>
+                //           snapshot.get('userId') == currentUserId);
+                //       /* プロフィール画像を登録していないアバターは表示リストから削除 */
+                //       listSnap.removeWhere(
+                //           (snapshot) => snapshot.get('profileImageUrl') == '');
+                //
+                //       return ListView.builder(
+                //         physics: BouncingScrollPhysics(
+                //           parent: AlwaysScrollableScrollPhysics(),
+                //         ),
+                //         scrollDirection: Axis.horizontal,
+                //         itemCount: listSnap.length,
+                //         itemBuilder: (BuildContext context, int index) {
+                //           User user = User.fromDoc(listSnap[index]);
+                //           return Container(
+                //             padding: EdgeInsets.symmetric(
+                //                 horizontal: 5, vertical: 0),
+                //             child: GestureDetector(
+                //               onTap: () {
+                //                 /*visitedUserId情報を更新*/
+                //                 context
+                //                     .read(visitedUserIdProvider.notifier)
+                //                     .update(userId: user.userId);
+                //                 print('currentUserId: $currentUserId');
+                //                 // print(
+                //                 //     'HomeScreen, visitedUserId: $visitedUserId');
+                //                 print('userName: ${user.name}');
+                //                 print('userId: ${user.userId}');
+                //
+                //                 Navigator.push(
+                //                   context,
+                //                   MaterialPageRoute(
+                //                     builder: (context) => ProfileScreen(),
+                //                   ),
+                //                 );
+                //               },
+                //               child: Column(
+                //                 children: [
+                //                   Stack(
+                //                     alignment: Alignment.center,
+                //                     children: [
+                //                       Container(
+                //                         height: 57,
+                //                         width: 57,
+                //                         decoration: BoxDecoration(
+                //                           shape: BoxShape.circle,
+                //                           color: TwitterColor,
+                //                         ),
+                //                       ),
+                //                       CircleAvatar(
+                //                         radius: 27,
+                //                         backgroundColor: Colors.white,
+                //                       ),
+                //                       CircleAvatar(
+                //                         radius: 25,
+                //                         backgroundColor: TwitterColor,
+                //                         backgroundImage: NetworkImage(
+                //                           user.profileImageUrl,
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                   SizedBox(height: 5),
+                //                   Text(user.name),
+                //                 ],
+                //               ),
+                //             ),
+                //           );
+                //         },
+                //       );
+                //     },
+                //   ),
+                // ),
+                // Container(
+                //   height: 3,
+                //   color: Colors.grey.shade300,
+                // ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
