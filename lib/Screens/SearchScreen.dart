@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
+import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/SearchUserScreen.dart';
@@ -16,6 +17,7 @@ class SearchScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final asyncAllTweets = useProvider(allTweetsStreamProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -66,19 +68,11 @@ class SearchScreen extends HookWidget {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: allTweetsRef
-            .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          List<DocumentSnapshot> allImageTweets = snapshot.data!.docs;
+      body: asyncAllTweets.when(
+        loading: () => Center(child: const CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error: $error')),
+        data: (query) {
+          List<DocumentSnapshot> allImageTweets = query.docs;
           /* ユーザー自身のツイート画像は表示リストから削除 → removeWhere */
           allImageTweets.removeWhere(
               (imageTweet) => imageTweet.get('authorId') == currentUserId);

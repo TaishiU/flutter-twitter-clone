@@ -4,107 +4,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Model/GetLastMessage.dart';
-import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Model/LastMessage.dart';
+import 'package:twitter_clone/Provider/ChatProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
-import 'package:twitter_clone/Repository/UserRepository.dart';
-import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/SelectChatUserScreen.dart';
 import 'package:twitter_clone/Widget/DrawerContainer.dart';
+import 'package:twitter_clone/Widget/MessageUserTile.dart';
 
 class MessageScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    final UserRepository _userRepository = UserRepository();
-
-    moveToChatScreen({
-      required BuildContext context,
-      required String convoId,
-      required String peerUserId,
-    }) async {
-      /*相手ユーザーのプロフィール*/
-      DocumentSnapshot userProfileDoc =
-          await _userRepository.getUserProfile(userId: peerUserId);
-      User peerUser = User.fromDoc(userProfileDoc);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            convoId: convoId,
-            peerUser: peerUser,
-          ),
-        ),
-      );
-    }
-
-    Widget buildUserTile({
-      required BuildContext context,
-      required GetLastMessage getLastMessage,
-    }) {
-      /*user1Idがユーザー自身のidと一致するか*/
-      final _isOwner = currentUserId == getLastMessage.user1Id;
-      final _notRead =
-          !getLastMessage.read && getLastMessage.idTo == currentUserId;
-      return ListTile(
-        leading: CircleAvatar(
-          radius: 23,
-          backgroundImage: _isOwner
-              ? NetworkImage(getLastMessage.user2ProfileImage)
-              : NetworkImage(getLastMessage.user1ProfileImage),
-        ),
-        title: Text(
-          _isOwner ? getLastMessage.user2Name : getLastMessage.user1Name,
-          style: TextStyle(
-            fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        subtitle: DefaultTextStyle(
-          style: TextStyle(color: Colors.black),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          child: getLastMessage.content != null
-              ? Text(
-                  getLastMessage.content!,
-                  style: TextStyle(
-                    fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                )
-              : _isOwner
-                  ? Text(
-                      'You sent the image.',
-                      style: TextStyle(
-                        fontWeight:
-                            _notRead ? FontWeight.bold : FontWeight.normal,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : Text(
-                      '${getLastMessage.userFrom} sent the image.',
-                      style: TextStyle(
-                        fontWeight:
-                            _notRead ? FontWeight.bold : FontWeight.normal,
-                        color: Colors.grey,
-                      ),
-                    ),
-        ),
-        trailing: Text(
-          '${getLastMessage.timestamp.toDate().month.toString()}/${getLastMessage.timestamp.toDate().day.toString()}',
-          style: TextStyle(
-            fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: () {
-          moveToChatScreen(
-            context: context,
-            convoId: getLastMessage.convoId!,
-            peerUserId:
-                _isOwner ? getLastMessage.user2Id : getLastMessage.user1Id,
-          );
-        },
-      );
-    }
+    final asyncLastMessages = useProvider(lastMessagesStreamProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -155,18 +66,12 @@ class MessageScreen extends HookWidget {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: messagesRef
-            .orderBy('timestamp', descending: true)
-            .where('users', arrayContains: currentUserId)
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.data!.docs.length == 0) {
+      body: asyncLastMessages.when(
+        loading: () => Center(child: const CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error: $error')),
+        data: (query) {
+          List<DocumentSnapshot> lastMessagesList = query.docs;
+          if (lastMessagesList.length == 0) {
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -222,18 +127,13 @@ class MessageScreen extends HookWidget {
               ),
             );
           }
-          List<DocumentSnapshot> listLastMessagesSnap = snapshot.data!.docs;
           return ListView(
-            //shrinkWrap: true,
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: listLastMessagesSnap.map((message) {
-              GetLastMessage getLastMessage = GetLastMessage.fromDoc(message);
-              return buildUserTile(
-                context: context,
-                getLastMessage: getLastMessage,
-              );
+            children: lastMessagesList.map((message) {
+              LastMessage lastMessage = LastMessage.fromDoc(message);
+              return MessageUserTile(lastMessage: lastMessage);
             }).toList(),
           );
         },

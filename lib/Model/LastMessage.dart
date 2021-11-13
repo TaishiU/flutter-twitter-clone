@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class GetLastMessage {
+class LastMessage {
   final String? content;
   final String? convoId;
   final String idFrom;
@@ -16,7 +16,7 @@ class GetLastMessage {
   final String userFrom;
   final String userTo;
 
-  GetLastMessage({
+  LastMessage({
     required this.content,
     this.convoId,
     required this.idFrom,
@@ -33,8 +33,8 @@ class GetLastMessage {
     required this.userTo,
   });
 
-  factory GetLastMessage.fromDoc(DocumentSnapshot doc) {
-    return GetLastMessage(
+  factory LastMessage.fromDoc(DocumentSnapshot doc) {
+    return LastMessage(
       content: doc['content'],
       convoId: doc['convoId'],
       idFrom: doc['idFrom'],
@@ -43,10 +43,10 @@ class GetLastMessage {
       timestamp: doc['timestamp'],
       user1Id: doc['user1Id'],
       user1Name: doc['user1Name'],
-      user1ProfileImage: doc['user1ProfileImage'],
+      user1ProfileImage: doc['user1ProfileImageUrl'],
       user2Id: doc['user2Id'],
       user2Name: doc['user2Name'],
-      user2ProfileImage: doc['user2ProfileImage'],
+      user2ProfileImage: doc['user2ProfileImageUrl'],
       userFrom: doc['userFrom'],
       userTo: doc['userTo'],
     );

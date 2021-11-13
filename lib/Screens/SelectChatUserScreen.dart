@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Repository/UserRepository.dart';
-import 'package:twitter_clone/Screens/ChatScreen.dart';
-import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
+import 'package:twitter_clone/Widget/SelectChatUserTile.dart';
 
 class SelectChatUserScreen extends StatefulWidget {
   final String currentUserId;
@@ -23,7 +21,6 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
   String _searchName = '';
   TextEditingController _searchController = TextEditingController();
   Future<List<AlgoliaObjectSnapshot>>? _algoliaResult;
-  final UserRepository _userRepository = UserRepository();
 
   Future<List<AlgoliaObjectSnapshot>> searchUser({required String name}) async {
     final Algolia algolia = Algolia.init(
@@ -36,52 +33,6 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
     AlgoliaQuerySnapshot algoliaQuerySnapshot = await algoliaQuery.getObjects();
     List<AlgoliaObjectSnapshot> _algoliaList = algoliaQuerySnapshot.hits;
     return _algoliaList;
-  }
-
-  Widget buildUserTile({required User peerUser}) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 23,
-        backgroundColor: TwitterColor,
-        backgroundImage: peerUser.profileImageUrl.isEmpty
-            ? null
-            : NetworkImage(peerUser.profileImageUrl),
-      ),
-      title: Text(peerUser.name),
-      subtitle: Text('@${peerUser.bio}'),
-      onTap: () {
-        moveToChatScreen(
-          context: context,
-          currentUserId: widget.currentUserId,
-          peerUser: peerUser,
-        );
-      },
-    );
-  }
-
-  moveToChatScreen({
-    required BuildContext context,
-    required String currentUserId,
-    required User peerUser,
-  }) async {
-    /*ユーザー自身のプロフィール*/
-    DocumentSnapshot userProfileDoc =
-        await _userRepository.getUserProfile(userId: currentUserId);
-    User currentUser = User.fromDoc(userProfileDoc);
-    /*会話Id（トークルームのId）を取得する*/
-    String convoId = HelperFunctions.getConvoIDFromHash(
-      currentUser: currentUser,
-      peerUser: peerUser,
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatScreen(
-          convoId: convoId,
-          peerUser: peerUser,
-        ),
-      ),
-    );
   }
 
   @override
@@ -156,7 +107,7 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
                   ),
                   children: userListSnap.map((userSnap) {
                     User peerUser = User.fromDoc(userSnap);
-                    return buildUserTile(peerUser: peerUser);
+                    return SelectChatUserTile(peerUser: peerUser);
                   }).toList(),
                 );
               },
@@ -203,7 +154,7 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
                   children: _result.map((snap) {
                     Map<String, dynamic> data = snap.data;
                     User peerUser = User.fromAlgolia(data);
-                    return buildUserTile(peerUser: peerUser);
+                    return SelectChatUserTile(peerUser: peerUser);
                   }).toList(),
                 );
               },

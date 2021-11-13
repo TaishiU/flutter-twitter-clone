@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/ChatProvider.dart';
@@ -10,12 +9,10 @@ import 'package:twitter_clone/ViewModel/ChatNotifier.dart';
 import 'package:twitter_clone/Widget/ChatContainer.dart';
 
 class ChatScreen extends HookWidget {
-  final String convoId;
   final User peerUser;
 
   ChatScreen({
     Key? key,
-    required this.convoId,
     required this.peerUser,
   }) : super(key: key);
 
@@ -24,6 +21,8 @@ class ChatScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _message = useProvider(messageTextProvider).state;
+    final convoId = useProvider(convoIdProvider);
+    final asyncUserMessages = useProvider(userMessagesStreamProvider);
     FocusNode _focusNode = FocusNode();
 
     return Scaffold(
@@ -59,20 +58,11 @@ class ChatScreen extends HookWidget {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: messagesRef
-                  .doc(convoId)
-                  .collection('allMessages')
-                  .orderBy('timestamp', descending: false)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                List<DocumentSnapshot> listMessageSnap = snapshot.data!.docs;
+            child: asyncUserMessages.when(
+              loading: () => Center(child: const CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (query) {
+                List<DocumentSnapshot> userMessagesList = query.docs;
                 return Column(
                   children: [
                     Container(
@@ -82,9 +72,8 @@ class ChatScreen extends HookWidget {
                     ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      //reverse: true,
-                      children: listMessageSnap.map((listMessage) {
-                        Message message = Message.fromDoc(listMessage);
+                      children: userMessagesList.map((userMessage) {
+                        Message message = Message.fromDoc(userMessage);
                         return ChatContainer(
                           peerUserId: peerUser.userId,
                           peerUserProfileImage: peerUser.profileImageUrl,
@@ -178,9 +167,6 @@ class ChatScreen extends HookWidget {
                           border: InputBorder.none,
                         ),
                         onChanged: (input) {
-                          // setState(() {
-                          //   message = input;
-                          // });
                           context.read(messageTextProvider).state = input;
                         },
                         focusNode: _focusNode,
