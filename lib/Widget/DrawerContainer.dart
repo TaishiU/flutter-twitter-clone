@@ -13,24 +13,21 @@ import 'package:twitter_clone/Widget/ListUserContainer.dart';
 class DrawerContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    final String? currentUserId = useProvider(currentUserIdProvider);
-    final String visitedUserId = useProvider(visitedUserIdProvider);
+    final asyncCurrentUserProfile =
+        useProvider(currentUserProfileStreamProvider);
+    final asyncFollowing = useProvider(followingStreamProvider);
+    final asyncFollowers = useProvider(followersStreamProvider);
     final AuthService _authService = AuthService();
 
     return Drawer(
       child: ListView(
         children: [
           DrawerHeader(
-            child: StreamBuilder(
-              stream: usersRef.doc(currentUserId).snapshots(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) {
-                  return CircleAvatar(
-                    radius: 28,
-                    backgroundColor: TwitterColor,
-                  );
-                }
-                User user = User.fromDoc(snapshot.data);
+            child: asyncCurrentUserProfile.when(
+              loading: () => Center(child: const CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (userProfileQuery) {
+                User user = User.fromDoc(userProfileQuery);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -40,7 +37,6 @@ class DrawerContainer extends HookWidget {
                         context
                             .read(visitedUserIdProvider.notifier)
                             .update(userId: user.userId);
-                        print('DrawerContainer, visitedUserId: $visitedUserId');
 
                         Navigator.push(
                           context,
@@ -77,19 +73,13 @@ class DrawerContainer extends HookWidget {
                     Row(
                       children: [
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(currentUserId)
-                                .collection('following')
-                                .orderBy('timestamp', descending: true)
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-                              List<DocumentSnapshot> followingUserList =
-                                  snapshot.data!.docs;
+                          child: asyncFollowing.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (followingQuery) {
+                              List<DocumentSnapshot> followingList =
+                                  followingQuery.docs;
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -97,7 +87,7 @@ class DrawerContainer extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Following',
-                                        listUserDocumentSnap: followingUserList,
+                                        listUserDocumentSnap: followingList,
                                       ),
                                     ),
                                   );
@@ -105,7 +95,7 @@ class DrawerContainer extends HookWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      followingUserList.length.toString(),
+                                      followingList.length.toString(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -128,19 +118,13 @@ class DrawerContainer extends HookWidget {
                         ),
                         SizedBox(width: 20),
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(currentUserId)
-                                .collection('followers')
-                                .orderBy('timestamp', descending: true)
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
+                          child: asyncFollowers.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (followersQuery) {
                               List<DocumentSnapshot> followersUserList =
-                                  snapshot.data!.docs;
+                                  followersQuery.docs;
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(

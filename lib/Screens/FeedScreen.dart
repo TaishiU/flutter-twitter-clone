@@ -95,7 +95,6 @@ class FeedScreen extends HookWidget {
         context,
         MaterialPageRoute(
           builder: (context) => ChatScreen(
-            convoId: convoId,
             peerUser: peerUser,
           ),
         ),
@@ -172,10 +171,6 @@ class FeedScreen extends HookWidget {
       bottomNavigationBar: CupertinoTabBar(
         onTap: (index) {
           context.read(bottomTabProvider.notifier).update(index: index);
-          /*visitedUserId情報を更新*/
-          // context
-          //     .read(visitedUserIdProvider.notifier)
-          //     .update(userId: currentUserId);
         },
         activeColor: TwitterColor,
         currentIndex: bottomTabIndex,

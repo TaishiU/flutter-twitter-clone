@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
-import 'package:twitter_clone/Screens/ProfileScreen.dart';
+import 'package:twitter_clone/Widget/SearchUserTile.dart';
 
 class SearchUserScreen extends StatefulWidget {
   final String currentUserId;
@@ -35,33 +34,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
     AlgoliaQuerySnapshot algoliaQuerySnapshot = await algoliaQuery.getObjects();
     List<AlgoliaObjectSnapshot> _algoliaList = algoliaQuerySnapshot.hits;
     return _algoliaList;
-  }
-
-  Widget buildUserTile({required User user}) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 23,
-        backgroundColor: TwitterColor,
-        backgroundImage: user.profileImageUrl.isEmpty
-            ? null
-            : NetworkImage(user.profileImageUrl),
-      ),
-      title: Text(user.name),
-      subtitle: Text('@${user.bio}'),
-      onTap: () {
-        /*visitedUserId情報を更新*/
-        context
-            .read(visitedUserIdProvider.notifier)
-            .update(userId: user.userId);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -127,31 +99,28 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       ),
       // body: Center(child: Text('_algoliaResult: $_algoliaResult')),
       body: _algoliaResult == null
-          ? StreamBuilder<QuerySnapshot>(
-              stream: usersRef.limit(5).snapshots(),
-              /*リミットは5件*/
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
+          ? Consumer(builder: (context, watch, child) {
+              final asyncSearchUsers = watch(searchUsersStreamProvider);
+              return asyncSearchUsers.when(
+                loading: () => Center(child: const CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+                data: (query) {
+                  List<DocumentSnapshot> userListSnap = query.docs;
+                  /*ユーザー自身のアバターは削除*/
+                  userListSnap.removeWhere((snapshot) =>
+                      snapshot.get('userId') == widget.currentUserId);
+                  return ListView(
+                    physics: BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    children: userListSnap.map((userSnap) {
+                      User user = User.fromDoc(userSnap);
+                      return SearchUserTile(user: user);
+                    }).toList(),
                   );
-                }
-                List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
-                /*ユーザー自身のアバターは削除*/
-                userListSnap.removeWhere((snapshot) =>
-                    snapshot.get('userId') == widget.currentUserId);
-                return ListView(
-                  physics: BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
-                  ),
-                  children: userListSnap.map((userSnap) {
-                    User user = User.fromDoc(userSnap);
-                    return buildUserTile(user: user);
-                  }).toList(),
-                );
-              },
-            )
+                },
+              );
+            })
           : FutureBuilder(
               future: _algoliaResult,
               builder: (BuildContext context,
@@ -194,7 +163,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                   children: _result.map((snap) {
                     Map<String, dynamic> data = snap.data;
                     User user = User.fromAlgolia(data);
-                    return buildUserTile(user: user);
+                    return SearchUserTile(user: user);
                   }).toList(),
                 );
               },

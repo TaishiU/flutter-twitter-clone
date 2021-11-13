@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+import 'package:twitter_clone/Constants/Constants.dart';
 
 final _authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
@@ -31,6 +29,17 @@ class VisitedUserIdController extends StateNotifier<String> {
   void update({required String userId}) => state = userId;
 }
 
+// final userModelProvider =
+//     StateNotifierProvider<UserModelController, UserModel.User>(
+//   (ref) => UserModelController(),
+// );
+//
+// class UserModelController extends StateNotifier<UserModel.User> {
+//   UserModelController() : super(user);
+//
+//   void update({required UserModel.User user}) => state = user;
+// }
+
 final isFollowingProvider = StateNotifierProvider<IsFollowingController, bool>(
   (ref) => IsFollowingController(false),
 );
@@ -53,11 +62,38 @@ final profileNameProvider = StateProvider.autoDispose((ref) => '');
 
 final profileBioProvider = StateProvider.autoDispose((ref) => '');
 
-final followingUsersStreamProvider = StreamProvider((ref) {
+final currentUserProfileStreamProvider = StreamProvider.autoDispose((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
-  return _firestore
-      .collection('users')
+  return usersRef.doc(currentUserId).snapshots();
+});
+
+final followingAvatarStreamProvider = StreamProvider.autoDispose((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return usersRef
       .doc(currentUserId)
       .collection('following')
+      .limit(8)
+      .snapshots();
+});
+
+final searchUsersStreamProvider = StreamProvider.autoDispose((ref) {
+  return usersRef.limit(5).snapshots();
+});
+
+final followingStreamProvider = StreamProvider.autoDispose((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return usersRef
+      .doc(currentUserId)
+      .collection('following')
+      .orderBy('timestamp', descending: true)
+      .snapshots();
+});
+
+final followersStreamProvider = StreamProvider.autoDispose((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return usersRef
+      .doc(currentUserId)
+      .collection('followers')
+      .orderBy('timestamp', descending: true)
       .snapshots();
 });

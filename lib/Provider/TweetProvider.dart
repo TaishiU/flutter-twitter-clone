@@ -1,4 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 
 final tweetTextProvider = StateProvider.autoDispose<String>((ref) => '');
 
@@ -33,3 +35,37 @@ class IsLoadingController extends StateNotifier<bool> {
   IsLoadingController(bool isLoading) : super(isLoading);
   void update({required bool isLoading}) => state = isLoading;
 }
+
+// final followingUsersStreamProvider = StreamProvider((ref) {
+//   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+//   return _firestore
+//       .collection('users')
+//       .doc(currentUserId)
+//       .collection('following')
+//       .snapshots();
+// });
+
+final followingUserTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return feedsRef
+      .doc(currentUserId)
+      .collection('followingUserTweets')
+      .orderBy('timestamp', descending: true)
+      .snapshots();
+});
+
+final allTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+  return allTweetsRef
+      .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+      .orderBy('timestamp', descending: true)
+      .snapshots();
+});
+
+// final userTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+//   final user = ref.watch(userProvider);
+//   return usersRef
+//       .doc(user!.userId)
+//       .collection('tweets')
+//       .orderBy('timestamp', descending: true)
+//       .snapshots();
+// });
