@@ -70,7 +70,7 @@ class ListUserContainer extends HookWidget {
                           children: [
                             CircleAvatar(
                               radius: 23,
-                              backgroundColor: TwitterColor,
+                              backgroundColor: Colors.transparent,
                               backgroundImage: listUser.profileImageUrl.isEmpty
                                   ? null
                                   : NetworkImage(listUser.profileImageUrl),

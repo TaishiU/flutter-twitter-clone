@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
@@ -24,7 +23,7 @@ class DrawerContainer extends HookWidget {
         children: [
           DrawerHeader(
             child: asyncCurrentUserProfile.when(
-              loading: () => Center(child: const CircularProgressIndicator()),
+              loading: () => SizedBox.shrink(),
               error: (error, stack) => Center(child: Text('Error: $error')),
               data: (userProfileQuery) {
                 User user = User.fromDoc(userProfileQuery);
@@ -47,13 +46,13 @@ class DrawerContainer extends HookWidget {
                       },
                       child: CircleAvatar(
                         radius: 28,
+                        backgroundColor: Colors.transparent,
                         backgroundImage: user.profileImageUrl.isEmpty
                             ? null
                             : NetworkImage(user.profileImageUrl),
-                        backgroundColor: TwitterColor,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 10),
                     Text(
                       user.name,
                       style: TextStyle(
@@ -69,7 +68,7 @@ class DrawerContainer extends HookWidget {
                               color: Colors.grey,
                             ),
                           ),
-                    SizedBox(height: 15),
+                    SizedBox(height: 10),
                     Row(
                       children: [
                         Container(

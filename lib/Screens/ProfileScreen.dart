@@ -230,10 +230,10 @@ class ProfileScreen extends HookWidget {
                               ),
                               CircleAvatar(
                                 radius: 42,
+                                backgroundColor: Colors.transparent,
                                 backgroundImage: user.profileImageUrl.isEmpty
                                     ? null
                                     : NetworkImage(user.profileImageUrl),
-                                backgroundColor: TwitterColor,
                               ),
                             ],
                           ),

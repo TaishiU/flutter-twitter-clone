@@ -1,3 +1,4 @@
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -33,6 +34,24 @@ class TweetContainer extends HookWidget {
     final TweetRepository _tweetRepository = TweetRepository();
     final StorageService _storageService = StorageService();
     final DynamicLinkService _dynamicLinkService = DynamicLinkService();
+    final _isOwner = tweet.authorId == currentUserId;
+    bool? isFollowingUser;
+
+    /*ユーザーをフォローしているか判断するメソッド*/
+    Future<void> setupIsFollowing() async {
+      isFollowingUser = await _userRepository.isFollowingUser(
+        currentUserId: currentUserId!,
+        visitedUserId: tweet.authorId,
+      );
+
+      if (isFollowingUser == true) {
+        print('${tweet.authorName}をフォローしています！');
+        print('isFollowingUser: $isFollowingUser');
+      } else {
+        print('${tweet.authorName}をフォローしていません...');
+        print('isFollowingUser: $isFollowingUser');
+      }
+    }
 
     /*ツイートにいいねをしているか判断するメソッド*/
     setupIsLiked() async {
@@ -50,8 +69,49 @@ class TweetContainer extends HookWidget {
     }
 
     useEffect(() {
+      setupIsFollowing();
       setupIsLiked();
     }, []);
+
+    followUser() async {
+      //context.read(isFollowingProvider.notifier).update(isFollowing: true);
+      isFollowingUser = true;
+      DocumentSnapshot followersUserSnap =
+          await _userRepository.getUserProfile(userId: tweet.authorId);
+      User followersUser = User.fromDoc(followersUserSnap);
+
+      DocumentSnapshot followingUserSnap =
+          await _userRepository.getUserProfile(userId: currentUserId!);
+      User followingUser = User.fromDoc(followingUserSnap);
+
+      await _userRepository.followUser(
+        followingUser: followingUser,
+        followersUser: followersUser,
+      );
+      Navigator.of(context).pop();
+      print('${tweet.authorName}をフォローしました！');
+      print('isFollowingUser: $isFollowingUser');
+    }
+
+    unFollowUser() async {
+      //context.read(isFollowingProvider.notifier).update(isFollowing: false);
+      isFollowingUser = false;
+      DocumentSnapshot unFollowersUserSnap =
+          await _userRepository.getUserProfile(userId: tweet.authorId);
+      User unFollowersUser = User.fromDoc(unFollowersUserSnap);
+
+      DocumentSnapshot unFollowingUserSnap =
+          await _userRepository.getUserProfile(userId: currentUserId!);
+      User unFollowingUser = User.fromDoc(unFollowingUserSnap);
+
+      await _userRepository.unFollowUser(
+        unFollowingUser: unFollowingUser,
+        unFollowersUser: unFollowersUser,
+      );
+      Navigator.of(context).pop();
+      print('${tweet.authorName}のフォローを解除しました！');
+      print('isFollowingUser: $isFollowingUser');
+    }
 
     likeOrUnLikeTweet() async {
       if (!_isLiked) {
@@ -128,7 +188,7 @@ class TweetContainer extends HookWidget {
                         },
                         child: CircleAvatar(
                           radius: 23,
-                          backgroundColor: TwitterColor,
+                          backgroundColor: Colors.transparent,
                           backgroundImage: tweet.authorProfileImage.isEmpty
                               ? null
                               : NetworkImage(tweet.authorProfileImage),
@@ -144,6 +204,7 @@ class TweetContainer extends HookWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -182,49 +243,164 @@ class TweetContainer extends HookWidget {
                                 ],
                               ),
                             ),
-                            PopupMenuButton(
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: Colors.grey..shade600,
-                                size: 20,
-                              ),
-                              itemBuilder: (_) {
-                                return <PopupMenuItem<String>>[
-                                  PopupMenuItem(
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.redAccent,
-                                          ),
-                                          Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Colors.red,
+                            GestureDetector(
+                              onTap: () {
+                                print('${tweet.authorName}のフォロー状態');
+                                print('isFollowingUser: $isFollowingUser');
+
+                                _isOwner
+                                    ? showAdaptiveActionSheet(
+                                        context: context,
+                                        title: SizedBox.shrink(),
+                                        actions: <BottomSheetAction>[
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.push_pin,
+                                                color: Colors.grey,
+                                              ),
                                             ),
+                                            title: Text(
+                                              'Fixed display in profile',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {},
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Delete a tweet',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _tweetRepository.deleteTweet(
+                                                currentUserId: currentUserId!,
+                                                tweet: tweet,
+                                              );
+                                              _storageService.deleteTweetImage(
+                                                imagesPath: tweet.imagesPath,
+                                              );
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.chat_bubble,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Change users who can reply',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {},
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                    value: 'Delete',
-                                  )
-                                ];
+                                      )
+                                    : showAdaptiveActionSheet(
+                                        context: context,
+                                        title: SizedBox.shrink(),
+                                        actions: <BottomSheetAction>[
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                isFollowingUser == true
+                                                    ? Icons.person_add_disabled
+                                                    : Icons.person_add,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              isFollowingUser == true
+                                                  ? 'Unfollow ${tweet.authorName}'
+                                                  : 'Follow ${tweet.authorName}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              isFollowingUser == true
+                                                  ? unFollowUser()
+                                                  : followUser();
+                                            },
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Delete a tweet',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _tweetRepository.deleteTweet(
+                                                currentUserId: currentUserId!,
+                                                tweet: tweet,
+                                              );
+                                              _storageService.deleteTweetImage(
+                                                imagesPath: tweet.imagesPath,
+                                              );
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.chat_bubble,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Change users who can reply',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {},
+                                          ),
+                                        ],
+                                      );
                               },
-                              onSelected: (selectedItem) {
-                                if (selectedItem == 'Delete') {
-                                  _tweetRepository.deleteTweet(
-                                    userId: currentUserId!,
-                                    tweet: tweet,
-                                  );
-                                  _storageService.deleteTweetImage(
-                                    imagesPath: tweet.imagesPath,
-                                  );
-                                }
-                              },
-                            )
+                              child: Container(
+                                height: 20,
+                                width: 30,
+                                color: Colors.red,
+                                child: Icon(
+                                  Icons.more_vert,
+                                  color: Colors.grey..shade600,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         Text(
@@ -237,7 +413,7 @@ class TweetContainer extends HookWidget {
                             ? SizedBox.shrink()
                             : Column(
                                 children: [
-                                  SizedBox(height: 15),
+                                  SizedBox(height: 10),
                                   TweetImage(
                                     tweet: tweet,
                                     containerHeight: 180,

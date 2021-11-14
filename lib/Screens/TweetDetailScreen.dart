@@ -172,7 +172,7 @@ class TweetDetailScreen extends HookWidget {
                                 children: [
                                   CircleAvatar(
                                     radius: 25,
-                                    backgroundColor: TwitterColor,
+                                    backgroundColor: Colors.transparent,
                                     backgroundImage:
                                         tweet.authorProfileImage.isEmpty
                                             ? null
@@ -238,7 +238,7 @@ class TweetDetailScreen extends HookWidget {
                               onSelected: (selectedItem) {
                                 if (selectedItem == 'Delete') {
                                   _tweetRepository.deleteTweet(
-                                    userId: currentUserId!,
+                                    currentUserId: currentUserId!,
                                     tweet: tweet,
                                   );
                                   _storageService.deleteTweetImage(
@@ -249,14 +249,14 @@ class TweetDetailScreen extends HookWidget {
                             )
                           ],
                         ),
-                        SizedBox(height: 15),
+                        SizedBox(height: 10),
                         Text(
                           tweet.text,
                           style: TextStyle(
                             fontSize: 15,
                           ),
                         ),
-                        SizedBox(height: 15),
+                        SizedBox(height: 10),
                         tweet.imagesUrl.isEmpty
                             ? SizedBox.shrink()
                             : TweetImage(

@@ -11,7 +11,7 @@ class CreateTweetScreen extends HookWidget {
   CreateTweetScreen({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController textEditingController = TextEditingController();
+  //final TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,8 @@ class CreateTweetScreen extends HookWidget {
         actions: [
           Container(
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            child: textEditingController.text.length >= 1
+            // child: textEditingController.text.length >= 1
+            child: _tweetText.length >= 1
                 ? ElevatedButton(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -148,7 +149,7 @@ class CreateTweetScreen extends HookWidget {
                             User user = User.fromDoc(snapshot.data);
                             return CircleAvatar(
                               radius: 20,
-                              backgroundColor: TwitterColor,
+                              backgroundColor: Colors.transparent,
                               backgroundImage: user.profileImageUrl.isEmpty
                                   ? null
                                   : NetworkImage(user.profileImageUrl),
@@ -161,7 +162,7 @@ class CreateTweetScreen extends HookWidget {
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: TextFormField(
                         autofocus: true,
-                        controller: textEditingController,
+                        //controller: textEditingController,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         /* keyboardTypeとmaxLinesを上記のように指定することでテキスト折り返しが可能になる */

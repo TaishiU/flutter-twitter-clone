@@ -105,7 +105,7 @@ class LoginScreen extends HookWidget {
                         );
                       },
                       child: Text(
-                        'Forget Password?',
+                        'Forgot Password?',
                         style: TextStyle(
                           fontSize: 16,
                           color: TwitterColor,

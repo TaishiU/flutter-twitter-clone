@@ -114,11 +114,15 @@ class TweetRepository {
   }
 
   Future<void> deleteTweet({
-    required String userId,
+    required String currentUserId,
     required Tweet tweet,
   }) async {
     // usersコレクション
-    await usersRef.doc(userId).collection('tweets').doc(tweet.tweetId).delete();
+    await usersRef
+        .doc(currentUserId)
+        .collection('tweets')
+        .doc(tweet.tweetId)
+        .delete();
 
     // allTweetsコレクション
     await allTweetsRef.doc(tweet.tweetId).delete();
@@ -126,7 +130,7 @@ class TweetRepository {
     // feedsコレクション
     /*①ユーザー自身のfeedsからツイートを削除*/
     await feedsRef
-        .doc(userId)
+        .doc(currentUserId)
         .collection('followingUserTweets')
         .doc(tweet.tweetId)
         .delete();
@@ -136,7 +140,7 @@ class TweetRepository {
         await usersRef.doc(tweet.authorId).collection('followers').get();
 
     for (var docSnapshot in followerSnapshot.docs) {
-      /*②フォロワー１人ひとりのfeedsにツイートを格納*/
+      /*②フォロワー１人ひとりのfeedsからツイートを削除*/
       feedsRef
           .doc(docSnapshot.id)
           .collection('followingUserTweets')
