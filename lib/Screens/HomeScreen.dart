@@ -246,7 +246,8 @@ class HomeScreen extends HookWidget {
                                                 ),
                                                 CircleAvatar(
                                                   radius: 25,
-                                                  backgroundColor: TwitterColor,
+                                                  backgroundColor:
+                                                      Colors.transparent,
                                                   backgroundImage: NetworkImage(
                                                     followingAvatarList[index]
                                                         ['profileImageUrl'],
@@ -270,6 +271,7 @@ class HomeScreen extends HookWidget {
                                 height: 3,
                                 color: Colors.grey.shade300,
                               ),
+                              SizedBox(height: 8),
                             ],
                           )
                         : SizedBox.shrink();

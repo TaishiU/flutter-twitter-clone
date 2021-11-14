@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -51,7 +50,7 @@ class CommentContainer extends HookWidget {
                   },
                   child: CircleAvatar(
                     radius: 23,
-                    backgroundColor: TwitterColor,
+                    backgroundColor: Colors.transparent,
                     backgroundImage: comment.commentUserProfileImage.isEmpty
                         ? null
                         : NetworkImage(comment.commentUserProfileImage),

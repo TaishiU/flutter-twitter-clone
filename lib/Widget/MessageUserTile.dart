@@ -27,6 +27,7 @@ class MessageUserTile extends HookWidget {
     return ListTile(
       leading: CircleAvatar(
         radius: 23,
+        backgroundColor: Colors.transparent,
         backgroundImage: _isOwner
             ? NetworkImage(lastMessage.user2ProfileImage)
             : NetworkImage(lastMessage.user1ProfileImage),

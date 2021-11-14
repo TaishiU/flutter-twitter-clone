@@ -138,6 +138,7 @@ class ChatContainer extends HookWidget {
                 SizedBox(width: 10),
                 CircleAvatar(
                   radius: 18,
+                  backgroundColor: Colors.transparent,
                   backgroundImage: peerUserProfileImage.isEmpty
                       ? null
                       : NetworkImage(peerUserProfileImage),
