@@ -57,6 +57,7 @@ dependencies:
   state_notifier: ^0.7.1
   flutter_state_notifier: ^0.7.1
   freezed_annotation: ^0.14.3
+  shared_preferences: ^2.0.8
 
 
 
