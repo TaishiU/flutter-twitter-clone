@@ -20,6 +20,7 @@ class HomeScreen extends HookWidget {
     final asyncFollowingAvatar = useProvider(followingAvatarStreamProvider);
     final asyncFollowingUserTweets =
         useProvider(followingUserTweetsStreamProvider);
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -211,13 +212,10 @@ class HomeScreen extends HookWidget {
                                       child: GestureDetector(
                                         onTap: () {
                                           /*visitedUserId情報を更新*/
-                                          context
-                                              .read(visitedUserIdProvider
-                                                  .notifier)
-                                              .update(
-                                                  userId:
-                                                      followingAvatarList[index]
-                                                          ['userId']);
+                                          _visitedUserIdNotifier.update(
+                                            userId: followingAvatarList[index]
+                                                ['userId'],
+                                          );
 
                                           Navigator.push(
                                             context,

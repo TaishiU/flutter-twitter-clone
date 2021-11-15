@@ -1,3 +1,4 @@
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -16,6 +17,7 @@ import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Service/DynamicLinkService.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
+import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
 import 'package:twitter_clone/Widget/CommentContainer.dart';
 import 'package:twitter_clone/Widget/CommentUserContainer.dart';
 import 'package:twitter_clone/Widget/LikesUserContainer.dart';
@@ -37,11 +39,14 @@ class TweetDetailScreen extends HookWidget {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final bool _isLiked = useProvider(isLikedProvider);
     final String _comment = useProvider(commentProvider).state;
-    final FocusNode _focusNode = FocusNode();
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
+    final _setupNotifier = context.read(setupProvider.notifier);
     final UserRepository _userRepository = UserRepository();
     final TweetRepository _tweetRepository = TweetRepository();
     final StorageService _storageService = StorageService();
     final DynamicLinkService _dynamicLinkService = DynamicLinkService();
+    final _isOwner = tweet.authorId == currentUserId;
+    final FocusNode _focusNode = FocusNode();
 
     /*ツイートにいいねをしているか判断するメソッド*/
     setupIsLiked() async {
@@ -153,13 +158,14 @@ class TweetDetailScreen extends HookWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             GestureDetector(
                               onTap: () {
                                 /*visitedUserId情報を更新*/
-                                context
-                                    .read(visitedUserIdProvider.notifier)
-                                    .update(userId: tweet.authorId);
+                                _visitedUserIdNotifier.update(
+                                  userId: tweet.authorId,
+                                );
 
                                 Navigator.push(
                                   context,
@@ -177,7 +183,8 @@ class TweetDetailScreen extends HookWidget {
                                         tweet.authorProfileImage.isEmpty
                                             ? null
                                             : NetworkImage(
-                                                tweet.authorProfileImage),
+                                                tweet.authorProfileImage,
+                                              ),
                                   ),
                                   SizedBox(width: 10),
                                   Column(
@@ -204,49 +211,179 @@ class TweetDetailScreen extends HookWidget {
                                 ],
                               ),
                             ),
-                            PopupMenuButton(
-                              icon: Icon(
+                            // PopupMenuButton(
+                            //   icon: Icon(
+                            //     Icons.more_vert,
+                            //     color: Colors.grey..shade600,
+                            //     size: 20,
+                            //   ),
+                            //   itemBuilder: (_) {
+                            //     return <PopupMenuItem<String>>[
+                            //       PopupMenuItem(
+                            //         child: Center(
+                            //           child: Row(
+                            //             mainAxisAlignment:
+                            //                 MainAxisAlignment.spaceAround,
+                            //             children: [
+                            //               Icon(
+                            //                 Icons.delete,
+                            //                 color: Colors.redAccent,
+                            //               ),
+                            //               Text(
+                            //                 'Delete',
+                            //                 style: TextStyle(
+                            //                   color: Colors.red,
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //         value: 'Delete',
+                            //       )
+                            //     ];
+                            //   },
+                            //   onSelected: (selectedItem) {
+                            //     if (selectedItem == 'Delete') {
+                            //       _tweetRepository.deleteTweet(
+                            //         currentUserId: currentUserId!,
+                            //         tweet: tweet,
+                            //       );
+                            //       _storageService.deleteTweetImage(
+                            //         imagesPath: tweet.imagesPath,
+                            //       );
+                            //     }
+                            //   },
+                            // ),
+                            GestureDetector(
+                              onTap: () async {
+                                bool _isFollowingUser =
+                                    await _userRepository.isFollowingUser(
+                                  currentUserId: currentUserId!,
+                                  visitedUserId: tweet.authorId,
+                                );
+
+                                _isOwner
+                                    ? showAdaptiveActionSheet(
+                                        context: context,
+                                        title: SizedBox.shrink(),
+                                        actions: <BottomSheetAction>[
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.push_pin,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Fixed display in profile',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {},
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Delete a tweet',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _tweetRepository.deleteTweet(
+                                                currentUserId: currentUserId,
+                                                tweet: tweet,
+                                              );
+                                              _storageService.deleteTweetImage(
+                                                imagesPath: tweet.imagesPath,
+                                              );
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : showAdaptiveActionSheet(
+                                        context: context,
+                                        title: SizedBox.shrink(),
+                                        actions: <BottomSheetAction>[
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                _isFollowingUser == true
+                                                    ? Icons.person_add_disabled
+                                                    : Icons.person_add,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              _isFollowingUser == true
+                                                  ? 'Unfollow ${tweet.authorName}'
+                                                  : 'Follow ${tweet.authorName}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              if (_isFollowingUser == true) {
+                                                _setupNotifier.unFollowUser(
+                                                  tweet: tweet,
+                                                );
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                _setupNotifier.followUser(
+                                                  tweet: tweet,
+                                                );
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                          ),
+                                          BottomSheetAction(
+                                            leading: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Delete a tweet',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _tweetRepository.deleteTweet(
+                                                currentUserId: currentUserId,
+                                                tweet: tweet,
+                                              );
+                                              _storageService.deleteTweetImage(
+                                                imagesPath: tweet.imagesPath,
+                                              );
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                              },
+                              child: Icon(
                                 Icons.more_vert,
                                 color: Colors.grey..shade600,
                                 size: 20,
                               ),
-                              itemBuilder: (_) {
-                                return <PopupMenuItem<String>>[
-                                  PopupMenuItem(
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.redAccent,
-                                          ),
-                                          Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    value: 'Delete',
-                                  )
-                                ];
-                              },
-                              onSelected: (selectedItem) {
-                                if (selectedItem == 'Delete') {
-                                  _tweetRepository.deleteTweet(
-                                    currentUserId: currentUserId!,
-                                    tweet: tweet,
-                                  );
-                                  _storageService.deleteTweetImage(
-                                    imagesPath: tweet.imagesPath,
-                                  );
-                                }
-                              },
-                            )
+                            ),
                           ],
                         ),
                         SizedBox(height: 10),

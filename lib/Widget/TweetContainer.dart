@@ -16,6 +16,7 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Service/DynamicLinkService.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
+import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
 import 'package:twitter_clone/Widget/TweetImage.dart';
 
 class TweetContainer extends HookWidget {
@@ -29,94 +30,33 @@ class TweetContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    final bool _isLiked = useProvider(isLikedProvider);
+    final setupState = useProvider(setupProvider);
+    //final _isLiked = setupState.isLikedTweet;
+    final _isLiked = useProvider(isLikedProvider);
+    final _setupNotifier = context.read(setupProvider.notifier);
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
     final UserRepository _userRepository = UserRepository();
     final TweetRepository _tweetRepository = TweetRepository();
     final StorageService _storageService = StorageService();
     final DynamicLinkService _dynamicLinkService = DynamicLinkService();
     final _isOwner = tweet.authorId == currentUserId;
-    bool? isFollowingUser;
-
-    /*ユーザーをフォローしているか判断するメソッド*/
-    Future<void> setupIsFollowing() async {
-      isFollowingUser = await _userRepository.isFollowingUser(
-        currentUserId: currentUserId!,
-        visitedUserId: tweet.authorId,
-      );
-
-      if (isFollowingUser == true) {
-        print('${tweet.authorName}をフォローしています！');
-        print('isFollowingUser: $isFollowingUser');
-      } else {
-        print('${tweet.authorName}をフォローしていません...');
-        print('isFollowingUser: $isFollowingUser');
-      }
-    }
-
-    /*ツイートにいいねをしているか判断するメソッド*/
-    setupIsLiked() async {
-      bool isLikedTweet = await _tweetRepository.isLikedTweet(
-        currentUserId: currentUserId!,
-        tweetAuthorId: tweet.authorId,
-        tweetId: tweet.tweetId!,
-      );
-
-      if (isLikedTweet == true) {
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-      } else {
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-      }
-    }
+    //bool _isLiked = false;
 
     useEffect(() {
-      setupIsFollowing();
-      setupIsLiked();
+      //setupIsLiked();
+      // print('setupState: $setupState');
+      // _setupNotifier.setupIsLiked(tweet: tweet);
     }, []);
-
-    followUser() async {
-      //context.read(isFollowingProvider.notifier).update(isFollowing: true);
-      isFollowingUser = true;
-      DocumentSnapshot followersUserSnap =
-          await _userRepository.getUserProfile(userId: tweet.authorId);
-      User followersUser = User.fromDoc(followersUserSnap);
-
-      DocumentSnapshot followingUserSnap =
-          await _userRepository.getUserProfile(userId: currentUserId!);
-      User followingUser = User.fromDoc(followingUserSnap);
-
-      await _userRepository.followUser(
-        followingUser: followingUser,
-        followersUser: followersUser,
-      );
-      Navigator.of(context).pop();
-      print('${tweet.authorName}をフォローしました！');
-      print('isFollowingUser: $isFollowingUser');
-    }
-
-    unFollowUser() async {
-      //context.read(isFollowingProvider.notifier).update(isFollowing: false);
-      isFollowingUser = false;
-      DocumentSnapshot unFollowersUserSnap =
-          await _userRepository.getUserProfile(userId: tweet.authorId);
-      User unFollowersUser = User.fromDoc(unFollowersUserSnap);
-
-      DocumentSnapshot unFollowingUserSnap =
-          await _userRepository.getUserProfile(userId: currentUserId!);
-      User unFollowingUser = User.fromDoc(unFollowingUserSnap);
-
-      await _userRepository.unFollowUser(
-        unFollowingUser: unFollowingUser,
-        unFollowersUser: unFollowersUser,
-      );
-      Navigator.of(context).pop();
-      print('${tweet.authorName}のフォローを解除しました！');
-      print('isFollowingUser: $isFollowingUser');
-    }
 
     likeOrUnLikeTweet() async {
       if (!_isLiked) {
         /*いいねされていない時*/
         context.read(isLikedProvider.notifier).update(isLiked: true);
+        print('いいねを押しました!');
+        //_isLiked = true;
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // prefs.setBool('tweetLike', true);
+
         DocumentSnapshot userProfileDoc =
             await _userRepository.getUserProfile(userId: currentUserId!);
         User user = User.fromDoc(userProfileDoc);
@@ -139,6 +79,9 @@ class TweetContainer extends HookWidget {
         );
       } else if (_isLiked) {
         /*いいねされている時*/
+        //_isLiked = false;
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // prefs.setBool('tweetLike', false);
         context.read(isLikedProvider.notifier).update(isLiked: false);
         DocumentSnapshot userProfileDoc =
             await _userRepository.getUserProfile(userId: currentUserId!);
@@ -175,9 +118,7 @@ class TweetContainer extends HookWidget {
                       GestureDetector(
                         onTap: () {
                           /*visitedUserId情報を更新*/
-                          context
-                              .read(visitedUserIdProvider.notifier)
-                              .update(userId: tweet.authorId);
+                          _visitedUserIdNotifier.update(userId: tweet.authorId);
 
                           Navigator.push(
                             context,
@@ -244,9 +185,12 @@ class TweetContainer extends HookWidget {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                print('${tweet.authorName}のフォロー状態');
-                                print('isFollowingUser: $isFollowingUser');
+                              onTap: () async {
+                                bool _isFollowingUser =
+                                    await _userRepository.isFollowingUser(
+                                  currentUserId: currentUserId!,
+                                  visitedUserId: tweet.authorId,
+                                );
 
                                 _isOwner
                                     ? showAdaptiveActionSheet(
@@ -287,7 +231,7 @@ class TweetContainer extends HookWidget {
                                             ),
                                             onPressed: () {
                                               _tweetRepository.deleteTweet(
-                                                currentUserId: currentUserId!,
+                                                currentUserId: currentUserId,
                                                 tweet: tweet,
                                               );
                                               _storageService.deleteTweetImage(
@@ -295,23 +239,6 @@ class TweetContainer extends HookWidget {
                                               );
                                               Navigator.of(context).pop();
                                             },
-                                          ),
-                                          BottomSheetAction(
-                                            leading: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 20),
-                                              child: Icon(
-                                                Icons.chat_bubble,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            title: Text(
-                                              'Change users who can reply',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                            onPressed: () {},
                                           ),
                                         ],
                                       )
@@ -324,14 +251,14 @@ class TweetContainer extends HookWidget {
                                               padding:
                                                   EdgeInsets.only(left: 20),
                                               child: Icon(
-                                                isFollowingUser == true
+                                                _isFollowingUser == true
                                                     ? Icons.person_add_disabled
                                                     : Icons.person_add,
                                                 color: Colors.grey,
                                               ),
                                             ),
                                             title: Text(
-                                              isFollowingUser == true
+                                              _isFollowingUser == true
                                                   ? 'Unfollow ${tweet.authorName}'
                                                   : 'Follow ${tweet.authorName}',
                                               style: TextStyle(
@@ -339,9 +266,17 @@ class TweetContainer extends HookWidget {
                                               ),
                                             ),
                                             onPressed: () {
-                                              isFollowingUser == true
-                                                  ? unFollowUser()
-                                                  : followUser();
+                                              if (_isFollowingUser == true) {
+                                                _setupNotifier.unFollowUser(
+                                                  tweet: tweet,
+                                                );
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                _setupNotifier.followUser(
+                                                  tweet: tweet,
+                                                );
+                                                Navigator.of(context).pop();
+                                              }
                                             },
                                           ),
                                           BottomSheetAction(
@@ -361,7 +296,7 @@ class TweetContainer extends HookWidget {
                                             ),
                                             onPressed: () {
                                               _tweetRepository.deleteTweet(
-                                                currentUserId: currentUserId!,
+                                                currentUserId: currentUserId,
                                                 tweet: tweet,
                                               );
                                               _storageService.deleteTweetImage(
@@ -370,35 +305,13 @@ class TweetContainer extends HookWidget {
                                               Navigator.of(context).pop();
                                             },
                                           ),
-                                          BottomSheetAction(
-                                            leading: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 20),
-                                              child: Icon(
-                                                Icons.chat_bubble,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            title: Text(
-                                              'Change users who can reply',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                            onPressed: () {},
-                                          ),
                                         ],
                                       );
                               },
-                              child: Container(
-                                height: 20,
-                                width: 30,
-                                color: Colors.red,
-                                child: Icon(
-                                  Icons.more_vert,
-                                  color: Colors.grey..shade600,
-                                  size: 20,
-                                ),
+                              child: Icon(
+                                Icons.more_vert,
+                                color: Colors.grey..shade600,
+                                size: 20,
                               ),
                             ),
                           ],
@@ -506,6 +419,12 @@ class TweetContainer extends HookWidget {
                                   GestureDetector(
                                     onTap: () {
                                       likeOrUnLikeTweet();
+                                      // final SharedPreferences prefs =
+                                      //     await SharedPreferences.getInstance();
+                                      // prefs.setBool('tweetLike', true);
+                                      // _setupNotifier.likeOrUnLikeTweet(
+                                      //   tweet: tweet,
+                                      // );
                                     },
                                     child: _isLiked
                                         ? Icon(

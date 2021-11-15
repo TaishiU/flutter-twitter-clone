@@ -1,5 +1,3 @@
-//NotificationsNotifier
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
