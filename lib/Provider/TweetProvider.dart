@@ -6,13 +6,12 @@ final tweetTextProvider = StateProvider.autoDispose<String>((ref) => '');
 
 final commentProvider = StateProvider.autoDispose<String>((ref) => '');
 
-final isLikedProvider =
-    StateNotifierProvider.autoDispose<IsLikedController, bool>(
+final isLikedProvider = StateNotifierProvider<IsLikedController, bool>(
   (ref) => IsLikedController(false),
 );
 
 class IsLikedController extends StateNotifier<bool> {
-  IsLikedController(bool isLiked) : super(isLiked);
+  IsLikedController(bool isLiked) : super(false);
   void update({required bool isLiked}) => state = isLiked;
 }
 
@@ -26,15 +25,15 @@ class SelectedPageController extends StateNotifier<int> {
   void update({required int index}) => state = index;
 }
 
-final isLoadingProvider =
-    StateNotifierProvider.autoDispose<IsLoadingController, bool>(
-  (ref) => IsLoadingController(false),
-);
-
-class IsLoadingController extends StateNotifier<bool> {
-  IsLoadingController(bool isLoading) : super(isLoading);
-  void update({required bool isLoading}) => state = isLoading;
-}
+// final isLoadingProvider =
+//     StateNotifierProvider.autoDispose<IsLoadingController, bool>(
+//   (ref) => IsLoadingController(false),
+// );
+//
+// class IsLoadingController extends StateNotifier<bool> {
+//   IsLoadingController(bool isLoading) : super(isLoading);
+//   void update({required bool isLoading}) => state = isLoading;
+// }
 
 // final followingUsersStreamProvider = StreamProvider((ref) {
 //   final currentUserId = ref.watch(userIdStreamProvider).data?.value;

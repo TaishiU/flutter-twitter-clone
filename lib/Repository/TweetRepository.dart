@@ -154,11 +154,11 @@ class TweetRepository {
 
   Future<void> likesForTweet({
     required Likes likes,
-    required String postId,
-    required String postUserId,
+    required String tweetId,
+    required String tweetAuthorId,
   }) async {
     DocumentReference likestReferenceInAllTweets =
-        allTweetsRef.doc(postId).collection('likes').doc(likes.likesUserId);
+        allTweetsRef.doc(tweetId).collection('likes').doc(likes.likesUserId);
     await likestReferenceInAllTweets.set({
       'likesUserId': likes.likesUserId,
       'likesUserName': likes.likesUserName,
@@ -168,9 +168,9 @@ class TweetRepository {
     });
 
     DocumentReference likestReferenceInUser = usersRef
-        .doc(postUserId)
+        .doc(tweetAuthorId)
         .collection('tweets')
-        .doc(postId)
+        .doc(tweetId)
         .collection('likes')
         .doc(likes.likesUserId);
     await likestReferenceInUser.set({
@@ -184,11 +184,11 @@ class TweetRepository {
     _activityRepository.addActivity(
       currentUserId: likes.likesUserId,
       followedUserId: null,
-      tweetAuthorId: postUserId,
+      tweetAuthorId: tweetAuthorId,
       follow: false,
       likes: true,
       comment: false,
-      tweetId: postId,
+      tweetId: tweetId,
     );
   }
 
@@ -219,7 +219,7 @@ class TweetRepository {
 
   Future<void> favoriteTweet({
     required String currentUserId,
-    required String name,
+    // required String name,
     required Tweet tweet,
   }) async {
     await usersRef
@@ -236,7 +236,8 @@ class TweetRepository {
       'imagesUrl': tweet.imagesUrl,
       'imagesPath': tweet.imagesPath,
       'hasImage': tweet.hasImage,
-      'timestamp': Timestamp.fromDate(DateTime.now()),
+      'timestamp': tweet.timestamp,
+      //'timestamp': Timestamp.fromDate(DateTime.now()),
       /*ユーザー自身がいいねを押した瞬間のタイムスタンプ*/
       'likes': tweet.likes,
       'reTweets': tweet.reTweets,

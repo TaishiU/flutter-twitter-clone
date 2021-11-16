@@ -68,12 +68,11 @@ class TweetImageView extends HookWidget {
         );
         _tweetRepository.likesForTweet(
           likes: likes,
-          postId: tweet.tweetId!,
-          postUserId: tweet.authorId,
+          tweetId: tweet.tweetId!,
+          tweetAuthorId: tweet.authorId,
         );
         _tweetRepository.favoriteTweet(
           currentUserId: currentUserId,
-          name: user.name,
           tweet: tweet,
         );
       } else if (_isLiked) {
