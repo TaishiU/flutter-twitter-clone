@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
-import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
@@ -37,7 +36,9 @@ class TweetDetailScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    final bool _isLiked = useProvider(isLikedProvider);
+    // final _isLiked = useProvider(isLikedProvider);
+    final setupState = useProvider(setupProvider);
+    final _isLiked = setupState.isLikedTweet;
     final String _comment = useProvider(commentProvider).state;
     final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
     final _setupNotifier = context.read(setupProvider.notifier);
@@ -49,60 +50,83 @@ class TweetDetailScreen extends HookWidget {
     final FocusNode _focusNode = FocusNode();
 
     /*ツイートにいいねをしているか判断するメソッド*/
-    setupIsLiked() async {
-      bool isLikedTweet = await _tweetRepository.isLikedTweet(
-        currentUserId: currentUserId!,
-        tweetAuthorId: tweet.authorId,
-        tweetId: tweet.tweetId!,
-      );
-
-      if (isLikedTweet == true) {
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-      } else {
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-      }
-    }
+    // setupIsLiked() async {
+    //   bool isLikedTweet = await _tweetRepository.isLikedTweet(
+    //     currentUserId: currentUserId!,
+    //     tweetAuthorId: tweet.authorId,
+    //     tweetId: tweet.tweetId!,
+    //   );
+    //
+    //   if (isLikedTweet == true) {
+    //     print('TweetDetailScreen:「${tweet.text}」にいいねしています');
+    //     context.read(isLikedProvider.notifier).update(isLiked: true);
+    //     //print('isLikedTweet: $isLikedTweet');
+    //     //print('!_isLiked: ${!_isLiked}');
+    //     print('_isLiked: $_isLiked');
+    //   } else {
+    //     context.read(isLikedProvider.notifier).update(isLiked: false);
+    //     print('TweetDetailScreen:「${tweet.text}」にいいねしていません...');
+    //     //print('isLikedTweet: $isLikedTweet');
+    //     //print('!_isLiked: ${!_isLiked}');
+    //     print('_isLiked: $_isLiked');
+    //   }
+    // }
 
     useEffect(() {
-      setupIsLiked();
+      //print('初期状態の_isLiked: ${_isLiked}');
+      //setupIsLiked();
+      _setupNotifier.setupIsLiked(tweet: tweet);
     }, []);
 
-    likeOrUnLikeTweet() async {
-      if (!_isLiked) {
-        /*いいねされていない時*/
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-        DocumentSnapshot userProfileDoc =
-            await _userRepository.getUserProfile(userId: currentUserId!);
-        User user = User.fromDoc(userProfileDoc);
-        Likes likes = Likes(
-          likesUserId: currentUserId,
-          likesUserName: user.name,
-          likesUserProfileImage: user.profileImageUrl,
-          likesUserBio: user.bio,
-          timestamp: Timestamp.fromDate(DateTime.now()),
-        );
-        _tweetRepository.likesForTweet(
-          likes: likes,
-          postId: tweet.tweetId!,
-          postUserId: tweet.authorId,
-        );
-        _tweetRepository.favoriteTweet(
-          currentUserId: currentUserId,
-          name: user.name,
-          tweet: tweet,
-        );
-      } else if (_isLiked) {
-        /*いいねされている時*/
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-        DocumentSnapshot userProfileDoc =
-            await _userRepository.getUserProfile(userId: currentUserId!);
-        User user = User.fromDoc(userProfileDoc);
-        _tweetRepository.unLikesForTweet(
-          tweet: tweet,
-          unlikesUser: user,
-        );
-      }
-    }
+    // if (_isLiked == true) {
+    //   print('いいねしています');
+    //   print('_isLiked: $_isLiked');
+    // } else {
+    //   print('いいねしていません...');
+    //   print('_isLiked: $_isLiked');
+    // }
+
+    // likeOrUnLikeTweet() async {
+    //   print('ボタン押した瞬間の_isLiked: $_isLiked');
+    //   if (_isLiked == false) {
+    //     /*いいねされていない時*/
+    //     context.read(isLikedProvider.notifier).update(isLiked: true);
+    //     print('いいね');
+    //     print('_isLiked: $_isLiked');
+    //     DocumentSnapshot userProfileDoc =
+    //         await _userRepository.getUserProfile(userId: currentUserId!);
+    //     User user = User.fromDoc(userProfileDoc);
+    //     Likes likes = Likes(
+    //       likesUserId: currentUserId,
+    //       likesUserName: user.name,
+    //       likesUserProfileImage: user.profileImageUrl,
+    //       likesUserBio: user.bio,
+    //       timestamp: Timestamp.fromDate(DateTime.now()),
+    //     );
+    //     _tweetRepository.likesForTweet(
+    //       likes: likes,
+    //       postId: tweet.tweetId!,
+    //       postUserId: tweet.authorId,
+    //     );
+    //     _tweetRepository.favoriteTweet(
+    //       currentUserId: currentUserId,
+    //       name: user.name,
+    //       tweet: tweet,
+    //     );
+    //   } else if (_isLiked == true) {
+    //     /*いいねされている時*/
+    //     context.read(isLikedProvider.notifier).update(isLiked: false);
+    //     print('いいね外し');
+    //     print('_isLiked: $_isLiked');
+    //     DocumentSnapshot userProfileDoc =
+    //         await _userRepository.getUserProfile(userId: currentUserId!);
+    //     User user = User.fromDoc(userProfileDoc);
+    //     _tweetRepository.unLikesForTweet(
+    //       tweet: tweet,
+    //       unlikesUser: user,
+    //     );
+    //   }
+    // }
 
     handleComment() async {
       _formkey.currentState!.save();
@@ -394,6 +418,20 @@ class TweetDetailScreen extends HookWidget {
                           ),
                         ),
                         SizedBox(height: 10),
+                        Container(
+                          height: 100,
+                          color: _isLiked == true ? Colors.red : Colors.blue,
+                          child: Center(
+                            child: Text(
+                              _isLiked == true ? 'true' : 'false',
+                              style: TextStyle(
+                                fontSize: 60,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
                         tweet.imagesUrl.isEmpty
                             ? SizedBox.shrink()
                             : TweetImage(
@@ -547,13 +585,14 @@ class TweetDetailScreen extends HookWidget {
                             ),
                             SizedBox(width: 10),
                             IconButton(
-                              icon: _isLiked
+                              icon: _isLiked == true
                                   ? Icon(Icons.favorite)
                                   : Icon(Icons.favorite_border),
-                              color:
-                                  _isLiked ? Colors.red : Colors.grey.shade600,
+                              color: _isLiked == true
+                                  ? Colors.red
+                                  : Colors.grey.shade600,
                               onPressed: () {
-                                likeOrUnLikeTweet();
+                                _setupNotifier.likeOrUnLikeTweet(tweet: tweet);
                               },
                             ),
                             SizedBox(width: 10),

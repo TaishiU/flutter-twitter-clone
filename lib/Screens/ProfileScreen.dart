@@ -33,6 +33,7 @@ class ProfileScreen extends HookWidget {
       'QR code'
     ];
     List<String> categories = ['Tweet', 'Media', 'Likes'];
+    //List<String> categories = ['Tweet', 'Media'];
 
     /*ユーザーをフォローしているか判断するメソッド*/
     setupIsFollowing() async {
@@ -105,8 +106,6 @@ class ProfileScreen extends HookWidget {
     }
 
     final _isOwner = currentUserId == visitedUserId;
-
-    print('ProfileScreen, visitedUserId: $visitedUserId');
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -20,35 +20,32 @@ class SetupNotifier extends StateNotifier<SetupState> {
   final TweetRepository _tweetRepository = TweetRepository();
 
   /*ユーザーをフォローしているか判断するメソッド*/
-  Future<bool> setupIsFollowing({required Tweet tweet}) async {
-    final String? currentUserId = _read(currentUserIdProvider);
-    bool _isFollowingUser = await _userRepository.isFollowingUser(
-      currentUserId: currentUserId!,
-      visitedUserId: tweet.authorId,
-    );
-    // state = state.copyWith(isFollowingUser: _isFollowingUser);
-
-    // if (_isFollowingUser == true) {
-    //   state = state.copyWith(isFollowingUser: true);
-    //   print('${tweet.authorName}をフォローしています！');
-    //   print('isFollowingUser: ${state.isFollowingUser}');
-    //   return state.isFollowingUser;
-    // } else
-    if (_isFollowingUser == false) {
-      state = state.copyWith(isFollowingUser: false);
-      print('${tweet.authorName}をフォローしていません...');
-      print('isFollowingUser: ${state.isFollowingUser}');
-      print('ユーザーをフォローしているか判断するメソッドを終了しました！');
-      return state.isFollowingUser;
-    }
-    state = state.copyWith(isFollowingUser: true);
-    print('${tweet.authorName}をフォローしています！');
-    print('isFollowingUser: ${state.isFollowingUser}');
-    print('ユーザーをフォローしているか判断するメソッドを終了しました！');
-    return state.isFollowingUser;
-
-    // return state.isFollowingUser;
-  }
+  // setupIsFollowing({required Tweet tweet}) async {
+  //   final String? currentUserId = _read(currentUserIdProvider);
+  //   bool _isFollowingUser = await _userRepository.isFollowingUser(
+  //     currentUserId: currentUserId!,
+  //     visitedUserId: tweet.authorId,
+  //   );
+  //   // state = state.copyWith(isFollowingUser: _isFollowingUser);
+  //
+  //   if (_isFollowingUser == true) {
+  //     state = state.copyWith(isFollowingUser: true);
+  //     print('${tweet.authorName}をフォローしています！');
+  //     print('isFollowingUser: ${state.isFollowingUser}');
+  //     return state.isFollowingUser;
+  //   } else if (_isFollowingUser == false) {
+  //     state = state.copyWith(isFollowingUser: false);
+  //     print('${tweet.authorName}をフォローしていません...');
+  //     print('isFollowingUser: ${state.isFollowingUser}');
+  //     print('ユーザーをフォローしているか判断するメソッドを終了しました！');
+  //   }
+  //   // state = state.copyWith(isFollowingUser: true);
+  //   // print('${tweet.authorName}をフォローしています！');
+  //   // print('isFollowingUser: ${state.isFollowingUser}');
+  //   // print('ユーザーをフォローしているか判断するメソッドを終了しました！');
+  //
+  //   // return state.isFollowingUser;
+  // }
 
   /*ツイートにいいねをしているか判断するメソッド*/
   Future<void> setupIsLiked({required Tweet tweet}) async {
@@ -59,16 +56,18 @@ class SetupNotifier extends StateNotifier<SetupState> {
       tweetId: tweet.tweetId!,
     );
 
-    state = state.copyWith(isLikedTweet: _isLikedTweet);
+    // state = state.copyWith(isLikedTweet: _isLikedTweet);
 
-    if (state.isLikedTweet == true) {
+    if (_isLikedTweet == true) {
+      state = state.copyWith(isLikedTweet: true);
       //context.read(isLikedProvider.notifier).update(isLiked: true);
       // print('tweet.text: ${tweet.text}にいいねをしています！');
-      // print('isLikedTweet: ${state.isLikedTweet}');
+      // print('state.isLikedTweet: ${state.isLikedTweet}');
     } else {
+      state = state.copyWith(isLikedTweet: false);
       //context.read(isLikedProvider.notifier).update(isLiked: false);
       // print('tweet.text: ${tweet.text}にいいねをしていません...');
-      // print('isLikedTweet: ${state.isLikedTweet}');
+      // print('state.isLikedTweet: ${state.isLikedTweet}');
     }
   }
 
@@ -116,12 +115,14 @@ class SetupNotifier extends StateNotifier<SetupState> {
     //print('isFollowingUser: ${state.isFollowingUser}');
   }
 
-  Future<void> likeOrUnLikeTweet({required Tweet tweet}) async {
+  likeOrUnLikeTweet({required Tweet tweet}) async {
     if (state.isLikedTweet == false) {
       /*いいねされていない時*/
       //context.read(isLikedProvider.notifier).update(isLiked: true);
-      final String? currentUserId = _read(currentUserIdProvider);
       state = state.copyWith(isLikedTweet: true);
+      print('投稿にいいねしました');
+      print('state.isLikedTweet: ${state.isLikedTweet}');
+      final String? currentUserId = _read(currentUserIdProvider);
 
       DocumentSnapshot userProfileDoc =
           await _userRepository.getUserProfile(userId: currentUserId!);
@@ -136,19 +137,20 @@ class SetupNotifier extends StateNotifier<SetupState> {
       );
       _tweetRepository.likesForTweet(
         likes: likes,
-        postId: tweet.tweetId!,
-        postUserId: tweet.authorId,
+        tweetId: tweet.tweetId!,
+        tweetAuthorId: tweet.authorId,
       );
       _tweetRepository.favoriteTweet(
         currentUserId: currentUserId,
-        name: user.name,
         tweet: tweet,
       );
     } else if (state.isLikedTweet == true) {
       /*いいねされている時*/
       //context.read(isLikedProvider.notifier).update(isLiked: false);
-      final String? currentUserId = _read(currentUserIdProvider);
       state = state.copyWith(isLikedTweet: false);
+      print('投稿からいいねを外しました');
+      print('state.isLikedTweet: ${state.isLikedTweet}');
+      final String? currentUserId = _read(currentUserIdProvider);
 
       DocumentSnapshot userProfileDoc =
           await _userRepository.getUserProfile(userId: currentUserId!);

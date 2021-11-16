@@ -19,7 +19,6 @@ class ProfileTabs extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    //final User? user = useProvider(userProvider);
     final int _profileIndex = useProvider(profileIndexProvider);
 
     switch (_profileIndex) {
@@ -119,6 +118,7 @@ class ProfileTabs extends HookWidget {
               children: allUserTweets.map((userTweets) {
                 Tweet tweet = Tweet.fromDoc(userTweets);
                 return TweetContainer(
+                  currentUserId: currentUserId!,
                   tweet: tweet,
                 );
               }).toList(),
@@ -223,6 +223,7 @@ class ProfileTabs extends HookWidget {
               children: allUserMediaTweets.map((userTweet) {
                 Tweet tweet = Tweet.fromDoc(userTweet);
                 return TweetContainer(
+                  currentUserId: currentUserId!,
                   tweet: tweet,
                 );
               }).toList(),
@@ -300,6 +301,7 @@ class ProfileTabs extends HookWidget {
               children: allFavoriteTweets.map((favoriteTweet) {
                 Tweet tweet = Tweet.fromDoc(favoriteTweet);
                 return TweetContainer(
+                  currentUserId: currentUserId!,
                   tweet: tweet,
                 );
               }).toList(),

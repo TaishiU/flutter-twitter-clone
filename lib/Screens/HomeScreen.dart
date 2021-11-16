@@ -17,6 +17,7 @@ import 'package:twitter_clone/Widget/TweetContainer.dart';
 class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
     final asyncFollowingAvatar = useProvider(followingAvatarStreamProvider);
     final asyncFollowingUserTweets =
         useProvider(followingUserTweetsStreamProvider);
@@ -281,6 +282,7 @@ class HomeScreen extends HookWidget {
                     children: followingUserTweetsList.map((userTweet) {
                       Tweet tweet = Tweet.fromDoc(userTweet);
                       return TweetContainer(
+                        currentUserId: currentUserId!,
                         tweet: tweet,
                       );
                     }).toList(),
