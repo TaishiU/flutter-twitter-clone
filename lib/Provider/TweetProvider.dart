@@ -1,6 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Service/DynamicLinkService.dart';
 
 final tweetTextProvider = StateProvider.autoDispose<String>((ref) => '');
 
@@ -58,6 +60,18 @@ final allTweetsStreamProvider = StreamProvider.autoDispose((ref) {
       .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
       .orderBy('timestamp', descending: true)
       .snapshots();
+});
+
+final shareProvider = FutureProvider.family<Uri, Tweet>((ref, tweet) {
+  final DynamicLinkService _dynamicLinkService = DynamicLinkService();
+  return _dynamicLinkService.createDynamicLink(
+    tweetId: tweet.tweetId!,
+    tweetAuthorId: tweet.authorId,
+    tweetText: tweet.text,
+    imageUrl: tweet.hasImage
+        ? tweet.imagesUrl['0']!
+        : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+  );
 });
 
 // final userTweetsStreamProvider = StreamProvider.autoDispose((ref) {

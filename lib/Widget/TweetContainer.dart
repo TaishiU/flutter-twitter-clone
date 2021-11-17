@@ -2,17 +2,18 @@ import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/src/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
-import 'package:twitter_clone/Service/DynamicLinkService.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
 import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
 import 'package:twitter_clone/Widget/TweetImage.dart';
@@ -37,7 +38,6 @@ class _TweetContainerState extends State<TweetContainer> {
   final TweetRepository _tweetRepository = TweetRepository();
   final UserRepository _userRepository = UserRepository();
   final StorageService _storageService = StorageService();
-  final DynamicLinkService _dynamicLinkService = DynamicLinkService();
 
   @override
   void initState() {
@@ -507,35 +507,35 @@ class _TweetContainerState extends State<TweetContainer> {
                               ),
                               SizedBox(width: 10),
                               Container(
-                                child: FutureBuilder<Uri>(
-                                  future: _dynamicLinkService.createDynamicLink(
-                                    tweetId: widget.tweet.tweetId!,
-                                    tweetAuthorId: widget.tweet.authorId,
-                                    tweetText: widget.tweet.text,
-                                    imageUrl: widget.tweet.hasImage
-                                        ? widget.tweet.imagesUrl['0']!
-                                        : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
-                                  ),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      /*データがない間はアイコンボタンを表示するだけ*/
-                                      return Icon(Icons.share);
-                                    }
-                                    Uri uri = snapshot.data!;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Share.share(
-                                          '${widget.tweet.text}\n\n${uri.toString()}',
-                                        );
-                                      },
-                                      child: Icon(
-                                        Icons.share,
-                                        size: 20,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    );
-                                  },
-                                ),
+                                child:
+                                    Consumer(builder: (context, watch, child) {
+                                  final asyncShare =
+                                      watch(shareProvider(widget.tweet));
+                                  return asyncShare.when(
+                                    loading: () => Icon(
+                                      Icons.share,
+                                      size: 20,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    error: (error, stack) => Center(
+                                        child: Text('ShareUri Error: $error')),
+                                    data: (shareUri) {
+                                      Uri uri = shareUri;
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Share.share(
+                                            '${widget.tweet.text}\n\n${uri.toString()}',
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.share,
+                                          size: 20,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }),
                               ),
                             ],
                           ),
@@ -553,6 +553,21 @@ class _TweetContainerState extends State<TweetContainer> {
     );
   }
 }
+
+// class TweetContainer extends StatefulHookWidget {
+//   const TweetContainer({Key? key}) : super(key: key);
+//
+//   @override
+//   _TweetContainerState createState() => _TweetContainerState();
+// }
+//
+// class _TweetContainerState extends State<TweetContainer> {
+//   @override
+//   Widget build(BuildContext context) {
+//     final share = useProvider(shareProvider(tweet));
+//     return Container();
+//   }
+// }
 
 // import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';

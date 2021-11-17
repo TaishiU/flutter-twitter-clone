@@ -31,9 +31,13 @@ class NotificationsScreen extends HookWidget {
 
     moveToProfileOrTweetDetail({
       required Activity activity,
-      required User user,
     }) async {
       if (activity.follow == true) {
+        /*visitedUserId情報を更新*/
+        context
+            .read(visitedUserIdProvider.notifier)
+            .update(userId: activity.fromUserId);
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -101,8 +105,8 @@ class NotificationsScreen extends HookWidget {
                 itemCount: _activitiesList.length,
                 itemBuilder: (BuildContext context, int index) {
                   Activity activity = _activitiesList[index];
-                  return FutureBuilder(
-                    future: usersRef.doc(activity.fromUserId).get(),
+                  return StreamBuilder(
+                    stream: usersRef.doc(activity.fromUserId).snapshots(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (!snapshot.hasData) {
                         return SizedBox.shrink();
@@ -114,7 +118,6 @@ class NotificationsScreen extends HookWidget {
                             onTap: () {
                               moveToProfileOrTweetDetail(
                                 activity: activity,
-                                user: user,
                               );
                             },
                             child: Container(
