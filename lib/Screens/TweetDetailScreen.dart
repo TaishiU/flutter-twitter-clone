@@ -14,7 +14,6 @@ import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
-import 'package:twitter_clone/Service/DynamicLinkService.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
 import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
 import 'package:twitter_clone/Widget/CommentContainer.dart';
@@ -40,12 +39,12 @@ class TweetDetailScreen extends HookWidget {
     final setupState = useProvider(setupProvider);
     final _isLiked = setupState.isLikedTweet;
     final String _comment = useProvider(commentProvider).state;
+    final asyncShare = useProvider(shareProvider(tweet));
     final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
     final _setupNotifier = context.read(setupProvider.notifier);
     final UserRepository _userRepository = UserRepository();
     final TweetRepository _tweetRepository = TweetRepository();
     final StorageService _storageService = StorageService();
-    final DynamicLinkService _dynamicLinkService = DynamicLinkService();
     final _isOwner = tweet.authorId == currentUserId;
     final FocusNode _focusNode = FocusNode();
 
@@ -235,49 +234,6 @@ class TweetDetailScreen extends HookWidget {
                                 ],
                               ),
                             ),
-                            // PopupMenuButton(
-                            //   icon: Icon(
-                            //     Icons.more_vert,
-                            //     color: Colors.grey..shade600,
-                            //     size: 20,
-                            //   ),
-                            //   itemBuilder: (_) {
-                            //     return <PopupMenuItem<String>>[
-                            //       PopupMenuItem(
-                            //         child: Center(
-                            //           child: Row(
-                            //             mainAxisAlignment:
-                            //                 MainAxisAlignment.spaceAround,
-                            //             children: [
-                            //               Icon(
-                            //                 Icons.delete,
-                            //                 color: Colors.redAccent,
-                            //               ),
-                            //               Text(
-                            //                 'Delete',
-                            //                 style: TextStyle(
-                            //                   color: Colors.red,
-                            //                 ),
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //         value: 'Delete',
-                            //       )
-                            //     ];
-                            //   },
-                            //   onSelected: (selectedItem) {
-                            //     if (selectedItem == 'Delete') {
-                            //       _tweetRepository.deleteTweet(
-                            //         currentUserId: currentUserId!,
-                            //         tweet: tweet,
-                            //       );
-                            //       _storageService.deleteTweetImage(
-                            //         imagesPath: tweet.imagesPath,
-                            //       );
-                            //     }
-                            //   },
-                            // ),
                             GestureDetector(
                               onTap: () async {
                                 bool _isFollowingUser =
@@ -597,27 +553,15 @@ class TweetDetailScreen extends HookWidget {
                             ),
                             SizedBox(width: 10),
                             Container(
-                              child: FutureBuilder<Uri>(
-                                future: _dynamicLinkService.createDynamicLink(
-                                  tweetId: tweet.tweetId!,
-                                  tweetAuthorId: tweet.authorId,
-                                  tweetText: tweet.text,
-                                  imageUrl: tweet.hasImage
-                                      ? tweet.imagesUrl['0']!
-                                      : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+                              child: asyncShare.when(
+                                loading: () => Icon(
+                                  Icons.share,
+                                  color: Colors.grey.shade600,
                                 ),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    /*データがない間はアイコンボタンを表示するだけ*/
-                                    return IconButton(
-                                      icon: Icon(
-                                        Icons.share,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                      onPressed: () {},
-                                    );
-                                  }
-                                  Uri uri = snapshot.data!;
+                                error: (error, stack) => Center(
+                                    child: Text('ShareUri Error: $error')),
+                                data: (shareUri) {
+                                  Uri uri = shareUri;
                                   return IconButton(
                                     icon: Icon(
                                       Icons.share,

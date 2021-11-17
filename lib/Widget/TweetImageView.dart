@@ -29,6 +29,7 @@ class TweetImageView extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final bool _isLiked = useProvider(isLikedProvider);
+    final asyncShare = useProvider(shareProvider(tweet));
     final UserRepository _userRepository = UserRepository();
     final TweetRepository _tweetRepository = TweetRepository();
     final DynamicLinkService _dynamicLinkService = DynamicLinkService();
@@ -251,36 +252,27 @@ class TweetImageView extends HookWidget {
                     ),
                     SizedBox(width: 10),
                     Container(
-                      child: FutureBuilder<Uri>(
-                        future: _dynamicLinkService.createDynamicLink(
-                          tweetId: tweet.tweetId!,
-                          tweetAuthorId: tweet.authorId,
-                          tweetText: tweet.text,
-                          imageUrl: tweet.hasImage
-                              ? tweet.imagesUrl['0']!
-                              : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
+                      child: asyncShare.when(
+                        loading: () => Icon(
+                          Icons.share,
+                          size: 24,
+                          color: Colors.white,
                         ),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            /*データがない間はアイコンボタンを表示するだけ*/
-                            return Icon(
-                              Icons.share,
-                              size: 24,
-                              color: Colors.white,
-                            );
-                          }
-                          Uri uri = snapshot.data!;
-                          return GestureDetector(
-                            onTap: () {
-                              Share.share(
-                                '${tweet.text}\n\n${uri.toString()}',
-                              );
-                            },
-                            child: Icon(
+                        error: (error, stack) =>
+                            Center(child: Text('ShareUri Error: $error')),
+                        data: (shareUri) {
+                          Uri uri = shareUri;
+                          return IconButton(
+                            icon: Icon(
                               Icons.share,
                               size: 24,
                               color: Colors.white,
                             ),
+                            onPressed: () {
+                              Share.share(
+                                '${tweet.text}\n\n${uri.toString()}',
+                              );
+                            },
                           );
                         },
                       ),
