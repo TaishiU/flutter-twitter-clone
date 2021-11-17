@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Model/Activity.dart';
 
 class ActivityRepository {
   void addActivity({
@@ -54,17 +53,24 @@ class ActivityRepository {
     }
   }
 
-  Future<List<Activity>> getActivity({required String currentUserid}) async {
-    QuerySnapshot userActivitiesSnapshot = await activitiesRef
-        .doc(currentUserid)
+  // Future<void> deleteMessageForText({
+  //   required Message message,
+  // }) async {
+  //   await messagesRef
+  //       .doc(message.convoId)
+  //       .collection('allMessages')
+  //       .doc(message.timestamp.toString())
+  //       .delete();
+  // }
+
+  deleteActivity({
+    required String currentUserId,
+    required String activityId,
+  }) async {
+    await activitiesRef
+        .doc(currentUserId)
         .collection('userActivities')
-        .orderBy('timestamp', descending: true)
-        .limit(10)
-        .get();
-    List<Activity> activities =
-        userActivitiesSnapshot.docs.map((userActivitiesSnap) {
-      return Activity.fromDoc(userActivitiesSnap);
-    }).toList();
-    return activities;
+        .doc(activityId)
+        .delete();
   }
 }

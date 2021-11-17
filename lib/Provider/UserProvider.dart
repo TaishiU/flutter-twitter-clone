@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
@@ -96,4 +97,10 @@ final followersStreamProvider = StreamProvider.autoDispose((ref) {
       .collection('followers')
       .orderBy('timestamp', descending: true)
       .snapshots();
+});
+
+final activityUserProvider =
+    StreamProvider.family<DocumentSnapshot<Map<String, dynamic>>, String>(
+        (ref, fromUserId) {
+  return usersRef.doc(fromUserId).snapshots();
 });
