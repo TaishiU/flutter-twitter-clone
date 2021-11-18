@@ -183,8 +183,12 @@ class NotificationsScreen extends HookWidget {
                                                   Row(
                                                     children: [
                                                       CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.transparent,
+                                                        backgroundColor: user
+                                                                .profileImageUrl
+                                                                .isEmpty
+                                                            ? TwitterColor
+                                                            : Colors
+                                                                .transparent,
                                                         backgroundImage: user
                                                                 .profileImageUrl
                                                                 .isEmpty

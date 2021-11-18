@@ -56,11 +56,10 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
       /*画像がある場合*/
       if (state.chatImageList.length != 0) {
-        // _imagesUrl = await _uploadImage();
         Map<String, Map<String, String>> data = await _uploadImage();
+        /* _uploadImage()メソッドは下にある↓ */
         _imagesUrl = data['urlData']!;
         _imagesPath = data['pathData']!;
-        /* _uploadImage()メソッドは下にある↓ */
         _hasImage = true;
       }
 
@@ -108,10 +107,6 @@ class ChatNotifier extends StateNotifier<ChatState> {
     if (_pickedImages.isNotEmpty) {
       for (var _pickedImage in _pickedImages.entries) {
         final String? currentUserId = _read(currentUserIdProvider);
-        // String _chatImageUrl = await Storage().uploadChatImage(
-        //     userId: currentUserId!, imageFile: _pickedImage.value);
-        // /* Mapの「key = value」の型 */
-        // _images[_pickedImage.key.toString()] = _chatImageUrl;
         Map<String, String> data = await _storageService.uploadChatImage(
             userId: currentUserId!, imageFile: _pickedImage.value);
         String _chatImageUrl = data['url']!;

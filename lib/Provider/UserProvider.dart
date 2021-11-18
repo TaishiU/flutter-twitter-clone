@@ -41,14 +41,14 @@ class VisitedUserIdController extends StateNotifier<String> {
 //   void update({required UserModel.User user}) => state = user;
 // }
 
-final isFollowingProvider = StateNotifierProvider<IsFollowingController, bool>(
-  (ref) => IsFollowingController(false),
-);
-
-class IsFollowingController extends StateNotifier<bool> {
-  IsFollowingController(bool isFollowing) : super(isFollowing);
-  void update({required bool isFollowing}) => state = isFollowing;
-}
+// final isFollowingProvider = StateNotifierProvider<IsFollowingController, bool>(
+//   (ref) => IsFollowingController(false),
+// );
+//
+// class IsFollowingController extends StateNotifier<bool> {
+//   IsFollowingController(bool isFollowing) : super(isFollowing);
+//   void update({required bool isFollowing}) => state = isFollowing;
+// }
 
 final profileIndexProvider = StateNotifierProvider<ProfileIndexController, int>(
   (ref) => ProfileIndexController(0),

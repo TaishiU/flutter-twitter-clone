@@ -8,15 +8,6 @@ final tweetTextProvider = StateProvider.autoDispose<String>((ref) => '');
 
 final commentProvider = StateProvider.autoDispose<String>((ref) => '');
 
-final isLikedProvider = StateNotifierProvider<IsLikedController, bool>(
-  (ref) => IsLikedController(false),
-);
-
-class IsLikedController extends StateNotifier<bool> {
-  IsLikedController(bool isLiked) : super(false);
-  void update({required bool isLiked}) => state = isLiked;
-}
-
 final selectedPageProvider =
     StateNotifierProvider.autoDispose<SelectedPageController, int>(
   (ref) => SelectedPageController(0),
@@ -26,25 +17,6 @@ class SelectedPageController extends StateNotifier<int> {
   SelectedPageController(int index) : super(index);
   void update({required int index}) => state = index;
 }
-
-// final isLoadingProvider =
-//     StateNotifierProvider.autoDispose<IsLoadingController, bool>(
-//   (ref) => IsLoadingController(false),
-// );
-//
-// class IsLoadingController extends StateNotifier<bool> {
-//   IsLoadingController(bool isLoading) : super(isLoading);
-//   void update({required bool isLoading}) => state = isLoading;
-// }
-
-// final followingUsersStreamProvider = StreamProvider((ref) {
-//   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
-//   return _firestore
-//       .collection('users')
-//       .doc(currentUserId)
-//       .collection('following')
-//       .snapshots();
-// });
 
 final followingUserTweetsStreamProvider = StreamProvider.autoDispose((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
@@ -73,12 +45,3 @@ final shareProvider = FutureProvider.family<Uri, Tweet>((ref, tweet) {
         : 'https://static.theprint.in/wp-content/uploads/2021/02/twitter--696x391.jpg',
   );
 });
-
-// final userTweetsStreamProvider = StreamProvider.autoDispose((ref) {
-//   final user = ref.watch(userProvider);
-//   return usersRef
-//       .doc(user!.userId)
-//       .collection('tweets')
-//       .orderBy('timestamp', descending: true)
-//       .snapshots();
-// });

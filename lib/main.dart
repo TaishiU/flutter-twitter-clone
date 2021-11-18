@@ -60,10 +60,6 @@ class MyApp extends HookWidget {
       home: userIdStream.when(
         data: ((String? currentUserId) {
           if (currentUserId != null) {
-            // /*visitedUserId情報を更新*/
-            // context
-            //     .read(visitedUserIdProvider.notifier)
-            //     .update(userId: currentUserId);
             return FeedScreen();
           } else {
             return WelcomeScreen();

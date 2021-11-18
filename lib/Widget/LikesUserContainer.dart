@@ -70,7 +70,10 @@ class LikesUserContainer extends HookWidget {
                           children: [
                             CircleAvatar(
                               radius: 23,
-                              backgroundColor: Colors.transparent,
+                              backgroundColor:
+                                  likes.likesUserProfileImage.isEmpty
+                                      ? TwitterColor
+                                      : Colors.transparent,
                               backgroundImage: likes
                                       .likesUserProfileImage.isEmpty
                                   ? null
