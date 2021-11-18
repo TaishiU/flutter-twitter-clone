@@ -1,30 +1,38 @@
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
-import 'package:twitter_clone/Provider/TweetProvider.dart';
+import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
+import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class CommentContainer extends HookWidget {
   final Comment comment;
+  final Tweet tweet;
 
   CommentContainer({
     Key? key,
     required this.comment,
+    required this.tweet,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool _isLiked = useProvider(isLikedProvider);
+    final String? currentUserId = useProvider(currentUserIdProvider);
+    final TweetRepository _tweetRepository = TweetRepository();
+    final _isOwner = comment.commentUserId == currentUserId;
 
-    likeTweet() {
-      if (_isLiked) {
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-      } else {
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-      }
-    }
+    // final bool _isLiked = useProvider(isLikedProvider);
+    // likeTweet() {
+    //   if (_isLiked) {
+    //     context.read(isLikedProvider.notifier).update(isLiked: false);
+    //   } else {
+    //     context.read(isLikedProvider.notifier).update(isLiked: true);
+    //   }
+    // }
 
     return Column(
       children: [
@@ -33,7 +41,6 @@ class CommentContainer extends HookWidget {
           children: [
             Column(
               children: [
-                SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     /*visitedUserId情報を更新*/
@@ -50,7 +57,9 @@ class CommentContainer extends HookWidget {
                   },
                   child: CircleAvatar(
                     radius: 23,
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: comment.commentUserProfileImage.isEmpty
+                        ? TwitterColor
+                        : Colors.transparent,
                     backgroundImage: comment.commentUserProfileImage.isEmpty
                         ? null
                         : NetworkImage(comment.commentUserProfileImage),
@@ -64,8 +73,10 @@ class CommentContainer extends HookWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -103,36 +114,48 @@ class CommentContainer extends HookWidget {
                           ],
                         ),
                       ),
-                      PopupMenuButton(
-                        icon: Icon(
-                          Icons.more_vert,
-                          color: Colors.grey..shade600,
-                          size: 20,
-                        ),
-                        itemBuilder: (_) {
-                          return <PopupMenuItem<String>>[
-                            PopupMenuItem(
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Icon(
-                                      Icons.delete,
-                                      color: Colors.redAccent,
+                      _isOwner
+                          ? GestureDetector(
+                              onTap: () {
+                                showAdaptiveActionSheet(
+                                  context: context,
+                                  title: SizedBox.shrink(),
+                                  actions: <BottomSheetAction>[
+                                    BottomSheetAction(
+                                      leading: Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        'Delete a comment',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        _tweetRepository
+                                            .deleteOwnCommentForTweet(
+                                          comment: comment,
+                                          tweetId: tweet.tweetId!,
+                                          tweetAuthorId: tweet.authorId,
+                                        );
+                                        print('自身のコメントを削除しました！');
+                                        Navigator.of(context).pop();
+                                      },
                                     ),
-                                    Text('Delete'),
                                   ],
-                                ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.more_vert,
+                                color: Colors.grey..shade600,
+                                size: 20,
                               ),
-                              value: 'Delete',
                             )
-                          ];
-                        },
-                        onSelected: (selectedItem) {
-                          if (selectedItem == 'Delete') {}
-                        },
-                      )
+                          : SizedBox.shrink(),
                     ],
                   ),
                   Text(
@@ -179,19 +202,21 @@ class CommentContainer extends HookWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                likeTweet();
+                                //likeTweet();
                               },
-                              child: _isLiked
-                                  ? Icon(
-                                      Icons.favorite,
-                                      size: 20,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border,
-                                      size: 20,
-                                      color: Colors.grey.shade600,
-                                    ),
+                              child:
+                                  // _isLiked
+                                  //     ? Icon(
+                                  //         Icons.favorite,
+                                  //         size: 20,
+                                  //         color: Colors.red,
+                                  //       )
+                                  //     :
+                                  Icon(
+                                Icons.favorite_border,
+                                size: 20,
+                                color: Colors.grey.shade600,
+                              ),
                             ),
                             SizedBox(width: 8),
                           ],

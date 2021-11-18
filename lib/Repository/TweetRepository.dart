@@ -219,7 +219,6 @@ class TweetRepository {
 
   Future<void> favoriteTweet({
     required String currentUserId,
-    // required String name,
     required Tweet tweet,
   }) async {
     await usersRef
@@ -261,11 +260,11 @@ class TweetRepository {
 
   Future<void> commentForTweet({
     required Comment comment,
-    required String postId,
-    required String postUserId,
+    required String tweetId,
+    required String tweetAuthorId,
   }) async {
     DocumentReference commentReferenceInAllTweets =
-        allTweetsRef.doc(postId).collection('comments').doc();
+        allTweetsRef.doc(tweetId).collection('comments').doc();
     await commentReferenceInAllTweets.set({
       'commentId': commentReferenceInAllTweets.id,
       'commentUserId': comment.commentUserId,
@@ -279,9 +278,9 @@ class TweetRepository {
     String commentReferenceId = commentReferenceInAllTweets.id;
 
     DocumentReference commentReferenceInUser = usersRef
-        .doc(postUserId)
+        .doc(tweetAuthorId)
         .collection('tweets')
-        .doc(postId)
+        .doc(tweetId)
         .collection('comments')
         .doc(commentReferenceId);
     await commentReferenceInUser.set({
@@ -297,11 +296,31 @@ class TweetRepository {
     _activityRepository.addActivity(
       currentUserId: comment.commentUserId,
       followedUserId: null,
-      tweetAuthorId: postUserId,
+      tweetAuthorId: tweetAuthorId,
       follow: false,
       likes: false,
       comment: true,
-      tweetId: postId,
+      tweetId: tweetId,
     );
+  }
+
+  Future<void> deleteOwnCommentForTweet({
+    required Comment comment,
+    required String tweetId,
+    required String tweetAuthorId,
+  }) async {
+    await allTweetsRef
+        .doc(tweetId)
+        .collection('comments')
+        .doc(comment.commentId)
+        .delete();
+
+    await usersRef
+        .doc(tweetAuthorId)
+        .collection('tweets')
+        .doc(tweetId)
+        .collection('comments')
+        .doc(comment.commentId)
+        .delete();
   }
 }

@@ -8,14 +8,15 @@ import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
-import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
+import 'package:twitter_clone/ViewModel/IsFollowingNotifier.dart';
+import 'package:twitter_clone/ViewModel/IsLikedNotifier.dart';
+import 'package:twitter_clone/ViewModel/TweetCommentNotifier.dart';
 import 'package:twitter_clone/Widget/CommentContainer.dart';
 import 'package:twitter_clone/Widget/CommentUserContainer.dart';
 import 'package:twitter_clone/Widget/LikesUserContainer.dart';
@@ -35,120 +36,23 @@ class TweetDetailScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    // final _isLiked = useProvider(isLikedProvider);
-    final setupState = useProvider(setupProvider);
-    final _isLiked = setupState.isLikedTweet;
     final String _comment = useProvider(commentProvider).state;
     final asyncShare = useProvider(shareProvider(tweet));
+    final isLikedState = useProvider(isLikedProvider);
+    final _isLiked = isLikedState.isLikedTweet;
     final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
-    final _setupNotifier = context.read(setupProvider.notifier);
+    final _isFollowingNotifier = context.read(isFollowingProvider.notifier);
+    final _isLikedNotifier = context.read(isLikedProvider.notifier);
+    final _tweetCommentNotifier = context.read(tweetCommentProvider.notifier);
     final UserRepository _userRepository = UserRepository();
     final TweetRepository _tweetRepository = TweetRepository();
     final StorageService _storageService = StorageService();
     final _isOwner = tweet.authorId == currentUserId;
     final FocusNode _focusNode = FocusNode();
 
-    /*ツイートにいいねをしているか判断するメソッド*/
-    // setupIsLiked() async {
-    //   bool isLikedTweet = await _tweetRepository.isLikedTweet(
-    //     currentUserId: currentUserId!,
-    //     tweetAuthorId: tweet.authorId,
-    //     tweetId: tweet.tweetId!,
-    //   );
-    //
-    //   if (isLikedTweet == true) {
-    //     print('TweetDetailScreen:「${tweet.text}」にいいねしています');
-    //     context.read(isLikedProvider.notifier).update(isLiked: true);
-    //     //print('isLikedTweet: $isLikedTweet');
-    //     //print('!_isLiked: ${!_isLiked}');
-    //     print('_isLiked: $_isLiked');
-    //   } else {
-    //     context.read(isLikedProvider.notifier).update(isLiked: false);
-    //     print('TweetDetailScreen:「${tweet.text}」にいいねしていません...');
-    //     //print('isLikedTweet: $isLikedTweet');
-    //     //print('!_isLiked: ${!_isLiked}');
-    //     print('_isLiked: $_isLiked');
-    //   }
-    // }
-
     useEffect(() {
-      //print('初期状態の_isLiked: ${_isLiked}');
-      //setupIsLiked();
-      _setupNotifier.setupIsLiked(tweet: tweet);
+      _isLikedNotifier.setupIsLiked(tweet: tweet);
     }, []);
-
-    // if (_isLiked == true) {
-    //   print('いいねしています');
-    //   print('_isLiked: $_isLiked');
-    // } else {
-    //   print('いいねしていません...');
-    //   print('_isLiked: $_isLiked');
-    // }
-
-    // likeOrUnLikeTweet() async {
-    //   print('ボタン押した瞬間の_isLiked: $_isLiked');
-    //   if (_isLiked == false) {
-    //     /*いいねされていない時*/
-    //     context.read(isLikedProvider.notifier).update(isLiked: true);
-    //     print('いいね');
-    //     print('_isLiked: $_isLiked');
-    //     DocumentSnapshot userProfileDoc =
-    //         await _userRepository.getUserProfile(userId: currentUserId!);
-    //     User user = User.fromDoc(userProfileDoc);
-    //     Likes likes = Likes(
-    //       likesUserId: currentUserId,
-    //       likesUserName: user.name,
-    //       likesUserProfileImage: user.profileImageUrl,
-    //       likesUserBio: user.bio,
-    //       timestamp: Timestamp.fromDate(DateTime.now()),
-    //     );
-    //     _tweetRepository.likesForTweet(
-    //       likes: likes,
-    //       postId: tweet.tweetId!,
-    //       postUserId: tweet.authorId,
-    //     );
-    //     _tweetRepository.favoriteTweet(
-    //       currentUserId: currentUserId,
-    //       name: user.name,
-    //       tweet: tweet,
-    //     );
-    //   } else if (_isLiked == true) {
-    //     /*いいねされている時*/
-    //     context.read(isLikedProvider.notifier).update(isLiked: false);
-    //     print('いいね外し');
-    //     print('_isLiked: $_isLiked');
-    //     DocumentSnapshot userProfileDoc =
-    //         await _userRepository.getUserProfile(userId: currentUserId!);
-    //     User user = User.fromDoc(userProfileDoc);
-    //     _tweetRepository.unLikesForTweet(
-    //       tweet: tweet,
-    //       unlikesUser: user,
-    //     );
-    //   }
-    // }
-
-    handleComment() async {
-      _formkey.currentState!.save();
-      if (_formkey.currentState!.validate()) {
-        DocumentSnapshot userProfileDoc =
-            await _userRepository.getUserProfile(userId: currentUserId!);
-        User user = User.fromDoc(userProfileDoc);
-        Comment comment = Comment(
-          commentUserId: currentUserId,
-          commentUserName: user.name,
-          commentUserProfileImage: user.profileImageUrl,
-          commentUserBio: user.bio,
-          commentText: _comment,
-          timestamp: Timestamp.fromDate(DateTime.now()),
-        );
-
-        _tweetRepository.commentForTweet(
-          comment: comment,
-          postId: tweet.tweetId!,
-          postUserId: tweet.authorId,
-        );
-      }
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -201,7 +105,10 @@ class TweetDetailScreen extends HookWidget {
                                 children: [
                                   CircleAvatar(
                                     radius: 25,
-                                    backgroundColor: Colors.transparent,
+                                    backgroundColor:
+                                        tweet.authorProfileImage.isEmpty
+                                            ? TwitterColor
+                                            : Colors.transparent,
                                     backgroundImage:
                                         tweet.authorProfileImage.isEmpty
                                             ? null
@@ -317,12 +224,14 @@ class TweetDetailScreen extends HookWidget {
                                             ),
                                             onPressed: () {
                                               if (_isFollowingUser == true) {
-                                                _setupNotifier.unFollowUser(
+                                                _isFollowingNotifier
+                                                    .unFollowUserFromTweet(
                                                   tweet: tweet,
                                                 );
                                                 Navigator.of(context).pop();
                                               } else {
-                                                _setupNotifier.followUser(
+                                                _isFollowingNotifier
+                                                    .followUserFromTweet(
                                                   tweet: tweet,
                                                 );
                                                 Navigator.of(context).pop();
@@ -548,7 +457,8 @@ class TweetDetailScreen extends HookWidget {
                                   ? Colors.red
                                   : Colors.grey.shade600,
                               onPressed: () {
-                                _setupNotifier.likeOrUnLikeTweet(tweet: tweet);
+                                _isLikedNotifier.likeOrUnLikeTweet(
+                                    tweet: tweet);
                               },
                             ),
                             SizedBox(width: 10),
@@ -608,6 +518,7 @@ class TweetDetailScreen extends HookWidget {
                             Comment comment = Comment.fromDoc(commentForTweet);
                             return CommentContainer(
                               comment: comment,
+                              tweet: tweet,
                             );
                           }).toList(),
                         );
@@ -638,7 +549,8 @@ class TweetDetailScreen extends HookWidget {
                 padding:
                     EdgeInsets.only(right: 20, left: 20, top: 5, bottom: 20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
                       height: 40,
@@ -660,22 +572,31 @@ class TweetDetailScreen extends HookWidget {
                           },
                           onChanged: (input) {
                             context.read(commentProvider).state = input;
+                            print('_comment: $_comment');
                           },
                           focusNode: _focusNode,
                         ),
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.send_rounded,
-                        color: Colors.blue,
-                      ),
-                      onPressed: () {
-                        handleComment();
-                        _commentController.clear();
-                        _focusNode.unfocus();
-                      },
-                    ),
+                    _commentController.text.length > 0
+                        ? GestureDetector(
+                            onTap: () {
+                              _tweetCommentNotifier.handleComment(
+                                tweet: tweet,
+                                commentText: _comment,
+                              );
+                              _commentController.clear();
+                              _focusNode.unfocus();
+                            },
+                            child: Icon(
+                              Icons.send_rounded,
+                              color: Colors.blue,
+                            ),
+                          )
+                        : Icon(
+                            Icons.send_rounded,
+                            color: Colors.grey,
+                          ),
                   ],
                 ),
               ),

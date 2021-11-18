@@ -12,6 +12,7 @@ import 'package:twitter_clone/Screens/ChatScreen.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Screens/EditProfileScreen.dart';
 import 'package:twitter_clone/Screens/Utils/HelperFunctions.dart';
+import 'package:twitter_clone/ViewModel/IsFollowingNotifier.dart';
 import 'package:twitter_clone/Widget/ListUserContainer.dart';
 import 'package:twitter_clone/Widget/ProfileImageView.dart';
 import 'package:twitter_clone/Widget/ProfileTabs.dart';
@@ -21,7 +22,9 @@ class ProfileScreen extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final String visitedUserId = useProvider(visitedUserIdProvider);
-    final bool _isFollowing = useProvider(isFollowingProvider);
+    final isFollowingState = useProvider(isFollowingProvider);
+    final _isFollowing = isFollowingState.isFollowingUser;
+    final _isFollowingNotifier = context.read(isFollowingProvider.notifier);
     final int _profileIndex = useProvider(profileIndexProvider);
     final UserRepository _userRepository = UserRepository();
 
@@ -33,24 +36,9 @@ class ProfileScreen extends HookWidget {
       'QR code'
     ];
     List<String> categories = ['Tweet', 'Media', 'Likes'];
-    //List<String> categories = ['Tweet', 'Media'];
-
-    /*ユーザーをフォローしているか判断するメソッド*/
-    setupIsFollowing() async {
-      bool isFollowingUser = await _userRepository.isFollowingUser(
-        currentUserId: currentUserId!,
-        visitedUserId: visitedUserId,
-      );
-
-      if (isFollowingUser == true) {
-        context.read(isFollowingProvider.notifier).update(isFollowing: true);
-      } else {
-        context.read(isFollowingProvider.notifier).update(isFollowing: false);
-      }
-    }
 
     useEffect(() {
-      setupIsFollowing();
+      _isFollowingNotifier.setupIsFollowing(visitedUserId: visitedUserId);
     }, []);
 
     moveToChatScreen({
@@ -78,30 +66,6 @@ class ProfileScreen extends HookWidget {
             peerUser: peerUser,
           ),
         ),
-      );
-    }
-
-    followUser({required User followersUser}) async {
-      context.read(isFollowingProvider.notifier).update(isFollowing: true);
-      DocumentSnapshot followingUserSnap =
-          await _userRepository.getUserProfile(userId: currentUserId!);
-      User followingUser = User.fromDoc(followingUserSnap);
-
-      await _userRepository.followUser(
-        followingUser: followingUser,
-        followersUser: followersUser,
-      );
-    }
-
-    unFollowUser({required User unFollowersUser}) async {
-      context.read(isFollowingProvider.notifier).update(isFollowing: false);
-      DocumentSnapshot unFollowingUserSnap =
-          await _userRepository.getUserProfile(userId: currentUserId!);
-      User unFollowingUser = User.fromDoc(unFollowingUserSnap);
-
-      await _userRepository.unFollowUser(
-        unFollowingUser: unFollowingUser,
-        unFollowersUser: unFollowersUser,
       );
     }
 
@@ -152,7 +116,9 @@ class ProfileScreen extends HookWidget {
                 child: Container(
                   height: 150,
                   decoration: BoxDecoration(
-                    color: TwitterColor,
+                    color: user.coverImageUrl.isEmpty
+                        ? TwitterColor
+                        : Colors.transparent,
                     image: user.coverImageUrl.isEmpty
                         ? null
                         : DecorationImage(
@@ -229,7 +195,9 @@ class ProfileScreen extends HookWidget {
                               ),
                               CircleAvatar(
                                 radius: 42,
-                                backgroundColor: Colors.transparent,
+                                backgroundColor: user.profileImageUrl.isEmpty
+                                    ? TwitterColor
+                                    : Colors.transparent,
                                 backgroundImage: user.profileImageUrl.isEmpty
                                     ? null
                                     : NetworkImage(user.profileImageUrl),
@@ -350,9 +318,10 @@ class ProfileScreen extends HookWidget {
                                                       primary: Colors.red,
                                                     ),
                                                     onPressed: () {
-                                                      unFollowUser(
-                                                        unFollowersUser: user,
-                                                      );
+                                                      _isFollowingNotifier
+                                                          .unFollowUserFromProfile(
+                                                              visitedUserId:
+                                                                  visitedUserId);
                                                       Navigator.pop(context);
                                                     },
                                                   ),
@@ -383,7 +352,9 @@ class ProfileScreen extends HookWidget {
                                       shape: StadiumBorder(),
                                     ),
                                     onPressed: () {
-                                      followUser(followersUser: user);
+                                      _isFollowingNotifier
+                                          .followUserFromProfile(
+                                              visitedUserId: visitedUserId);
                                     },
                                   ),
                       ],

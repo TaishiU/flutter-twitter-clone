@@ -15,7 +15,7 @@ import 'package:twitter_clone/Repository/UserRepository.dart';
 import 'package:twitter_clone/Screens/ProfileScreen.dart';
 import 'package:twitter_clone/Screens/TweetDetailScreen.dart';
 import 'package:twitter_clone/Service/StorageService.dart';
-import 'package:twitter_clone/ViewModel/SetupNotifier.dart';
+import 'package:twitter_clone/ViewModel/IsFollowingNotifier.dart';
 import 'package:twitter_clone/Widget/TweetImage.dart';
 
 class TweetContainer extends StatefulWidget {
@@ -148,7 +148,10 @@ class _TweetContainerState extends State<TweetContainer> {
                         },
                         child: CircleAvatar(
                           radius: 23,
-                          backgroundColor: Colors.transparent,
+                          backgroundColor:
+                              widget.tweet.authorProfileImage.isEmpty
+                                  ? TwitterColor
+                                  : Colors.transparent,
                           backgroundImage: widget
                                   .tweet.authorProfileImage.isEmpty
                               ? null
@@ -286,24 +289,18 @@ class _TweetContainerState extends State<TweetContainer> {
                                             ),
                                             onPressed: () {
                                               if (_isFollowingUser == true) {
-                                                // _setupNotifier.unFollowUser(
-                                                //   tweet: widget.tweet,
-                                                // );
                                                 context
-                                                    .read(
-                                                        setupProvider.notifier)
-                                                    .unFollowUser(
+                                                    .read(isFollowingProvider
+                                                        .notifier)
+                                                    .unFollowUserFromTweet(
                                                       tweet: widget.tweet,
                                                     );
                                                 Navigator.of(context).pop();
                                               } else {
-                                                // _setupNotifier.followUser(
-                                                //   tweet: tweet,
-                                                // );
                                                 context
-                                                    .read(
-                                                        setupProvider.notifier)
-                                                    .followUser(
+                                                    .read(isFollowingProvider
+                                                        .notifier)
+                                                    .followUserFromTweet(
                                                       tweet: widget.tweet,
                                                     );
                                                 Navigator.of(context).pop();
@@ -435,6 +432,9 @@ class _TweetContainerState extends State<TweetContainer> {
                                             : Text(
                                                 snapshot.data!.size.toString(),
                                                 /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                ),
                                               );
                                       },
                                     ),
@@ -498,7 +498,7 @@ class _TweetContainerState extends State<TweetContainer> {
                                                   style: TextStyle(
                                                     color: _isLiked == true
                                                         ? Colors.red
-                                                        : Colors.grey,
+                                                        : Colors.grey.shade600,
                                                   ),
                                                 );
                                         }),
@@ -540,6 +540,7 @@ class _TweetContainerState extends State<TweetContainer> {
                             ],
                           ),
                         ),
+                        SizedBox(height: 5),
                       ],
                     ),
                   ),

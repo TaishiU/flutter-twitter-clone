@@ -6,14 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
-import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
-import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
-import 'package:twitter_clone/Provider/UserProvider.dart';
-import 'package:twitter_clone/Repository/TweetRepository.dart';
-import 'package:twitter_clone/Repository/UserRepository.dart';
-import 'package:twitter_clone/Service/DynamicLinkService.dart';
+import 'package:twitter_clone/ViewModel/IsLikedNotifier.dart';
 
 class TweetImageView extends HookWidget {
   final int tappedImageIndex;
@@ -27,67 +22,14 @@ class TweetImageView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? currentUserId = useProvider(currentUserIdProvider);
-    final bool _isLiked = useProvider(isLikedProvider);
     final asyncShare = useProvider(shareProvider(tweet));
-    final UserRepository _userRepository = UserRepository();
-    final TweetRepository _tweetRepository = TweetRepository();
-    final DynamicLinkService _dynamicLinkService = DynamicLinkService();
-
-    /*ツイートにいいねをしているか判断するメソッド*/
-    setupIsLiked() async {
-      bool isLikedTweet = await _tweetRepository.isLikedTweet(
-        currentUserId: currentUserId!,
-        tweetAuthorId: tweet.authorId,
-        tweetId: tweet.tweetId!,
-      );
-
-      if (isLikedTweet == true) {
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-      } else {
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-      }
-    }
+    final isLikedState = useProvider(isLikedProvider);
+    final _isLiked = isLikedState.isLikedTweet;
+    final _isLikedNotifier = context.read(isLikedProvider.notifier);
 
     useEffect(() {
-      setupIsLiked();
+      _isLikedNotifier.setupIsLiked(tweet: tweet);
     }, []);
-
-    likeOrUnLikeTweet() async {
-      if (!_isLiked) {
-        /*いいねされていない時*/
-        context.read(isLikedProvider.notifier).update(isLiked: true);
-        DocumentSnapshot userProfileDoc =
-            await _userRepository.getUserProfile(userId: currentUserId!);
-        User user = User.fromDoc(userProfileDoc);
-        Likes likes = Likes(
-          likesUserId: user.userId,
-          likesUserName: user.name,
-          likesUserProfileImage: user.profileImageUrl,
-          likesUserBio: user.bio,
-          timestamp: Timestamp.fromDate(DateTime.now()),
-        );
-        _tweetRepository.likesForTweet(
-          likes: likes,
-          tweetId: tweet.tweetId!,
-          tweetAuthorId: tweet.authorId,
-        );
-        _tweetRepository.favoriteTweet(
-          currentUserId: currentUserId,
-          tweet: tweet,
-        );
-      } else if (_isLiked) {
-        /*いいねされている時*/
-        context.read(isLikedProvider.notifier).update(isLiked: false);
-        DocumentSnapshot userProfileDoc =
-            await _userRepository.getUserProfile(userId: currentUserId!);
-        User user = User.fromDoc(userProfileDoc);
-        _tweetRepository.unLikesForTweet(
-          tweet: tweet,
-          unlikesUser: user,
-        );
-      }
-    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -205,7 +147,7 @@ class TweetImageView extends HookWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            likeOrUnLikeTweet();
+                            _isLikedNotifier.likeOrUnLikeTweet(tweet: tweet);
                           },
                           child: _isLiked
                               ? Icon(

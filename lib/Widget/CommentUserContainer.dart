@@ -70,7 +70,10 @@ class CommentUserContainer extends HookWidget {
                           children: [
                             CircleAvatar(
                               radius: 23,
-                              backgroundColor: TwitterColor,
+                              backgroundColor:
+                                  comment.commentUserProfileImage.isEmpty
+                                      ? TwitterColor
+                                      : Colors.transparent,
                               backgroundImage:
                                   comment.commentUserProfileImage.isEmpty
                                       ? null

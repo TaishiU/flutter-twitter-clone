@@ -11,7 +11,6 @@ class CreateTweetScreen extends HookWidget {
   CreateTweetScreen({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
-  //final TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,6 @@ class CreateTweetScreen extends HookWidget {
         actions: [
           Container(
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            // child: textEditingController.text.length >= 1
             child: _tweetText.length >= 1
                 ? ElevatedButton(
                     child: Padding(

@@ -102,11 +102,6 @@ class FeedScreen extends HookWidget {
     }
 
     useEffect(() {
-      /*visitedUserId情報を更新*/
-      // context
-      //     .read(visitedUserIdProvider.notifier)
-      //     .update(userId: currentUserId!);
-
       initDynamicLink();
       getToken();
 
