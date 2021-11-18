@@ -9,12 +9,12 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class CommentUserContainer extends HookWidget {
   final String title;
-  final List<DocumentSnapshot> commentListForTweet;
+  final List<DocumentSnapshot> allTweetCommentsList;
 
   CommentUserContainer({
     Key? key,
     required this.title,
-    required this.commentListForTweet,
+    required this.allTweetCommentsList,
   }) : super(key: key);
 
   @override
@@ -44,7 +44,7 @@ class CommentUserContainer extends HookWidget {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: commentListForTweet.map((commentForTweet) {
+            children: allTweetCommentsList.map((commentForTweet) {
               Comment comment = Comment.fromDoc(commentForTweet);
               return GestureDetector(
                 onTap: () {

@@ -24,7 +24,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   importance: Importance.max,
 );
 
-/*Androidのフォアグラウンド用(グローバルに宣言可)*/
+/*Androidのフォアグラウンド用*/
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 

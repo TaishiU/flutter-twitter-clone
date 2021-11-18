@@ -413,32 +413,28 @@ class _TweetContainerState extends State<TweetContainer> {
                                     ),
                                   ),
                                   SizedBox(width: 8),
-                                  Container(
-                                    child: StreamBuilder(
-                                      stream: usersRef
-                                          .doc(widget.tweet.authorId)
-                                          .collection('tweets')
-                                          .doc(widget.tweet.tweetId)
-                                          .collection('comments')
-                                          .snapshots(),
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<QuerySnapshot>
-                                              snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return SizedBox.shrink();
-                                        }
-                                        return snapshot.data!.size == 0
+                                  Consumer(builder: (context, watch, child) {
+                                    final asyncAllTweetComments = watch(
+                                      allTweetCommentsProvider(widget.tweet),
+                                    );
+                                    return asyncAllTweetComments.when(
+                                      loading: () => SizedBox.shrink(),
+                                      error: (error, stack) =>
+                                          Center(child: Text('Error: $error')),
+                                      data: (allTweetComments) {
+                                        return allTweetComments.size == 0
                                             ? SizedBox.shrink()
                                             : Text(
-                                                snapshot.data!.size.toString(),
+                                                allTweetComments.size
+                                                    .toString(),
                                                 /*Firestoreコレクションの要素数はsizeで取得できる*/
                                                 style: TextStyle(
                                                   color: Colors.grey.shade600,
                                                 ),
                                               );
                                       },
-                                    ),
-                                  ),
+                                    );
+                                  }),
                                 ],
                               ),
                               SizedBox(width: 10),
@@ -473,27 +469,19 @@ class _TweetContainerState extends State<TweetContainer> {
                                           ),
                                   ),
                                   SizedBox(width: 8),
-                                  Container(
-                                    child: StreamBuilder(
-                                        stream: usersRef
-                                            .doc(widget.tweet.authorId)
-                                            .collection('tweets')
-                                            .doc(widget.tweet.tweetId)
-                                            .collection('likes')
-                                            .orderBy('timestamp',
-                                                descending: true)
-                                            .snapshots(),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<QuerySnapshot>
-                                                snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return SizedBox.shrink();
-                                          }
-                                          return snapshot.data!.size == 0
+                                  Consumer(builder: (context, watch, child) {
+                                    final asyncAllTweetLikes = watch(
+                                      allTweetLikesProvider(widget.tweet),
+                                    );
+                                    return asyncAllTweetLikes.when(
+                                        loading: () => SizedBox.shrink(),
+                                        error: (error, stack) => Center(
+                                            child: Text('Error: $error')),
+                                        data: (allTweetLikes) {
+                                          return allTweetLikes.size == 0
                                               ? SizedBox.shrink()
                                               : Text(
-                                                  snapshot.data!.size
-                                                      .toString(),
+                                                  allTweetLikes.size.toString(),
                                                   /*Firestoreコレクションの要素数はsizeで取得できる*/
                                                   style: TextStyle(
                                                     color: _isLiked == true
@@ -501,8 +489,8 @@ class _TweetContainerState extends State<TweetContainer> {
                                                         : Colors.grey.shade600,
                                                   ),
                                                 );
-                                        }),
-                                  ),
+                                        });
+                                  }),
                                 ],
                               ),
                               SizedBox(width: 10),

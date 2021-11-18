@@ -37,6 +37,8 @@ class TweetDetailScreen extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final String _comment = useProvider(commentProvider).state;
+    final asyncAllTweetComments = useProvider(allTweetCommentsProvider(tweet));
+    final asyncAllTweetLikes = useProvider(allTweetLikesProvider(tweet));
     final asyncShare = useProvider(shareProvider(tweet));
     final isLikedState = useProvider(isLikedProvider);
     final _isLiked = isLikedState.isLikedTweet;
@@ -337,21 +339,13 @@ class TweetDetailScreen extends HookWidget {
                           children: [
                             Container(
                               padding: EdgeInsets.all(6),
-                              child: StreamBuilder(
-                                stream: usersRef
-                                    .doc(tweet.authorId)
-                                    .collection('tweets')
-                                    .doc(tweet.tweetId)
-                                    .collection('likes')
-                                    .orderBy('timestamp', descending: true)
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return SizedBox.shrink();
-                                  }
-                                  List<DocumentSnapshot> likesListForTweet =
-                                      snapshot.data!.docs;
+                              child: asyncAllTweetLikes.when(
+                                loading: () => SizedBox.shrink(),
+                                error: (error, stack) =>
+                                    Center(child: Text('Error: $error')),
+                                data: (allTweetLikes) {
+                                  List<DocumentSnapshot> allTweetLikesList =
+                                      allTweetLikes.docs;
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -360,8 +354,8 @@ class TweetDetailScreen extends HookWidget {
                                           builder: (context) =>
                                               LikesUserContainer(
                                             title: 'Liked by',
-                                            likesListForTweet:
-                                                likesListForTweet,
+                                            allTweetLikesList:
+                                                allTweetLikesList,
                                           ),
                                         ),
                                       );
@@ -369,7 +363,7 @@ class TweetDetailScreen extends HookWidget {
                                     child: Row(
                                       children: [
                                         Text(
-                                          likesListForTweet.length.toString(),
+                                          allTweetLikesList.length.toString(),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -384,21 +378,13 @@ class TweetDetailScreen extends HookWidget {
                             SizedBox(width: 20),
                             Container(
                               padding: EdgeInsets.all(6),
-                              child: StreamBuilder(
-                                stream: usersRef
-                                    .doc(tweet.authorId)
-                                    .collection('tweets')
-                                    .doc(tweet.tweetId)
-                                    .collection('comments')
-                                    .orderBy('timestamp', descending: true)
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return SizedBox.shrink();
-                                  }
-                                  List<DocumentSnapshot> commentListForTweet =
-                                      snapshot.data!.docs;
+                              child: asyncAllTweetComments.when(
+                                loading: () => SizedBox.shrink(),
+                                error: (error, stack) =>
+                                    Center(child: Text('Error: $error')),
+                                data: (allTweetComments) {
+                                  List<DocumentSnapshot> allTweetCommentsList =
+                                      allTweetComments.docs;
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -407,15 +393,16 @@ class TweetDetailScreen extends HookWidget {
                                           builder: (context) =>
                                               CommentUserContainer(
                                                   title: 'Commented by',
-                                                  commentListForTweet:
-                                                      commentListForTweet),
+                                                  allTweetCommentsList:
+                                                      allTweetCommentsList),
                                         ),
                                       );
                                     },
                                     child: Row(
                                       children: [
                                         Text(
-                                          commentListForTweet.length.toString(),
+                                          allTweetCommentsList.length
+                                              .toString(),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),

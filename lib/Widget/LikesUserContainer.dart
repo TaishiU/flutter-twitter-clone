@@ -9,12 +9,12 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class LikesUserContainer extends HookWidget {
   final String title;
-  final List<DocumentSnapshot> likesListForTweet;
+  final List<DocumentSnapshot> allTweetLikesList;
 
   LikesUserContainer({
     Key? key,
     required this.title,
-    required this.likesListForTweet,
+    required this.allTweetLikesList,
   }) : super(key: key);
 
   @override
@@ -44,7 +44,7 @@ class LikesUserContainer extends HookWidget {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: likesListForTweet.map((likesForTweet) {
+            children: allTweetLikesList.map((likesForTweet) {
               Likes likes = Likes.fromDoc(likesForTweet);
               return GestureDetector(
                 onTap: () {
