@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
@@ -27,9 +28,32 @@ final followingUserTweetsStreamProvider = StreamProvider.autoDispose((ref) {
       .snapshots();
 });
 
-final allTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+final allImageTweetsStreamProvider = StreamProvider.autoDispose((ref) {
   return allTweetsRef
       .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+      .orderBy('timestamp', descending: true)
+      .snapshots();
+});
+
+final allTweetCommentsProvider =
+    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, Tweet>(
+        (ref, tweet) {
+  return usersRef
+      .doc(tweet.authorId)
+      .collection('tweets')
+      .doc(tweet.tweetId)
+      .collection('comments')
+      .snapshots();
+});
+
+final allTweetLikesProvider =
+    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, Tweet>(
+        (ref, tweet) {
+  return usersRef
+      .doc(tweet.authorId)
+      .collection('tweets')
+      .doc(tweet.tweetId)
+      .collection('likes')
       .orderBy('timestamp', descending: true)
       .snapshots();
 });

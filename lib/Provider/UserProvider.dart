@@ -30,26 +30,6 @@ class VisitedUserIdController extends StateNotifier<String> {
   void update({required String userId}) => state = userId;
 }
 
-// final userModelProvider =
-//     StateNotifierProvider<UserModelController, UserModel.User>(
-//   (ref) => UserModelController(),
-// );
-//
-// class UserModelController extends StateNotifier<UserModel.User> {
-//   UserModelController() : super(user);
-//
-//   void update({required UserModel.User user}) => state = user;
-// }
-
-// final isFollowingProvider = StateNotifierProvider<IsFollowingController, bool>(
-//   (ref) => IsFollowingController(false),
-// );
-//
-// class IsFollowingController extends StateNotifier<bool> {
-//   IsFollowingController(bool isFollowing) : super(isFollowing);
-//   void update({required bool isFollowing}) => state = isFollowing;
-// }
-
 final profileIndexProvider = StateNotifierProvider<ProfileIndexController, int>(
   (ref) => ProfileIndexController(0),
 );

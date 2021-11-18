@@ -5,7 +5,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/ViewModel/IsLikedNotifier.dart';
@@ -22,6 +21,8 @@ class TweetImageView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final asyncAllTweetComments = useProvider(allTweetCommentsProvider(tweet));
+    final asyncAllTweetLikes = useProvider(allTweetLikesProvider(tweet));
     final asyncShare = useProvider(shareProvider(tweet));
     final isLikedState = useProvider(isLikedProvider);
     final _isLiked = isLikedState.isLikedTweet;
@@ -98,23 +99,17 @@ class TweetImageView extends HookWidget {
                         ),
                         SizedBox(width: 8),
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(tweet.authorId)
-                                .collection('tweets')
-                                .doc(tweet.tweetId)
-                                .collection('comments')
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-                              return snapshot.data!.size == 0
+                          child: asyncAllTweetComments.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (allTweetComments) {
+                              List<DocumentSnapshot> allTweetCommentsList =
+                                  allTweetComments.docs;
+                              return allTweetCommentsList.length == 0
                                   ? SizedBox.shrink()
                                   : Text(
-                                      snapshot.data!.size.toString(),
-                                      /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                      allTweetCommentsList.length.toString(),
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -163,24 +158,17 @@ class TweetImageView extends HookWidget {
                         ),
                         SizedBox(width: 8),
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(tweet.authorId)
-                                .collection('tweets')
-                                .doc(tweet.tweetId)
-                                .collection('likes')
-                                .orderBy('timestamp', descending: true)
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-                              return snapshot.data!.size == 0
+                          child: asyncAllTweetLikes.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (allTweetLikes) {
+                              List<DocumentSnapshot> allTweetLikesList =
+                                  allTweetLikes.docs;
+                              return allTweetLikesList.length == 0
                                   ? SizedBox.shrink()
                                   : Text(
-                                      snapshot.data!.size.toString(),
-                                      /*Firestoreコレクションの要素数はsizeで取得できる*/
+                                      allTweetLikesList.length.toString(),
                                       style: TextStyle(
                                         color: _isLiked
                                             ? Colors.red

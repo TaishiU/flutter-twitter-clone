@@ -17,7 +17,7 @@ class SearchScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
-    final asyncAllTweets = useProvider(allTweetsStreamProvider);
+    final asyncAllImageTweets = useProvider(allImageTweetsStreamProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -68,7 +68,7 @@ class SearchScreen extends HookWidget {
           ),
         ],
       ),
-      body: asyncAllTweets.when(
+      body: asyncAllImageTweets.when(
         loading: () => Center(child: const CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Error: $error')),
         data: (query) {
