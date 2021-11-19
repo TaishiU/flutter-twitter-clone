@@ -26,13 +26,19 @@ class NotificationsScreen extends HookWidget {
     final asyncActivity = useProvider(activityProvider);
     final TweetRepository _tweetRepository = TweetRepository();
     final ActivityRepository _activityRepository = ActivityRepository();
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       backgroundColor: Colors.white,
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: false,
         elevation: 0.5,
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.black),
+          onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+        ),
         title: Text(
           'Notifications',
           style: TextStyle(
