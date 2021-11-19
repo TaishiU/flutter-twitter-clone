@@ -22,13 +22,19 @@ class HomeScreen extends HookWidget {
     final asyncFollowingUserTweets =
         useProvider(followingUserTweetsStreamProvider);
     final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       backgroundColor: Colors.white,
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.black),
+          onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+        ),
         title: Image.asset(
           'assets/images/TwitterLogo.png',
           width: 45,

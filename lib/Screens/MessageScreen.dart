@@ -16,13 +16,19 @@ class MessageScreen extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final asyncLastMessages = useProvider(lastMessagesStreamProvider);
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       backgroundColor: Colors.white,
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0.5,
+        leading: IconButton(
+          icon: Icon(Icons.menu, color: Colors.black),
+          onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+        ),
         title: GestureDetector(
           onTap: () {
             Navigator.push(
