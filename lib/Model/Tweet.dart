@@ -1,20 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class Tweet {
-  String? tweetId;
-  String authorName;
-  String authorId;
-  String authorBio;
-  String authorProfileImage;
-  String text;
-  Map<String, String> imagesUrl;
-  Map<String, String> imagesPath;
-  bool hasImage;
-  Timestamp timestamp;
-  int likes;
-  int reTweets;
+  final String? tweetId;
+  final String authorName;
+  final String authorId;
+  final String authorBio;
+  final String authorProfileImage;
+  final String text;
+  final Map<String, String> imagesUrl;
+  final Map<String, String> imagesPath;
+  final bool hasImage;
+  final Timestamp timestamp;
+  final int likes;
+  final int reTweets;
 
-  Tweet({
+  const Tweet({
     this.tweetId,
     required this.authorName,
     required this.authorId,

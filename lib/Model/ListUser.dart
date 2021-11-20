@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class ListUser {
-  String? userId;
-  String name;
-  String bio;
-  String profileImageUrl;
-  Timestamp timestamp;
+  final String? userId;
+  final String name;
+  final String bio;
+  final String profileImageUrl;
+  final Timestamp timestamp;
 
-  ListUser({
+  const ListUser({
     this.userId,
     required this.name,
     required this.bio,

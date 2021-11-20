@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class LastMessage {
   final String? content;
   final String? convoId;
@@ -16,7 +18,7 @@ class LastMessage {
   final String userFrom;
   final String userTo;
 
-  LastMessage({
+  const LastMessage({
     required this.content,
     this.convoId,
     required this.idFrom,

@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class Activity {
-  String activityId;
-  String fromUserId;
-  Timestamp timestamp;
-  bool follow;
-  bool likes;
-  bool comment;
-  String tweetId;
+  final String activityId;
+  final String fromUserId;
+  final Timestamp timestamp;
+  final bool follow;
+  final bool likes;
+  final bool comment;
+  final String tweetId;
 
-  Activity({
+  const Activity({
     required this.activityId,
     required this.fromUserId,
     required this.timestamp,

@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class Message {
-  String? convoId;
-  String? content;
-  Map<String, String> imagesUrl;
-  Map<String, String> imagesPath;
-  bool hasImage;
-  String userFrom;
-  String userTo;
-  String idFrom;
-  String idTo;
-  Timestamp timestamp;
-  bool read;
+  final String? convoId;
+  final String? content;
+  final Map<String, String> imagesUrl;
+  final Map<String, String> imagesPath;
+  final bool hasImage;
+  final String userFrom;
+  final String userTo;
+  final String idFrom;
+  final String idTo;
+  final Timestamp timestamp;
+  final bool read;
 
-  Message({
+  const Message({
     this.convoId,
     required this.content,
     required this.imagesUrl,
