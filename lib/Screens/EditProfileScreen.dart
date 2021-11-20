@@ -1,63 +1,130 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/src/provider.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/User.dart';
-import 'package:twitter_clone/Provider/UserProvider.dart';
-import 'package:twitter_clone/ViewModel/EditProfileNotifier.dart';
+import 'package:twitter_clone/Repository/UserRepository.dart';
+import 'package:twitter_clone/Service/StorageService.dart';
 
-class EditProfileScreen extends HookWidget {
+class EditProfileScreen extends StatefulWidget {
   final User user;
-  EditProfileScreen({required this.user});
 
+  EditProfileScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  late String _name;
+  late String _bio;
+  File? _profileImage;
+  File? _coverImage;
+  bool _isLoading = false;
+  late String _imagePickedType;
   final _formKey = GlobalKey<FormState>();
+  final UserRepository _userRepository = UserRepository();
+  final StorageService _storageService = StorageService();
+
+  @override
+  initState() {
+    super.initState();
+    _name = widget.user.name;
+    _bio = widget.user.bio;
+  }
+
+  displayCoverImage() {
+    if (_coverImage == null) {
+      if (widget.user.coverImageUrl.isNotEmpty) {
+        return NetworkImage(widget.user.coverImageUrl);
+      }
+    } else {
+      return FileImage(_coverImage!);
+    }
+  }
+
+  displayProfileImage() {
+    if (_profileImage == null) {
+      if (widget.user.profileImageUrl.isNotEmpty) {
+        return NetworkImage(widget.user.profileImageUrl);
+      }
+    } else {
+      return FileImage(_profileImage!);
+    }
+  }
+
+  handleImageFromGallery() async {
+    try {
+      final imageFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        if (_imagePickedType == 'cover') {
+          setState(() {
+            _coverImage = File(imageFile.path);
+          });
+        } else if (_imagePickedType == 'profile') {
+          setState(() {
+            _profileImage = File(imageFile.path);
+          });
+        }
+      }
+    } catch (e) {
+      print('image_pickerエラー');
+    }
+  }
+
+  saveProfile() async {
+    _formKey.currentState!.save();
+    if (_formKey.currentState!.validate() && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+      String _profileImageUrl = '';
+      String _profileImagePath = '';
+      String _coverImageUrl = '';
+      String _coverImagePath = '';
+      if (_profileImage == null) {
+        _profileImageUrl = widget.user.profileImageUrl;
+        _profileImagePath = widget.user.profileImagePath;
+      } else {
+        Map<String, String> profileData =
+            await _storageService.uploadProfileImage(
+                userId: widget.user.userId, imageFile: _profileImage!);
+        _profileImageUrl = profileData['url']!;
+        _profileImagePath = profileData['path']!;
+      }
+      if (_coverImage == null) {
+        _coverImageUrl = widget.user.coverImageUrl;
+        _coverImagePath = widget.user.coverImagePath;
+      } else {
+        Map<String, String> coverData = await _storageService.uploadCoverImage(
+            userId: widget.user.userId, imageFile: _coverImage!);
+        _coverImageUrl = coverData['url']!;
+        _coverImagePath = coverData['path']!;
+      }
+
+      User user = User(
+        userId: widget.user.userId,
+        name: _name,
+        email: widget.user.email,
+        bio: _bio,
+        profileImageUrl: _profileImageUrl,
+        profileImagePath: _profileImagePath,
+        coverImageUrl: _coverImageUrl,
+        coverImagePath: _coverImagePath,
+        fcmToken: widget.user.fcmToken,
+      );
+      await _userRepository.updateUserData(user: user);
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var _name = useProvider(profileNameProvider).state;
-    var _bio = useProvider(profileBioProvider).state;
-    final editProfileState = useProvider(editProfileProvider);
-    final _profileImage = editProfileState.profileImage;
-    final _coverImage = editProfileState.coverImage;
-    final _isLoading = editProfileState.isLoading;
-    final editProfileNotifier = context.read(editProfileProvider.notifier);
-    // final TextEditingController nameController =
-    //     TextEditingController(text: _name);
-    // final TextEditingController bioController =
-    //     TextEditingController(text: _bio);
-
-    //仮説
-    // TODO textEditingControllerのtext.lengthが0であればuser.name、１文字でもあれば_nameを渡す
-
-    useEffect(() {
-      _name = user.name;
-      //context.read(profileNameProvider).state = user.name;
-      print('初期化したname: $_name');
-      _bio = user.bio;
-      print('初期化したbio: $_bio');
-    }, []);
-
-    displayCoverImage() {
-      if (_coverImage == null) {
-        if (user.coverImageUrl.isNotEmpty) {
-          return NetworkImage(user.coverImageUrl);
-        }
-      } else {
-        return FileImage(_coverImage);
-      }
-    }
-
-    displayProfileImage() {
-      if (_profileImage == null) {
-        if (user.profileImageUrl.isNotEmpty) {
-          return NetworkImage(user.profileImageUrl);
-        }
-      } else {
-        return FileImage(_profileImage);
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -82,28 +149,8 @@ class EditProfileScreen extends HookWidget {
                 color: Colors.black,
               ),
             ),
-            onPressed: () async {
-              print('ボタンをクリック, _name: $_name');
-              print('ボタンをクリック, _bio: $_bio');
-              if (_isLoading == false) {
-                final isFalse = await editProfileNotifier.saveProfile(
-                  user: user,
-                  name: _name,
-                  bio: _bio,
-                  // name: nameController.text.length > 0 ? _name : user.name,
-                  // bio: bioController.text.length > 0 ? _bio : user.bio,
-                );
-                /*falseが帰ってきたら前のページに戻る*/
-                if (isFalse == false) {
-                  Navigator.of(context).pop();
-                } else {
-                  print('edit Profile error...');
-                  print('isFalse: $isFalse');
-                }
-              } else {
-                print('プロフィールを保存中なのでボタンをクリックしても無効です');
-                print('保存中の_isLoading: $_isLoading');
-              }
+            onPressed: () {
+              saveProfile();
             },
           ),
         ],
@@ -115,20 +162,25 @@ class EditProfileScreen extends HookWidget {
         children: [
           GestureDetector(
             onTap: () {
-              editProfileNotifier.handleImageFromGallery(type: 'cover');
+              _imagePickedType = 'cover';
+              handleImageFromGallery();
             },
             child: Stack(
               children: [
                 Container(
                   height: 150,
                   decoration: BoxDecoration(
-                    color: TwitterColor,
-                    image: user.coverImageUrl.isEmpty && _coverImage == null
-                        ? null
-                        : DecorationImage(
-                            image: displayCoverImage() as ImageProvider,
-                            fit: BoxFit.cover,
-                          ),
+                    color:
+                        widget.user.coverImageUrl.isEmpty && _coverImage == null
+                            ? TwitterColor
+                            : Colors.transparent,
+                    image:
+                        widget.user.coverImageUrl.isEmpty && _coverImage == null
+                            ? null
+                            : DecorationImage(
+                                image: displayCoverImage(),
+                                fit: BoxFit.cover,
+                              ),
                   ),
                 ),
                 Container(
@@ -161,8 +213,8 @@ class EditProfileScreen extends HookWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        editProfileNotifier.handleImageFromGallery(
-                            type: 'profile');
+                        _imagePickedType = 'profile';
+                        handleImageFromGallery();
                       },
                       child: Stack(
                         alignment: Alignment.center,
@@ -173,11 +225,16 @@ class EditProfileScreen extends HookWidget {
                           ),
                           CircleAvatar(
                             radius: 42,
-                            backgroundColor: TwitterColor,
-                            backgroundImage: user.profileImageUrl.isEmpty &&
-                                    _profileImage == null
-                                ? null
-                                : displayProfileImage() as ImageProvider,
+                            backgroundColor:
+                                widget.user.profileImageUrl.isEmpty &&
+                                        _profileImage == null
+                                    ? TwitterColor
+                                    : Colors.transparent,
+                            backgroundImage:
+                                widget.user.profileImageUrl.isEmpty &&
+                                        _profileImage == null
+                                    ? null
+                                    : displayProfileImage(),
                           ),
                           CircleAvatar(
                             radius: 42,
@@ -205,8 +262,7 @@ class EditProfileScreen extends HookWidget {
                   child: Column(
                     children: [
                       TextFormField(
-                        initialValue: user.name,
-                        //controller: TextEditingController(text: _name),
+                        initialValue: _name,
                         decoration: InputDecoration(
                           labelText: 'Name',
                           labelStyle: TextStyle(color: TwitterColor),
@@ -214,14 +270,13 @@ class EditProfileScreen extends HookWidget {
                         validator: (input) => input!.trim().length < 2
                             ? 'please enter valid name'
                             : null,
-                        onChanged: (String? value) {
-                          context.read(profileNameProvider).state = value!;
+                        onSaved: (value) {
+                          _name = value!;
                         },
                       ),
                       SizedBox(height: 30),
                       TextFormField(
-                        initialValue: user.bio,
-                        //controller: bioController,
+                        initialValue: _bio,
                         decoration: InputDecoration(
                           labelText: 'Bio',
                           labelStyle: TextStyle(color: TwitterColor),
@@ -229,8 +284,8 @@ class EditProfileScreen extends HookWidget {
                         validator: (input) => input!.trim().length < 2
                             ? 'please enter valid bio'
                             : null,
-                        onChanged: (String? value) {
-                          context.read(profileBioProvider).state = value!;
+                        onSaved: (value) {
+                          _bio = value!;
                         },
                       ),
                       SizedBox(height: 30),

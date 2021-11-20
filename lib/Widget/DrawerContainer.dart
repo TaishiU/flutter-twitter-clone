@@ -13,6 +13,7 @@ import 'package:twitter_clone/Widget/ListUserContainer.dart';
 class DrawerContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = useProvider(currentUserIdProvider);
     final asyncCurrentUserProfile =
         useProvider(currentUserProfileStreamProvider);
     final asyncFollowing = useProvider(followingStreamProvider);
@@ -172,6 +173,11 @@ class DrawerContainer extends HookWidget {
           ),
           GestureDetector(
             onTap: () {
+              /*visitedUserId情報を更新*/
+              context
+                  .read(visitedUserIdProvider.notifier)
+                  .update(userId: currentUserId!);
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
