@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class User {
-  String userId;
-  String name;
-  String email;
-  String bio;
-  String profileImageUrl;
-  String profileImagePath;
-  String coverImageUrl;
-  String coverImagePath;
-  String fcmToken;
+  final String userId;
+  final String name;
+  final String email;
+  final String bio;
+  final String profileImageUrl;
+  final String profileImagePath;
+  final String coverImageUrl;
+  final String coverImagePath;
+  final String fcmToken;
 
-  User({
+  const User({
     required this.userId,
     required this.name,
     required this.email,

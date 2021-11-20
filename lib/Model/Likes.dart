@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class Likes {
-  String likesUserId;
-  String likesUserName;
-  String likesUserProfileImage;
-  String likesUserBio;
-  Timestamp timestamp;
+  final String likesUserId;
+  final String likesUserName;
+  final String likesUserProfileImage;
+  final String likesUserBio;
+  final Timestamp timestamp;
 
-  Likes({
+  const Likes({
     required this.likesUserId,
     required this.likesUserName,
     required this.likesUserProfileImage,

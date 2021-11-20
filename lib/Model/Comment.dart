@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class Comment {
-  String? commentId;
-  String commentUserId;
-  String commentUserName;
-  String commentUserProfileImage;
-  String commentUserBio;
-  String commentText;
-  Timestamp timestamp;
+  final String? commentId;
+  final String commentUserId;
+  final String commentUserName;
+  final String commentUserProfileImage;
+  final String commentUserBio;
+  final String commentText;
+  final Timestamp timestamp;
 
-  Comment({
+  const Comment({
     this.commentId,
     required this.commentUserId,
     required this.commentUserName,
