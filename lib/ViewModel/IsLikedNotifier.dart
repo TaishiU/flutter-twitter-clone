@@ -39,8 +39,6 @@ class IsLikedNotifier extends StateNotifier<IsLikedState> {
     if (state.isLikedTweet == false) {
       /*いいねされていない時*/
       state = state.copyWith(isLikedTweet: true);
-      print('投稿にいいねしました');
-      print('state.isLikedTweet: ${state.isLikedTweet}');
       final String? currentUserId = _read(currentUserIdProvider);
 
       DocumentSnapshot userProfileDoc =
@@ -66,8 +64,6 @@ class IsLikedNotifier extends StateNotifier<IsLikedState> {
     } else if (state.isLikedTweet == true) {
       /*いいねされている時*/
       state = state.copyWith(isLikedTweet: false);
-      print('投稿からいいねを外しました');
-      print('state.isLikedTweet: ${state.isLikedTweet}');
       final String? currentUserId = _read(currentUserIdProvider);
 
       DocumentSnapshot userProfileDoc =

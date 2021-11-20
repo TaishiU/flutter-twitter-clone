@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/CreateTweetScreen.dart';
 import 'package:twitter_clone/Widget/TweetContainer.dart';
@@ -20,24 +21,19 @@ class ProfileTabs extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final int _profileIndex = useProvider(profileIndexProvider);
+    final _profileTweet = useProvider(profileTweetProvider(user));
+    final _profileImageTweet = useProvider(profileImageTweetProvider(user));
+    final _profileFavoriteTweet =
+        useProvider(profileFavoriteTweetProvider(user));
 
     switch (_profileIndex) {
       case 0:
-        return StreamBuilder<QuerySnapshot>(
-          stream: usersRef
-              .doc(user.userId)
-              .collection('tweets')
-              .orderBy('timestamp', descending: true)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            List<DocumentSnapshot> allUserTweets = snapshot.data!.docs;
-            if (allUserTweets.length == 0) {
+        return _profileTweet.when(
+          loading: () => Center(child: const CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (profileTweet) {
+            List<DocumentSnapshot> profileTweetList = profileTweet.docs;
+            if (profileTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -115,7 +111,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: allUserTweets.map((userTweets) {
+              children: profileTweetList.map((userTweets) {
                 Tweet tweet = Tweet.fromDoc(userTweets);
                 return TweetContainer(
                   currentUserId: currentUserId!,
@@ -127,22 +123,13 @@ class ProfileTabs extends HookWidget {
         );
         break;
       case 1:
-        return StreamBuilder<QuerySnapshot>(
-          stream: usersRef
-              .doc(user.userId)
-              .collection('tweets')
-              .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
-              .orderBy('timestamp', descending: true)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            List<DocumentSnapshot> allUserMediaTweets = snapshot.data!.docs;
-            if (allUserMediaTweets.length == 0) {
+        return _profileImageTweet.when(
+          loading: () => Center(child: const CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (profileImageTweet) {
+            List<DocumentSnapshot> profileImageTweetList =
+                profileImageTweet.docs;
+            if (profileImageTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -220,7 +207,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: allUserMediaTweets.map((userTweet) {
+              children: profileImageTweetList.map((userTweet) {
                 Tweet tweet = Tweet.fromDoc(userTweet);
                 return TweetContainer(
                   currentUserId: currentUserId!,
@@ -232,22 +219,13 @@ class ProfileTabs extends HookWidget {
         );
         break;
       case 2:
-        return StreamBuilder<QuerySnapshot>(
-          stream: usersRef
-              .doc(user.userId)
-              .collection('favorite')
-              /*いいねを押した瞬間のタイム順*/
-              .orderBy('timestamp', descending: true)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            List<DocumentSnapshot> allFavoriteTweets = snapshot.data!.docs;
-            if (allFavoriteTweets.length == 0) {
+        return _profileFavoriteTweet.when(
+          loading: () => Center(child: const CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (profileFavoriteTweet) {
+            List<DocumentSnapshot> profileFavoriteTweetList =
+                profileFavoriteTweet.docs;
+            if (profileFavoriteTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -298,7 +276,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: allFavoriteTweets.map((favoriteTweet) {
+              children: profileFavoriteTweetList.map((favoriteTweet) {
                 Tweet tweet = Tweet.fromDoc(favoriteTweet);
                 return TweetContainer(
                   currentUserId: currentUserId!,

@@ -53,16 +53,6 @@ class ActivityRepository {
     }
   }
 
-  // Future<void> deleteMessageForText({
-  //   required Message message,
-  // }) async {
-  //   await messagesRef
-  //       .doc(message.convoId)
-  //       .collection('allMessages')
-  //       .doc(message.timestamp.toString())
-  //       .delete();
-  // }
-
   deleteActivity({
     required String currentUserId,
     required String activityId,

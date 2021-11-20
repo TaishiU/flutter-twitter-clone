@@ -235,8 +235,8 @@ class TweetRepository {
       'imagesUrl': tweet.imagesUrl,
       'imagesPath': tweet.imagesPath,
       'hasImage': tweet.hasImage,
-      'timestamp': tweet.timestamp,
-      //'timestamp': Timestamp.fromDate(DateTime.now()),
+      //'timestamp': tweet.timestamp,
+      'timestamp': Timestamp.fromDate(DateTime.now()),
       /*ユーザー自身がいいねを押した瞬間のタイムスタンプ*/
       'likes': tweet.likes,
       'reTweets': tweet.reTweets,

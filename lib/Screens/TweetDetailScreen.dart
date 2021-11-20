@@ -39,6 +39,7 @@ class TweetDetailScreen extends HookWidget {
     final String _comment = useProvider(commentProvider).state;
     final asyncAllTweetComments = useProvider(allTweetCommentsProvider(tweet));
     final asyncAllTweetLikes = useProvider(allTweetLikesProvider(tweet));
+    final asyncCommentForTweet = useProvider(commentForTweetProvider(tweet));
     final asyncShare = useProvider(shareProvider(tweet));
     final isLikedState = useProvider(isLikedProvider);
     final _isLiked = isLikedState.isLikedTweet;
@@ -285,20 +286,6 @@ class TweetDetailScreen extends HookWidget {
                           ),
                         ),
                         SizedBox(height: 10),
-                        Container(
-                          height: 100,
-                          color: _isLiked == true ? Colors.red : Colors.blue,
-                          child: Center(
-                            child: Text(
-                              _isLiked == true ? 'true' : 'false',
-                              style: TextStyle(
-                                fontSize: 60,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10),
                         tweet.imagesUrl.isEmpty
                             ? SizedBox.shrink()
                             : TweetImage(
@@ -481,28 +468,18 @@ class TweetDetailScreen extends HookWidget {
                   ),
                   Divider(),
                   Container(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: usersRef
-                          .doc(tweet.authorId)
-                          .collection('tweets')
-                          .doc(tweet.tweetId)
-                          .collection('comments')
-                          .orderBy('timestamp', descending: true)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        List<DocumentSnapshot> commentsForTweet =
-                            snapshot.data!.docs;
+                    child: asyncCommentForTweet.when(
+                      loading: () => SizedBox.shrink(),
+                      error: (error, stack) =>
+                          Center(child: Text('Error: $error')),
+                      data: (commentForTweet) {
+                        List<DocumentSnapshot> commentsForTweetList =
+                            commentForTweet.docs;
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          children: commentsForTweet.map((commentForTweet) {
-                            Comment comment = Comment.fromDoc(commentForTweet);
+                          children: commentsForTweetList.map((commentSnap) {
+                            Comment comment = Comment.fromDoc(commentSnap);
                             return CommentContainer(
                               comment: comment,
                               tweet: tweet,

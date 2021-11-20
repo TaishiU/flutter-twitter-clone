@@ -80,7 +80,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 setState(() {
                   _searchName = name;
                   _algoliaResult = searchUser(name: name);
-                  print('_algoliaResult: $_algoliaResult');
                 });
               }
             },
@@ -97,7 +96,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
           ),
         ],
       ),
-      // body: Center(child: Text('_algoliaResult: $_algoliaResult')),
       body: _algoliaResult == null
           ? Consumer(builder: (context, watch, child) {
               final asyncSearchUsers = watch(searchUsersStreamProvider);

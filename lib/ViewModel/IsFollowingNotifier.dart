@@ -27,12 +27,8 @@ class IsFollowingNotifier extends StateNotifier<IsFollowingState> {
 
     if (_isFollowingUser == true) {
       state = state.copyWith(isFollowingUser: true);
-      print('フォローしています！');
-      print('isFollowingUser: ${state.isFollowingUser}');
     } else if (_isFollowingUser == false) {
       state = state.copyWith(isFollowingUser: false);
-      print('フォローしていません...');
-      print('isFollowingUser: ${state.isFollowingUser}');
     }
   }
 
@@ -52,9 +48,6 @@ class IsFollowingNotifier extends StateNotifier<IsFollowingState> {
       followingUser: followingUser,
       followersUser: followersUser,
     );
-
-    print('${followingUser.name}が${followersUser.name}をフォローしました！');
-    print('isFollowingUser: ${state.isFollowingUser}');
   }
 
   Future<void> followUserFromTweet({required Tweet tweet}) async {
@@ -73,9 +66,6 @@ class IsFollowingNotifier extends StateNotifier<IsFollowingState> {
       followingUser: followingUser,
       followersUser: followersUser,
     );
-
-    print('${followingUser.name}が${followersUser.name}をフォローしました！');
-    print('isFollowingUser: ${state.isFollowingUser}');
   }
 
   Future<void> unFollowUserFromProfile({required String visitedUserId}) async {
@@ -94,9 +84,6 @@ class IsFollowingNotifier extends StateNotifier<IsFollowingState> {
       unFollowingUser: unFollowingUser,
       unFollowersUser: unFollowersUser,
     );
-
-    print('${unFollowingUser.name}が${unFollowersUser.name}のフォローを解除しました！');
-    print('isFollowingUser: ${state.isFollowingUser}');
   }
 
   Future<void> unFollowUserFromTweet({required Tweet tweet}) async {
@@ -115,8 +102,5 @@ class IsFollowingNotifier extends StateNotifier<IsFollowingState> {
       unFollowingUser: unFollowingUser,
       unFollowersUser: unFollowersUser,
     );
-
-    print('${unFollowingUser.name}が${unFollowersUser.name}のフォローを解除しました！');
-    print('isFollowingUser: ${state.isFollowingUser}');
   }
 }

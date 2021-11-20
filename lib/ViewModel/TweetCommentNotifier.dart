@@ -6,7 +6,6 @@ import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Repository/TweetRepository.dart';
 import 'package:twitter_clone/Repository/UserRepository.dart';
-import 'package:twitter_clone/State/IsLikedState.dart';
 
 final tweetCommentProvider = StateNotifierProvider<TweetCommentNotifier, void>(
   (ref) => TweetCommentNotifier(ref.read),
@@ -14,7 +13,7 @@ final tweetCommentProvider = StateNotifierProvider<TweetCommentNotifier, void>(
 
 class TweetCommentNotifier extends StateNotifier<void> {
   final Reader _read;
-  TweetCommentNotifier(this._read) : super(const IsLikedState());
+  TweetCommentNotifier(this._read) : super(null);
 
   final UserRepository _userRepository = UserRepository();
   final TweetRepository _tweetRepository = TweetRepository();
