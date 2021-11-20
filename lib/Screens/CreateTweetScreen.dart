@@ -160,7 +160,6 @@ class CreateTweetScreen extends HookWidget {
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: TextFormField(
                         autofocus: true,
-                        //controller: textEditingController,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         /* keyboardTypeとmaxLinesを上記のように指定することでテキスト折り返しが可能になる */

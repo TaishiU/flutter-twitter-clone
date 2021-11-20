@@ -25,15 +25,6 @@ class CommentContainer extends HookWidget {
     final TweetRepository _tweetRepository = TweetRepository();
     final _isOwner = comment.commentUserId == currentUserId;
 
-    // final bool _isLiked = useProvider(isLikedProvider);
-    // likeTweet() {
-    //   if (_isLiked) {
-    //     context.read(isLikedProvider.notifier).update(isLiked: false);
-    //   } else {
-    //     context.read(isLikedProvider.notifier).update(isLiked: true);
-    //   }
-    // }
-
     return Column(
       children: [
         Row(
@@ -201,18 +192,8 @@ class CommentContainer extends HookWidget {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                //likeTweet();
-                              },
-                              child:
-                                  // _isLiked
-                                  //     ? Icon(
-                                  //         Icons.favorite,
-                                  //         size: 20,
-                                  //         color: Colors.red,
-                                  //       )
-                                  //     :
-                                  Icon(
+                              onTap: () {},
+                              child: Icon(
                                 Icons.favorite_border,
                                 size: 20,
                                 color: Colors.grey.shade600,

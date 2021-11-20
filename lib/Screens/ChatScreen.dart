@@ -81,22 +81,6 @@ class ChatScreen extends HookWidget {
                         );
                       }).toList(),
                     ),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: NeverScrollableScrollPhysics(),
-                    //   //reverse: true,
-                    //   itemCount: listMessageSnap.length,
-                    //   itemBuilder: (BuildContext context, int index) {
-                    //     Message message =
-                    //         Message.fromDoc(listMessageSnap[index]);
-                    //     return ChatContainer(
-                    //       currentUserId: widget.currentUserId,
-                    //       peerUserId: widget.peerUser.userId,
-                    //       peerUserProfileImage: widget.peerUser.profileImage,
-                    //       message: message,
-                    //     );
-                    //   },
-                    // ),
                     Container(
                       height: 70,
                       color: Colors.transparent,

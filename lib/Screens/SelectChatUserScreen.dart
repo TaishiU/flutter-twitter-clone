@@ -2,8 +2,9 @@ import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Model/User.dart';
+import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Widget/SelectChatUserTile.dart';
 
 class SelectChatUserScreen extends StatefulWidget {
@@ -49,7 +50,6 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
           width: MediaQuery.of(context).size.width * 0.7,
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
           decoration: BoxDecoration(
-            //color: Colors.grey.shade200,
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextFormField(
@@ -87,31 +87,28 @@ class _SelectChatUserScreenState extends State<SelectChatUserScreen> {
         ),
       ),
       body: _algoliaResult == null
-          ? StreamBuilder<QuerySnapshot>(
-              stream: usersRef.limit(5).snapshots(),
-              /*リミットは5件*/
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
+          ? Consumer(builder: (context, watch, child) {
+              final asyncSearchUsers = watch(searchUsersStreamProvider);
+              return asyncSearchUsers.when(
+                loading: () => Center(child: const CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+                data: (query) {
+                  List<DocumentSnapshot> userListSnap = query.docs;
+                  /*ユーザー自身のアバターは削除*/
+                  userListSnap.removeWhere((snapshot) =>
+                      snapshot.get('userId') == widget.currentUserId);
+                  return ListView(
+                    physics: BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    children: userListSnap.map((userSnap) {
+                      User peerUser = User.fromDoc(userSnap);
+                      return SelectChatUserTile(peerUser: peerUser);
+                    }).toList(),
                   );
-                }
-                List<DocumentSnapshot> userListSnap = snapshot.data!.docs;
-                /*ユーザー自身のアバターは削除*/
-                userListSnap.removeWhere((snapshot) =>
-                    snapshot.get('userId') == widget.currentUserId);
-                return ListView(
-                  physics: BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
-                  ),
-                  children: userListSnap.map((userSnap) {
-                    User peerUser = User.fromDoc(userSnap);
-                    return SelectChatUserTile(peerUser: peerUser);
-                  }).toList(),
-                );
-              },
-            )
+                },
+              );
+            })
           : FutureBuilder(
               future: _algoliaResult,
               builder: (BuildContext context,
