@@ -1,9 +1,8 @@
 # Hello world👋   ![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fthealphamerc)
 
-Welcome to the Twitter Clone project with Flutter and Firebase.
+Welcome to the Twitter Clone project with Flutter, Firebase and algolia.<br>
 
-![FE1DD7C2-0E86-42C6-A1A6-14D079E185F3_4_5005_c](https://user-images.githubusercontent.com/73986840/134115443-949395ff-1e06-4987-9100-8a184eb037a0.jpeg)
-
+![4FA73133-96C0-47A7-85BB-451D2658C326_1_201_a](https://user-images.githubusercontent.com/73986840/142754894-a635457f-8cc9-4d24-839c-1870c714fa8e.jpeg)
 
 ## 💥 Features
 - Registration and Login
@@ -18,7 +17,121 @@ Welcome to the Twitter Clone project with Flutter and Firebase.
 - Tweet detail
 - Notification (follow, likes and comment)
 - Chat with other users
+- Send some images as chat (up to 4)
 - etc.
+
+## Architecture (Update 2021/11/19)
+- Riverpod
+- Flutter Hooks
+- StateNotifier
+- freezed
+
+![A0DA5EE3-E9B4-4EE3-A4EC-B06EBCD42639_1_105_c](https://user-images.githubusercontent.com/73986840/142591192-835202f0-edac-4fd4-8564-f889b643c386.jpeg)
+
+Reference: https://github.com/wasabeef/flutter-architecture-blueprints
+
+## 📙 Directory Structure (Update 2021/11/19)
+
+![2DDB9E04-75C9-4944-B3C6-6318720EEEAA_1_105_c](https://user-images.githubusercontent.com/73986840/142754183-56c84175-3082-44de-8e9c-4665386a7aef.jpeg)
+
+<details>
+     <summary> [Detail] Click to expand </summary>
+
+```
+|-- lib
+|   |-- Constants
+|   |   '-- Constants.dart
+|   |-- Model
+|   |   |-- Activity.dart
+|   |   |-- Comment.dart
+|   |   |-- LastMessage.dart
+|   |   |-- Likes.dart
+|   |   |-- ListUser.dart
+|   |   |-- Message.dart
+|   |   |-- Tweet.dart
+|   |   '-- User.dart
+|   |-- Provider
+|   |   |-- ActivityProvider.dart
+|   |   |-- AuthProvider.dart
+|   |   |-- ChatProvider.dart
+|   |   |-- TweetProvider.dart
+|   |   '-- UserProvider.dart
+|   |-- Repository
+|   |   |-- ActivityRepository.dart
+|   |   |-- MessageRepository.dart
+|   |   |-- TweetRepository.dart
+|   |   '-- UserRepository.dart
+|   |-- Screens
+|   |   |-- Intro
+|   |   |   |-- ForgetPasswordScreen.dart
+|   |   |   |-- LoginScreen.dart
+|   |   |   |-- RegistrationScreen.dart
+|   |   |   '-- WelcomeScreen.dart
+|   |   |-- Utils
+|   |   |   '-- HelperFunctions.dart
+|   |   |-- ChatScreen.dart
+|   |   |-- CreateTweetScreen.dart
+|   |   |-- EditProfileScreen.dart
+|   |   |-- FeedScreen.dart
+|   |   |-- HomeScreen.dart
+|   |   |-- MessageScreen.dart
+|   |   |-- NotificationsScreen.dart
+|   |   |-- ProfileScreen.dart
+|   |   |-- SearchScreen.dart
+|   |   |-- SearchUserScreen.dart
+|   |   |-- SelectChatUserScreen.dart
+|   |   '-- TweetDetailScreen.dart
+|   |-- Service
+|   |   |-- AuthService.dart
+|   |   |-- DynamicLinkService.dart
+|   |   '-- StorageService.dart
+|   |-- State
+|   |   |-- ChatState.dart
+|   |   |-- ChatState.freezed.dart
+|   |   |-- CreateTweetState.dart
+|   |   |-- CreateTweetState.freezed.dart
+|   |   |-- EditProfileState.dart
+|   |   |-- EditProfileState.freezed.dart
+|   |   |-- FavoriteState.dart
+|   |   |-- FavoriteState.freezed.dart
+|   |   |-- FcmTokenState.dart
+|   |   |-- FcmTokenState.freezed.dart
+|   |   |-- IsFollowingState.dart
+|   |   |-- IsFollowingState.freezed.dart
+|   |   |-- IsLikedState.dart
+|   |   |-- IsLikedState.freezed.dart
+|   |-- ViewModel
+|   |   |-- ChatNotifier.dart
+|   |   |-- CreateTweetNotifier.dart
+|   |   '-- EditProfileNotifier.dart
+|   |   |-- FavoriteNotifier.dart
+|   |   |-- FcmTokenNotifier.dart
+|   |   |-- IsFollowingNotifier.dart
+|   |   |-- IsLikedNotifier.dart
+|   |   |-- TweetCommentNotifier.dart
+|   |-- Widget
+|   |   |-- ChatContainer.dart
+|   |   |-- ChatImage.dart
+|   |   |-- CommentContainer.dart
+|   |   |-- CommentUserContainer.dart
+|   |   |-- DrawerContainer.dart
+|   |   |-- LikesUserContainer.dart
+|   |   |-- ListUserContainer.dart
+|   |   |-- MessageUserTile.dart
+|   |   |-- ProfileImageView.dart
+|   |   |-- ProfileTabs.dart
+|   |   |-- RoundedButton.dart
+|   |   |-- SearchUserTile.dart
+|   |   |-- SelectChatUserTile.dart
+|   |   |-- TweetContainer.dart
+|   |   |-- TweetImage.dart
+|   |   '-- TweetImageView.dart
+|   |-- main.dart
+
+```
+
+</details>
+
 
 ## 📸 All Screens
 
@@ -56,7 +169,7 @@ Notification | To Detail | Drawer | Create Tweet
 
 Message | Select Chat User | Chat | Delete Message
 :---:|:---:|:---:|:---:
-![274937DF-CE92-4B33-A811-56A77BBAF8E2](https://user-images.githubusercontent.com/73986840/134101775-82a98890-607f-4c0e-b299-801d73841bb8.png) | ![5C3ED4C5-9162-4AC0-B98A-3488B67B0D7D](https://user-images.githubusercontent.com/73986840/133972740-db7d1fdb-869c-4a00-85e9-ec16b5050539.png) | ![0F7E450E-B089-4489-AD40-09622B2B3CC2_1_105_c](https://user-images.githubusercontent.com/73986840/134099063-f7e8ab63-329f-4816-863d-f005532123b7.jpeg) | ![5F907F12-3FD8-4896-9B28-5835B1FF2151_1_105_c](https://user-images.githubusercontent.com/73986840/134101793-29f7f60e-d1bb-4682-8bf5-198ad6916a82.jpeg) |
+![9A852907-3DB6-4B13-A75F-777917834CB6_1_105_c](https://user-images.githubusercontent.com/73986840/142753262-77d6aaf9-fb0f-4225-aa89-d836fd035ec0.jpeg) | ![5C3ED4C5-9162-4AC0-B98A-3488B67B0D7D](https://user-images.githubusercontent.com/73986840/133972740-db7d1fdb-869c-4a00-85e9-ec16b5050539.png) | ![9902C158-7DC3-440E-8A5F-D47C0C2A9CDB_1_105_c](https://user-images.githubusercontent.com/73986840/142754244-2000fcac-d29d-4e44-8d7b-20df29dc0bb0.jpeg) | ![BB917B77-B2DC-4115-AA0F-A76609E566A5](https://user-images.githubusercontent.com/73986840/142753366-f16d4ea1-561e-4a61-ba69-8885dee4ba04.png) |
 
 
 ## 🔥 Firebase products
@@ -65,6 +178,7 @@ Message | Select Chat User | Chat | Delete Message
 - Storage
 - Functions
 - Dynamic Links
+- Messaging (Update 2021/11/19)
 
 
 
@@ -77,82 +191,40 @@ Message | Select Chat User | Chat | Delete Message
    - [firebase_storage](https://pub.dev/packages/firebase_storage)
    - [cloud_functions](https://pub.dev/packages/cloud_functions)
    - [firebase_dynamic_links](https://pub.dev/packages/firebase_dynamic_links)
+   - [firebase_messaging](https://pub.dev/packages/firebase_messaging)
+   - [firebase_analytics](https://pub.dev/packages/firebase_analytics)
 - Tweet related
    - [image_picker](https://pub.dev/packages/image_picker)
    - [flutter_image_compress](https://pub.dev/packages/flutter_image_compress)
    - [path_provider](https://pub.dev/packages/path_provider)
    - [uuid](https://pub.dev/packages/uuid)
    - [flutter_staggered_grid_view](https://pub.dev/packages/flutter_staggered_grid_view)
+   - [photo_view](https://pub.dev/packages/photo_view)
+- FCM related
+   - [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications)
+- Algolia
+   - [algolia](https://pub.dev/packages/algolia)
 - Others
    - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons)
    - [flutter_native_splash](https://pub.dev/packages/flutter_native_splash)
    - [share](https://pub.dev/packages/share)
    - [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)
    - [flutter_svg](https://pub.dev/packages/flutter_svg)
+   - [intl](https://pub.dev/packages/intl)
+   - [adaptive_action_sheet](https://pub.dev/packages/adaptive_action_sheet)
+- Provider related
+   - [flutter_hooks](https://pub.dev/packages/flutter_hooks)
+   - [hooks_riverpod](https://pub.dev/packages/hooks_riverpod)
+   - [state_notifier](https://pub.dev/packages/state_notifier)
+   - [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier)
+   - [freezed_annotation](https://pub.dev/packages/freezed_annotation)
+   - [shared_preferences](https://pub.dev/packages/shared_preferences)
 
-
-## 📙 Directory Structure
-<details>
-     <summary> Click to expand </summary>
-
-```
-|-- lib
-|   |-- Constants
-|   |   '-- Constants.dart
-|   |-- Firebase
-|   |   |-- Auth.dart
-|   |   |-- DynamicLink.dart
-|   |   |-- Firestore.dart
-|   |   '-- Storage.dart
-|   |-- Model
-|   |   |-- Activity.dart
-|   |   |-- Comment.dart
-|   |   |-- GetLastMessage.dart
-|   |   |-- Likes.dart
-|   |   |-- ListUser.dart
-|   |   |-- Message.dart
-|   |   |-- Tweet.dart
-|   |   '-- User.dart
-|   |-- Screens
-|   |   |-- Intro
-|   |   |   |-- ForgetPasswordScreen.dart
-|   |   |   |-- LoginScreen.dart
-|   |   |   |-- RegistrationScreen.dart
-|   |   |   '-- WelcomeScreen.dart
-|   |   |-- Utils
-|   |   |   '-- HelperFunctions.dart
-|   |   |-- ChatScreen.dart
-|   |   |-- CreateTweetScreen.dart
-|   |   |-- EditProfileScreen.dart
-|   |   |-- FeedScreen.dart
-|   |   |-- HomeScreen.dart
-|   |   |-- MessageScreen.dart
-|   |   |-- NotificationsScreen.dart
-|   |   |-- ProfileScreen.dart
-|   |   |-- SearchScreen.dart
-|   |   |-- SearchUserScreen.dart
-|   |   |-- SelectChatUserScreen.dart
-|   |   '-- TweetDetailScreen.dart
-|   |-- Widget
-|   |   |-- CommentContainer.dart
-|   |   |-- CommentUser.dart
-|   |   |-- DrawerContainer.dart
-|   |   |-- LikesUserContainer.dart
-|   |   |-- ListUserContainer.dart
-|   |   |-- MessageContainer.dart
-|   |   |-- ProfileImageView.dart
-|   |   |-- RoundedButton.dart
-|   |   |-- TweetContainer.dart
-|   |   |-- TweetImage.dart
-|   |   '-- TweetImageView.dart
-|   |-- main.dart
-
-```
-
-</details>
-
-## 🚀 Comming in the Future
+## 🚀 Coming in the Future
 - Create tweet with video
-- Cloud Messaging
+- Cloud Messaging (✅Done 2021/11/19)
 - Enhanced Chat functionality
+- Complete migration from StatefulWidget to HookWidget
+
+
 
