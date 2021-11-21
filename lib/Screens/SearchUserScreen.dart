@@ -75,7 +75,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 },
               ),
             ),
-            onChanged: (name) {
+            onChanged: (String name) {
               if (name.isNotEmpty) {
                 setState(() {
                   _searchName = name;

@@ -1,10 +1,10 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Provider/AuthProvider.dart';
 import 'package:twitter_clone/Service/AuthService.dart';
+import 'package:twitter_clone/ViewModel/FcmTokenNotifier.dart';
 import 'package:twitter_clone/Widget/RoundedButton.dart';
 import 'package:twitter_clone/main.dart';
 
@@ -19,19 +19,22 @@ class RegistrationScreen extends HookWidget {
     final _email = useProvider(emailProvider).state;
     final _password = useProvider(passwordProvider).state;
     final _isObscure = useProvider(isObscureProvider);
+    final fcmTokenState = useProvider(fcmTokenProvider);
+    final _fcmToken = fcmTokenState.fcmToken;
     final AuthService _authService = AuthService();
 
     /*初期化処理が非同期だから、登録ボタンを押したときに_fcmTokenがnullのまま*/
-    String? _fcmToken;
+    //String? _fcmToken;
 
-    void getFcmToken() async {
-      print('ゼロ状態fcmToken: $_fcmToken');
-      _fcmToken = await FirebaseMessaging.instance.getToken();
-      print('初期fcmToken: $_fcmToken');
-    }
+    // void getFcmToken() async {
+    //   print('ゼロ状態fcmToken: $_fcmToken');
+    //   _fcmToken = await FirebaseMessaging.instance.getToken();
+    //   print('初期fcmToken: $_fcmToken');
+    // }
 
     useEffect(() {
-      getFcmToken();
+      //getFcmToken();
+      context.read(fcmTokenProvider.notifier).getFcmToken();
     }, []);
 
     return Scaffold(
