@@ -23,17 +23,7 @@ class RegistrationScreen extends HookWidget {
     final _fcmToken = fcmTokenState.fcmToken;
     final AuthService _authService = AuthService();
 
-    /*初期化処理が非同期だから、登録ボタンを押したときに_fcmTokenがnullのまま*/
-    //String? _fcmToken;
-
-    // void getFcmToken() async {
-    //   print('ゼロ状態fcmToken: $_fcmToken');
-    //   _fcmToken = await FirebaseMessaging.instance.getToken();
-    //   print('初期fcmToken: $_fcmToken');
-    // }
-
     useEffect(() {
-      //getFcmToken();
       context.read(fcmTokenProvider.notifier).getFcmToken();
     }, []);
 
