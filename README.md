@@ -218,7 +218,6 @@ Message | Select Chat User | Chat | Delete Message
    - [state_notifier](https://pub.dev/packages/state_notifier)
    - [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier)
    - [freezed_annotation](https://pub.dev/packages/freezed_annotation)
-   - [shared_preferences](https://pub.dev/packages/shared_preferences)
 
 ## 🚀 Coming in the Future
 - Create tweet with video
