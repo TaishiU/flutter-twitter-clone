@@ -58,7 +58,7 @@ final followingAvatarStreamProvider = StreamProvider.autoDispose((ref) {
 });
 
 final searchUsersStreamProvider = StreamProvider.autoDispose((ref) {
-  return usersRef.limit(5).snapshots();
+  return usersRef.limit(8).snapshots();
 });
 
 final followingStreamProvider = StreamProvider.autoDispose((ref) {
