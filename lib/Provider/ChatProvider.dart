@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -21,11 +22,21 @@ class ConvoIdController extends StateNotifier<String> {
   void update({required String convoId}) => state = convoId;
 }
 
-final userMessagesStreamProvider = StreamProvider.autoDispose((ref) {
+final userMessagesStreamProvider = StreamProvider((ref) {
   final convoId = ref.watch(convoIdProvider);
   return messagesRef
       .doc(convoId)
       .collection('allMessages')
       .orderBy('timestamp', descending: false)
+      .snapshots();
+});
+
+final unReadMessageProvider =
+    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, String>(
+        (ref, convoId) {
+  return messagesRef
+      .doc(convoId)
+      .collection('allMessages')
+      .where('read', isEqualTo: false) /*未読メッセージを取得*/
       .snapshots();
 });
