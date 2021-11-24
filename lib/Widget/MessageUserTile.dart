@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/LastMessage.dart';
+import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/ChatProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -19,11 +21,14 @@ class MessageUserTile extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
+    final unReadMessage =
+        useProvider(unReadMessageProvider(lastMessage.convoId!));
     final UserRepository _userRepository = UserRepository();
 
     /*user1Idがユーザー自身のidと一致するか*/
     final _isOwner = currentUserId == lastMessage.user1Id;
     final _notRead = !lastMessage.read && lastMessage.idTo == currentUserId;
+
     return ListTile(
       leading: CircleAvatar(
         radius: 23,
@@ -68,10 +73,48 @@ class MessageUserTile extends HookWidget {
                     ),
                   ),
       ),
-      trailing: Text(
-        '${lastMessage.timestamp.toDate().month.toString()}/${lastMessage.timestamp.toDate().day.toString()}',
-        style: TextStyle(
-          fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+      trailing: Container(
+        child: unReadMessage.when(
+          loading: () => SizedBox.shrink(),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (unReadMessageQuery) {
+            List<DocumentSnapshot> unReadMessageListSnap =
+                unReadMessageQuery.docs;
+
+            final unReadMessageList = unReadMessageListSnap.where((e) {
+              Message message = Message.fromDoc(e);
+              return message.idTo == currentUserId;
+            }).toList();
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${lastMessage.timestamp.toDate().month.toString()}/${lastMessage.timestamp.toDate().day.toString()}',
+                  style: TextStyle(
+                    fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+                unReadMessageList.length != 0
+                    ? Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: TwitterColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          unReadMessageList.length.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ],
+            );
+          },
         ),
       ),
       onTap: () async {
