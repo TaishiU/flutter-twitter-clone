@@ -18,6 +18,7 @@ class DrawerContainer extends HookWidget {
         useProvider(currentUserProfileStreamProvider);
     final asyncFollowing = useProvider(followingStreamProvider);
     final asyncFollowers = useProvider(followersStreamProvider);
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
     final AuthService _authService = AuthService();
 
     return Drawer(
@@ -35,9 +36,7 @@ class DrawerContainer extends HookWidget {
                     GestureDetector(
                       onTap: () {
                         /*visitedUserId情報を更新*/
-                        context
-                            .read(visitedUserIdProvider.notifier)
-                            .update(userId: user.userId);
+                        _visitedUserIdNotifier.update(userId: user.userId);
 
                         Navigator.push(
                           context,

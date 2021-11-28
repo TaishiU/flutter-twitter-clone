@@ -27,6 +27,7 @@ class NotificationsScreen extends HookWidget {
     final TweetRepository _tweetRepository = TweetRepository();
     final ActivityRepository _activityRepository = ActivityRepository();
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    final _visitedUserUdNotifier = context.read(visitedUserIdProvider.notifier);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -75,7 +76,6 @@ class NotificationsScreen extends HookWidget {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Container(
                       height: MediaQuery.of(context).size.height,
-                      //color: Colors.red,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -120,9 +120,8 @@ class NotificationsScreen extends HookWidget {
                                   onTap: () async {
                                     if (activity.follow == true) {
                                       /*visitedUserId情報を更新*/
-                                      context
-                                          .read(visitedUserIdProvider.notifier)
-                                          .update(userId: activity.fromUserId);
+                                      _visitedUserUdNotifier.update(
+                                          userId: activity.fromUserId);
 
                                       Navigator.push(
                                         context,

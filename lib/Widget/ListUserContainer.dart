@@ -19,6 +19,8 @@ class ListUserContainer extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -49,9 +51,7 @@ class ListUserContainer extends HookWidget {
               return GestureDetector(
                 onTap: () {
                   /*visitedUserId情報を更新*/
-                  context
-                      .read(visitedUserIdProvider.notifier)
-                      .update(userId: listUser.userId!);
+                  _visitedUserIdNotifier.update(userId: listUser.userId!);
 
                   Navigator.push(
                     context,

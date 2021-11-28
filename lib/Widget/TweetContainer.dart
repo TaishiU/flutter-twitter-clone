@@ -107,6 +107,8 @@ class _TweetContainerState extends State<TweetContainer> {
   @override
   Widget build(BuildContext context) {
     final _isOwner = widget.tweet.authorId == widget.currentUserId;
+    final _isFollowingNotifier = context.read(isFollowingProvider.notifier);
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
 
     return Container(
       child: Column(
@@ -134,9 +136,8 @@ class _TweetContainerState extends State<TweetContainer> {
                       GestureDetector(
                         onTap: () {
                           /*visitedUserId情報を更新*/
-                          context
-                              .read(visitedUserIdProvider.notifier)
-                              .update(userId: widget.tweet.authorId);
+                          _visitedUserIdNotifier.update(
+                              userId: widget.tweet.authorId);
 
                           Navigator.push(
                             context,
@@ -172,9 +173,8 @@ class _TweetContainerState extends State<TweetContainer> {
                               GestureDetector(
                                 onTap: () {
                                   /*visitedUserId情報を更新*/
-                                  context
-                                      .read(visitedUserIdProvider.notifier)
-                                      .update(userId: widget.tweet.authorId);
+                                  _visitedUserIdNotifier.update(
+                                      userId: widget.tweet.authorId);
 
                                   Navigator.push(
                                     context,
@@ -290,20 +290,16 @@ class _TweetContainerState extends State<TweetContainer> {
                                               ),
                                               onPressed: () {
                                                 if (_isFollowingUser == true) {
-                                                  context
-                                                      .read(isFollowingProvider
-                                                          .notifier)
+                                                  _isFollowingNotifier
                                                       .unFollowUserFromTweet(
-                                                        tweet: widget.tweet,
-                                                      );
+                                                    tweet: widget.tweet,
+                                                  );
                                                   Navigator.of(context).pop();
                                                 } else {
-                                                  context
-                                                      .read(isFollowingProvider
-                                                          .notifier)
+                                                  _isFollowingNotifier
                                                       .followUserFromTweet(
-                                                        tweet: widget.tweet,
-                                                      );
+                                                    tweet: widget.tweet,
+                                                  );
                                                   Navigator.of(context).pop();
                                                 }
                                               },

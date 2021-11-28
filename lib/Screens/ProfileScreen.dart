@@ -94,7 +94,6 @@ class ProfileScreen extends HookWidget {
             );
           }
           User user = User.fromDoc(snapshot.data);
-          //context.read(userProvider.notifier).update(user: user);
           return ListView(
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
