@@ -15,6 +15,8 @@ class SearchUserTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
+
     return ListTile(
       leading: CircleAvatar(
         radius: 23,
@@ -28,9 +30,7 @@ class SearchUserTile extends HookWidget {
       subtitle: Text('@${user.bio}'),
       onTap: () {
         /*visitedUserId情報を更新*/
-        context
-            .read(visitedUserIdProvider.notifier)
-            .update(userId: user.userId);
+        _visitedUserIdNotifier.update(userId: user.userId);
 
         Navigator.push(
           context,

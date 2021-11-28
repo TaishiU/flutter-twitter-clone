@@ -24,6 +24,7 @@ class CommentContainer extends HookWidget {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final TweetRepository _tweetRepository = TweetRepository();
     final _isOwner = comment.commentUserId == currentUserId;
+    final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
 
     return Column(
       children: [
@@ -35,9 +36,8 @@ class CommentContainer extends HookWidget {
                 GestureDetector(
                   onTap: () {
                     /*visitedUserId情報を更新*/
-                    context
-                        .read(visitedUserIdProvider.notifier)
-                        .update(userId: comment.commentUserId);
+                    _visitedUserIdNotifier.update(
+                        userId: comment.commentUserId);
 
                     Navigator.push(
                       context,
