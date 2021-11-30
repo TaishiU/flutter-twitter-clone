@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -77,11 +76,10 @@ class SearchScreen extends HookWidget {
       body: asyncAllImageTweets.when(
         loading: () => Center(child: const CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Error: $error')),
-        data: (query) {
-          List<DocumentSnapshot> allImageTweets = query.docs;
+        data: (List<Tweet> allImageTweets) {
           /* ユーザー自身のツイート画像は表示リストから削除 → removeWhere */
-          allImageTweets.removeWhere(
-              (imageTweet) => imageTweet.get('authorId') == currentUserId);
+          allImageTweets
+              .removeWhere((tweet) => tweet.authorId == currentUserId);
 
           if (allImageTweets.length == 0) {
             return Container();
@@ -92,7 +90,7 @@ class SearchScreen extends HookWidget {
             crossAxisSpacing: 4,
             itemCount: allImageTweets.length,
             itemBuilder: (context, index) {
-              Tweet tweet = Tweet.fromDoc(allImageTweets[index]);
+              Tweet tweet = allImageTweets[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(

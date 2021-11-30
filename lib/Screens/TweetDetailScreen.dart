@@ -1,5 +1,4 @@
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -39,7 +39,6 @@ class TweetDetailScreen extends HookWidget {
     final String _comment = useProvider(commentProvider).state;
     final asyncAllTweetComments = useProvider(allTweetCommentsProvider(tweet));
     final asyncAllTweetLikes = useProvider(allTweetLikesProvider(tweet));
-    final asyncCommentForTweet = useProvider(commentForTweetProvider(tweet));
     final asyncShare = useProvider(shareProvider(tweet));
     final isLikedState = useProvider(isLikedProvider);
     final _isLiked = isLikedState.isLikedTweet;
@@ -330,9 +329,7 @@ class TweetDetailScreen extends HookWidget {
                                 loading: () => SizedBox.shrink(),
                                 error: (error, stack) =>
                                     Center(child: Text('Error: $error')),
-                                data: (allTweetLikes) {
-                                  List<DocumentSnapshot> allTweetLikesList =
-                                      allTweetLikes.docs;
+                                data: (List<Likes> allTweetLikesList) {
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -369,9 +366,7 @@ class TweetDetailScreen extends HookWidget {
                                 loading: () => SizedBox.shrink(),
                                 error: (error, stack) =>
                                     Center(child: Text('Error: $error')),
-                                data: (allTweetComments) {
-                                  List<DocumentSnapshot> allTweetCommentsList =
-                                      allTweetComments.docs;
+                                data: (List<Comment> allTweetCommentsList) {
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -468,18 +463,15 @@ class TweetDetailScreen extends HookWidget {
                   ),
                   Divider(),
                   Container(
-                    child: asyncCommentForTweet.when(
+                    child: asyncAllTweetComments.when(
                       loading: () => SizedBox.shrink(),
                       error: (error, stack) =>
                           Center(child: Text('Error: $error')),
-                      data: (commentForTweet) {
-                        List<DocumentSnapshot> commentsForTweetList =
-                            commentForTweet.docs;
+                      data: (List<Comment> allTweetCommentsList) {
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          children: commentsForTweetList.map((commentSnap) {
-                            Comment comment = Comment.fromDoc(commentSnap);
+                          children: allTweetCommentsList.map((comment) {
                             return CommentContainer(
                               comment: comment,
                               tweet: tweet,

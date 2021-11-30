@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -20,88 +22,106 @@ class SelectedPageController extends StateNotifier<int> {
   void update({required int index}) => state = index;
 }
 
-final followingUserTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+//List: Tweet Model
+final followingUserTweetsStreamProvider =
+    StreamProvider.autoDispose<List<Tweet>>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
   return feedsRef
       .doc(currentUserId)
       .collection('followingUserTweets')
       .orderBy('timestamp', descending: true)
-      .snapshots();
+      .snapshots()
+      .map(_queryToTweetList);
 });
 
-final allImageTweetsStreamProvider = StreamProvider.autoDispose((ref) {
+final allImageTweetsStreamProvider =
+    StreamProvider.autoDispose<List<Tweet>>((ref) {
   return allTweetsRef
       .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
       .orderBy('timestamp', descending: true)
-      .snapshots();
+      .snapshots()
+      .map(_queryToTweetList);
 });
 
+final profileTweetProvider =
+    StreamProvider.family<List<Tweet>, User>((ref, user) {
+  return usersRef
+      .doc(user.userId)
+      .collection('tweets')
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map(_queryToTweetList);
+});
+
+final profileImageTweetProvider =
+    StreamProvider.family<List<Tweet>, User>((ref, user) {
+  return usersRef
+      .doc(user.userId)
+      .collection('tweets')
+      .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map(_queryToTweetList);
+});
+
+final profileFavoriteTweetProvider =
+    StreamProvider.family<List<Tweet>, User>((ref, user) {
+  return usersRef
+      .doc(user.userId)
+      .collection('favorite')
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map(_queryToTweetList);
+});
+
+List<Tweet> _queryToTweetList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    Tweet tweet = Tweet.fromDoc(doc);
+    return tweet;
+  }).toList();
+}
+
+//List: Comment Model
 final allTweetCommentsProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, Tweet>(
-        (ref, tweet) {
+    StreamProvider.family<List<Comment>, Tweet>((ref, tweet) {
   return usersRef
       .doc(tweet.authorId)
       .collection('tweets')
       .doc(tweet.tweetId)
       .collection('comments')
-      .snapshots();
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map(_queryToCommentList);
 });
 
+List<Comment> _queryToCommentList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    Comment comment = Comment.fromDoc(doc);
+    return comment;
+  }).toList();
+}
+
+//List: Likes Model
 final allTweetLikesProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, Tweet>(
-        (ref, tweet) {
+    StreamProvider.family<List<Likes>, Tweet>((ref, tweet) {
   return usersRef
       .doc(tweet.authorId)
       .collection('tweets')
       .doc(tweet.tweetId)
       .collection('likes')
       .orderBy('timestamp', descending: true)
-      .snapshots();
+      .snapshots()
+      .map(_queryToLikesList);
 });
 
-final profileTweetProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, User>(
-        (ref, user) {
-  return usersRef
-      .doc(user.userId)
-      .collection('tweets')
-      .orderBy('timestamp', descending: true)
-      .snapshots();
-});
+List<Likes> _queryToLikesList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    Likes likes = Likes.fromDoc(doc);
+    return likes;
+  }).toList();
+}
 
-final profileImageTweetProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, User>(
-        (ref, user) {
-  return usersRef
-      .doc(user.userId)
-      .collection('tweets')
-      .where('hasImage', isEqualTo: true) /*画像があるツイートを取得*/
-      .orderBy('timestamp', descending: true)
-      .snapshots();
-});
-
-final profileFavoriteTweetProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, User>(
-        (ref, user) {
-  return usersRef
-      .doc(user.userId)
-      .collection('favorite')
-      .orderBy('timestamp', descending: true)
-      .snapshots();
-});
-
-final commentForTweetProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, Tweet>(
-        (ref, tweet) {
-  return usersRef
-      .doc(tweet.authorId)
-      .collection('tweets')
-      .doc(tweet.tweetId)
-      .collection('comments')
-      .orderBy('timestamp', descending: true)
-      .snapshots();
-});
-
+//Share
 final shareProvider = FutureProvider.family<Uri, Tweet>((ref, tweet) {
   final DynamicLinkService _dynamicLinkService = DynamicLinkService();
   return _dynamicLinkService.createDynamicLink(

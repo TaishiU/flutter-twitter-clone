@@ -129,8 +129,7 @@ class HomeScreen extends HookWidget {
         child: asyncFollowingUserTweets.when(
           loading: () => Center(child: const CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
-          data: (query) {
-            List<DocumentSnapshot> followingUserTweetsList = query.docs;
+          data: (List<Tweet> followingUserTweetsList) {
             if (followingUserTweetsList.length == 0) {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -285,8 +284,7 @@ class HomeScreen extends HookWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
-                    children: followingUserTweetsList.map((userTweet) {
-                      Tweet tweet = Tweet.fromDoc(userTweet);
+                    children: followingUserTweetsList.map((tweet) {
                       return TweetContainer(
                         currentUserId: currentUserId!,
                         tweet: tweet,
