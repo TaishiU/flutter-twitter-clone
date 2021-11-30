@@ -69,8 +69,7 @@ class NotificationsScreen extends HookWidget {
           asyncActivity.when(
               loading: () => Center(child: const CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Error: $error')),
-              data: (activitiesQuery) {
-                List<DocumentSnapshot> activitiesList = activitiesQuery.docs;
+              data: (List<Activity> activitiesList) {
                 if (activitiesList.length == 0) {
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -102,8 +101,7 @@ class NotificationsScreen extends HookWidget {
                 return ListView(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  children: activitiesList.map((activities) {
-                    Activity activity = Activity.fromDoc(activities);
+                  children: activitiesList.map((activity) {
                     return Consumer(builder: (context, watch, child) {
                       final asyncActivityUser = watch(
                         activityUserProvider(activity.fromUserId),
