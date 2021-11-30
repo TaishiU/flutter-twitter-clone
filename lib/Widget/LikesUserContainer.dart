@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +8,7 @@ import 'package:twitter_clone/Screens/ProfileScreen.dart';
 
 class LikesUserContainer extends HookWidget {
   final String title;
-  final List<DocumentSnapshot> allTweetLikesList;
+  final List<Likes> allTweetLikesList;
 
   LikesUserContainer({
     Key? key,
@@ -46,8 +45,7 @@ class LikesUserContainer extends HookWidget {
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            children: allTweetLikesList.map((likesForTweet) {
-              Likes likes = Likes.fromDoc(likesForTweet);
+            children: allTweetLikesList.map((likes) {
               return GestureDetector(
                 onTap: () {
                   /*visitedUserId情報を更新*/

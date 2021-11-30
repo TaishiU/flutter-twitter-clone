@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -31,8 +30,7 @@ class ProfileTabs extends HookWidget {
         return _profileTweet.when(
           loading: () => Center(child: const CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
-          data: (profileTweet) {
-            List<DocumentSnapshot> profileTweetList = profileTweet.docs;
+          data: (List<Tweet> profileTweetList) {
             if (profileTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
@@ -111,8 +109,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: profileTweetList.map((userTweets) {
-                Tweet tweet = Tweet.fromDoc(userTweets);
+              children: profileTweetList.map((tweet) {
                 return TweetContainer(
                   currentUserId: currentUserId!,
                   tweet: tweet,
@@ -126,9 +123,7 @@ class ProfileTabs extends HookWidget {
         return _profileImageTweet.when(
           loading: () => Center(child: const CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
-          data: (profileImageTweet) {
-            List<DocumentSnapshot> profileImageTweetList =
-                profileImageTweet.docs;
+          data: (List<Tweet> profileImageTweetList) {
             if (profileImageTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
@@ -207,8 +202,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: profileImageTweetList.map((userTweet) {
-                Tweet tweet = Tweet.fromDoc(userTweet);
+              children: profileImageTweetList.map((tweet) {
                 return TweetContainer(
                   currentUserId: currentUserId!,
                   tweet: tweet,
@@ -222,9 +216,7 @@ class ProfileTabs extends HookWidget {
         return _profileFavoriteTweet.when(
           loading: () => Center(child: const CircularProgressIndicator()),
           error: (error, stack) => Center(child: Text('Error: $error')),
-          data: (profileFavoriteTweet) {
-            List<DocumentSnapshot> profileFavoriteTweetList =
-                profileFavoriteTweet.docs;
+          data: (List<Tweet> profileFavoriteTweetList) {
             if (profileFavoriteTweetList.length == 0) {
               return currentUserId == user.userId
                   ? Padding(
@@ -276,8 +268,7 @@ class ProfileTabs extends HookWidget {
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: profileFavoriteTweetList.map((favoriteTweet) {
-                Tweet tweet = Tweet.fromDoc(favoriteTweet);
+              children: profileFavoriteTweetList.map((tweet) {
                 return TweetContainer(
                   currentUserId: currentUserId!,
                   tweet: tweet,

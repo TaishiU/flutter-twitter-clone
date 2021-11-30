@@ -1,10 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share/share.dart';
+import 'package:twitter_clone/Model/Comment.dart';
+import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/ViewModel/IsLikedNotifier.dart';
@@ -103,9 +104,7 @@ class TweetImageView extends HookWidget {
                             loading: () => SizedBox.shrink(),
                             error: (error, stack) =>
                                 Center(child: Text('Error: $error')),
-                            data: (allTweetComments) {
-                              List<DocumentSnapshot> allTweetCommentsList =
-                                  allTweetComments.docs;
+                            data: (List<Comment> allTweetCommentsList) {
                               return allTweetCommentsList.length == 0
                                   ? SizedBox.shrink()
                                   : Text(
@@ -162,9 +161,7 @@ class TweetImageView extends HookWidget {
                             loading: () => SizedBox.shrink(),
                             error: (error, stack) =>
                                 Center(child: Text('Error: $error')),
-                            data: (allTweetLikes) {
-                              List<DocumentSnapshot> allTweetLikesList =
-                                  allTweetLikes.docs;
+                            data: (List<Likes> allTweetLikesList) {
                               return allTweetLikesList.length == 0
                                   ? SizedBox.shrink()
                                   : Text(

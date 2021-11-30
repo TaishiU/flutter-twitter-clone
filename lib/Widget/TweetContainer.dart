@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/src/provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share/share.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Comment.dart';
 import 'package:twitter_clone/Model/Likes.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Model/User.dart';
@@ -404,13 +405,14 @@ class _TweetContainerState extends State<TweetContainer> {
                                         loading: () => SizedBox.shrink(),
                                         error: (error, stack) => Center(
                                             child: Text('Error: $error')),
-                                        data: (allTweetComments) {
-                                          return allTweetComments.size == 0
+                                        data: (List<Comment>
+                                            allTweetCommentsList) {
+                                          return allTweetCommentsList.length ==
+                                                  0
                                               ? SizedBox.shrink()
                                               : Text(
-                                                  allTweetComments.size
+                                                  allTweetCommentsList.length
                                                       .toString(),
-                                                  /*Firestoreコレクションの要素数はsizeで取得できる*/
                                                   style: TextStyle(
                                                     color: Colors.grey.shade600,
                                                   ),
@@ -460,13 +462,13 @@ class _TweetContainerState extends State<TweetContainer> {
                                           loading: () => SizedBox.shrink(),
                                           error: (error, stack) => Center(
                                               child: Text('Error: $error')),
-                                          data: (allTweetLikes) {
-                                            return allTweetLikes.size == 0
+                                          data:
+                                              (List<Likes> allTweetLikesList) {
+                                            return allTweetLikesList.length == 0
                                                 ? SizedBox.shrink()
                                                 : Text(
-                                                    allTweetLikes.size
+                                                    allTweetLikesList.length
                                                         .toString(),
-                                                    /*Firestoreコレクションの要素数はsizeで取得できる*/
                                                     style: TextStyle(
                                                       color: _isLiked == true
                                                           ? Colors.red
