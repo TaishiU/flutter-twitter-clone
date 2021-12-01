@@ -1,17 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/LastMessage.dart';
+import 'package:twitter_clone/Model/Message.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 
 final messageTextProvider = StateProvider.autoDispose<String>((ref) => '');
-
-final lastMessagesStreamProvider = StreamProvider.autoDispose((ref) {
-  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
-  return messagesRef
-      .orderBy('timestamp', descending: true)
-      .where('users', arrayContains: currentUserId)
-      .snapshots();
-});
 
 final convoIdProvider = StateNotifierProvider<ConvoIdController, String>(
   (ref) => ConvoIdController(''),
@@ -22,21 +16,48 @@ class ConvoIdController extends StateNotifier<String> {
   void update({required String convoId}) => state = convoId;
 }
 
-final userMessagesStreamProvider = StreamProvider((ref) {
+//List: LastMessage Model
+final lastMessagesStreamProvider =
+    StreamProvider.autoDispose<List<LastMessage>>((ref) {
+  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+  return messagesRef
+      .orderBy('timestamp', descending: true)
+      .where('users', arrayContains: currentUserId)
+      .snapshots()
+      .map(_queryToLastMessageList);
+});
+
+List<LastMessage> _queryToLastMessageList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    LastMessage lastMessage = LastMessage.fromDoc(doc);
+    return lastMessage;
+  }).toList();
+}
+
+//List: Message Model
+final userMessagesStreamProvider = StreamProvider<List<Message>>((ref) {
   final convoId = ref.watch(convoIdProvider);
   return messagesRef
       .doc(convoId)
       .collection('allMessages')
       .orderBy('timestamp', descending: false)
-      .snapshots();
+      .snapshots()
+      .map(_queryToMessageList);
 });
 
 final unReadMessageProvider =
-    StreamProvider.family<QuerySnapshot<Map<String, dynamic>>, String>(
-        (ref, convoId) {
+    StreamProvider.family<List<Message>, String>((ref, convoId) {
   return messagesRef
       .doc(convoId)
       .collection('allMessages')
       .where('read', isEqualTo: false) /*未読メッセージを取得*/
-      .snapshots();
+      .snapshots()
+      .map(_queryToMessageList);
 });
+
+List<Message> _queryToMessageList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    Message message = Message.fromDoc(doc);
+    return message;
+  }).toList();
+}
