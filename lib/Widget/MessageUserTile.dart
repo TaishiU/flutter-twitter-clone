@@ -77,12 +77,8 @@ class MessageUserTile extends HookWidget {
         child: unReadMessage.when(
           loading: () => SizedBox.shrink(),
           error: (error, stack) => Center(child: Text('Error: $error')),
-          data: (unReadMessageQuery) {
-            List<DocumentSnapshot> unReadMessageListSnap =
-                unReadMessageQuery.docs;
-
-            final unReadMessageList = unReadMessageListSnap.where((e) {
-              Message message = Message.fromDoc(e);
+          data: (List<Message> unReadMessageList) {
+            final unReadMessageListForMe = unReadMessageList.where((message) {
               return message.idTo == currentUserId;
             }).toList();
 
@@ -95,7 +91,7 @@ class MessageUserTile extends HookWidget {
                     fontWeight: _notRead ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
-                unReadMessageList.length != 0
+                unReadMessageListForMe.length != 0
                     ? Container(
                         padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
@@ -103,7 +99,7 @@ class MessageUserTile extends HookWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Text(
-                          unReadMessageList.length.toString(),
+                          unReadMessageListForMe.length.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
