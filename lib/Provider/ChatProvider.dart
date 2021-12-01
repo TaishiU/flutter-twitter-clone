@@ -16,7 +16,7 @@ class ConvoIdController extends StateNotifier<String> {
   void update({required String convoId}) => state = convoId;
 }
 
-//List: LastMessage Model
+//return LastMessage Model(List)
 final lastMessagesStreamProvider =
     StreamProvider.autoDispose<List<LastMessage>>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
@@ -34,7 +34,7 @@ List<LastMessage> _queryToLastMessageList(QuerySnapshot query) {
   }).toList();
 }
 
-//List: Message Model
+//return Message Model(List)
 final userMessagesStreamProvider = StreamProvider<List<Message>>((ref) {
   final convoId = ref.watch(convoIdProvider);
   return messagesRef

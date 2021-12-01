@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/ListUser.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/ChatProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -22,6 +23,8 @@ class ProfileScreen extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final String visitedUserId = useProvider(visitedUserIdProvider);
+    final asyncFollowing = useProvider(followingStreamProvider(visitedUserId));
+    final asyncFollowers = useProvider(followersStreamProvider(visitedUserId));
     final isFollowingState = useProvider(isFollowingProvider);
     final _isFollowing = isFollowingState.isFollowingUser;
     final _isFollowingNotifier = context.read(isFollowingProvider.notifier);
@@ -380,19 +383,11 @@ class ProfileScreen extends HookWidget {
                     Row(
                       children: [
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(visitedUserId)
-                                .collection('following')
-                                .orderBy('timestamp', descending: true)
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-                              List<DocumentSnapshot> followingUserList =
-                                  snapshot.data!.docs;
+                          child: asyncFollowing.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (List<ListUser> followingList) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -400,7 +395,7 @@ class ProfileScreen extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Following',
-                                        listUserDocumentSnap: followingUserList,
+                                        listUserDocumentSnap: followingList,
                                       ),
                                     ),
                                   );
@@ -408,7 +403,7 @@ class ProfileScreen extends HookWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      followingUserList.length.toString(),
+                                      followingList.length.toString(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -420,7 +415,6 @@ class ProfileScreen extends HookWidget {
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.grey,
-                                        //fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -431,19 +425,11 @@ class ProfileScreen extends HookWidget {
                         ),
                         SizedBox(width: 20),
                         Container(
-                          child: StreamBuilder(
-                            stream: usersRef
-                                .doc(visitedUserId)
-                                .collection('followers')
-                                .orderBy('timestamp', descending: true)
-                                .snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (!snapshot.hasData) {
-                                return SizedBox.shrink();
-                              }
-                              List<DocumentSnapshot> followersUserList =
-                                  snapshot.data!.docs;
+                          child: asyncFollowers.when(
+                            loading: () => SizedBox.shrink(),
+                            error: (error, stack) =>
+                                Center(child: Text('Error: $error')),
+                            data: (List<ListUser> followersList) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -451,7 +437,7 @@ class ProfileScreen extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
-                                        listUserDocumentSnap: followersUserList,
+                                        listUserDocumentSnap: followersList,
                                       ),
                                     ),
                                   );
@@ -459,7 +445,7 @@ class ProfileScreen extends HookWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      followersUserList.length.toString(),
+                                      followersList.length.toString(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -471,7 +457,6 @@ class ProfileScreen extends HookWidget {
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.grey,
-                                        //fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
