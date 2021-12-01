@@ -1,11 +1,11 @@
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Following.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Provider/TweetProvider.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
@@ -192,12 +192,10 @@ class HomeScreen extends HookWidget {
                 asyncFollowingAvatar.when(
                   loading: () => const CircularProgressIndicator(),
                   error: (error, stack) => Center(child: Text('Error: $error')),
-                  data: (query) {
-                    List<DocumentSnapshot> followingAvatarList = query.docs;
-
+                  data: (List<Following> followingAvatarList) {
                     /* プロフィール画像を登録していないアバターは表示リストから削除 */
                     followingAvatarList.removeWhere(
-                        (snapshot) => snapshot.get('profileImageUrl') == '');
+                        (following) => following.profileImageUrl == '');
 
                     return followingAvatarList.length >= 1
                         ? Column(
@@ -212,6 +210,9 @@ class HomeScreen extends HookWidget {
                                   itemCount: followingAvatarList.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
+                                    Following following =
+                                        followingAvatarList[index];
+
                                     return Padding(
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 3),
@@ -219,8 +220,7 @@ class HomeScreen extends HookWidget {
                                         onTap: () {
                                           /*visitedUserId情報を更新*/
                                           _visitedUserIdNotifier.update(
-                                            userId: followingAvatarList[index]
-                                                ['userId'],
+                                            userId: following.userId,
                                           );
 
                                           Navigator.push(
@@ -253,17 +253,13 @@ class HomeScreen extends HookWidget {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   backgroundImage: NetworkImage(
-                                                    followingAvatarList[index]
-                                                        ['profileImageUrl'],
+                                                    following.profileImageUrl,
                                                   ),
                                                 ),
                                               ],
                                             ),
                                             SizedBox(height: 5),
-                                            Text(
-                                              followingAvatarList[index]
-                                                  ['name'],
-                                            ),
+                                            Text(following.name),
                                           ],
                                         ),
                                       ),

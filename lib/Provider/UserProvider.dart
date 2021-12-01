@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/Following.dart';
+import 'package:twitter_clone/Model/ListUser.dart';
+import 'package:twitter_clone/Model/User.dart' as UserModel;
 
 final _authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
@@ -43,44 +46,78 @@ final profileNameProvider = StateProvider.autoDispose((ref) => '');
 
 final profileBioProvider = StateProvider.autoDispose((ref) => '');
 
-final currentUserProfileStreamProvider = StreamProvider.autoDispose((ref) {
+//return User Model
+final currentUserProfileStreamProvider =
+    StreamProvider.autoDispose<UserModel.User>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
-  return usersRef.doc(currentUserId).snapshots();
+  return usersRef.doc(currentUserId).snapshots().map(_snapshotToUser);
 });
 
-final followingAvatarStreamProvider = StreamProvider.autoDispose((ref) {
+final activityUserProvider =
+    StreamProvider.family<UserModel.User, String>((ref, fromUserId) {
+  return usersRef.doc(fromUserId).snapshots().map(_snapshotToUser);
+});
+
+UserModel.User _snapshotToUser(DocumentSnapshot snapshot) {
+  return UserModel.User.fromDoc(snapshot);
+}
+
+//return User Model(List)
+final searchUsersStreamProvider =
+    StreamProvider.autoDispose<List<UserModel.User>>((ref) {
+  return usersRef.limit(8).snapshots().map(_queryToUserList);
+});
+
+List<UserModel.User> _queryToUserList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    UserModel.User user = UserModel.User.fromDoc(doc);
+    return user;
+  }).toList();
+}
+
+//return Following Model(List)
+final followingAvatarStreamProvider =
+    StreamProvider.autoDispose<List<Following>>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
   return usersRef
       .doc(currentUserId)
       .collection('following')
       .limit(8)
-      .snapshots();
+      .snapshots()
+      .map(_queryToFollowingList);
 });
 
-final searchUsersStreamProvider = StreamProvider.autoDispose((ref) {
-  return usersRef.limit(8).snapshots();
-});
+List<Following> _queryToFollowingList(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    Following following = Following.fromDoc(doc);
+    return following;
+  }).toList();
+}
 
-final followingStreamProvider = StreamProvider.autoDispose((ref) {
-  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+// return ListUser Model(List)
+final followingStreamProvider = StreamProvider.autoDispose
+    .family<List<ListUser>, String>((ref, visitedUserId) {
   return usersRef
-      .doc(currentUserId)
+      .doc(visitedUserId)
       .collection('following')
       .orderBy('timestamp', descending: true)
-      .snapshots();
+      .snapshots()
+      .map(_queryToListUserAboutFollow);
 });
 
-final followersStreamProvider = StreamProvider.autoDispose((ref) {
-  final currentUserId = ref.watch(userIdStreamProvider).data?.value;
+final followersStreamProvider = StreamProvider.autoDispose
+    .family<List<ListUser>, String>((ref, visitedUserId) {
   return usersRef
-      .doc(currentUserId)
+      .doc(visitedUserId)
       .collection('followers')
       .orderBy('timestamp', descending: true)
-      .snapshots();
+      .snapshots()
+      .map(_queryToListUserAboutFollow);
 });
 
-final activityUserProvider =
-    StreamProvider.family<DocumentSnapshot<Map<String, dynamic>>, String>(
-        (ref, fromUserId) {
-  return usersRef.doc(fromUserId).snapshots();
-});
+List<ListUser> _queryToListUserAboutFollow(QuerySnapshot query) {
+  return query.docs.map((doc) {
+    ListUser listUser = ListUser.fromDoc(doc);
+    return listUser;
+  }).toList();
+}

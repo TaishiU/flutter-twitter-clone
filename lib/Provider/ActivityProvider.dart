@@ -4,6 +4,7 @@ import 'package:twitter_clone/Constants/Constants.dart';
 import 'package:twitter_clone/Model/Activity.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 
+//return Activity Model(List)
 final activityProvider = StreamProvider.autoDispose<List<Activity>>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
   return activitiesRef

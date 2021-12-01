@@ -22,7 +22,7 @@ class SelectedPageController extends StateNotifier<int> {
   void update({required int index}) => state = index;
 }
 
-//List: Tweet Model
+//return Tweet Model(List)
 final followingUserTweetsStreamProvider =
     StreamProvider.autoDispose<List<Tweet>>((ref) {
   final currentUserId = ref.watch(userIdStreamProvider).data?.value;
@@ -81,7 +81,7 @@ List<Tweet> _queryToTweetList(QuerySnapshot query) {
   }).toList();
 }
 
-//List: Comment Model
+//return Comment Model(List)
 final allTweetCommentsProvider =
     StreamProvider.family<List<Comment>, Tweet>((ref, tweet) {
   return usersRef
@@ -101,7 +101,7 @@ List<Comment> _queryToCommentList(QuerySnapshot query) {
   }).toList();
 }
 
-//List: Likes Model
+//return Likes Model(List)
 final allTweetLikesProvider =
     StreamProvider.family<List<Likes>, Tweet>((ref, tweet) {
   return usersRef

@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
+import 'package:twitter_clone/Model/ListUser.dart';
 import 'package:twitter_clone/Model/User.dart';
 import 'package:twitter_clone/Provider/UserProvider.dart';
 import 'package:twitter_clone/Screens/Intro/WelcomeScreen.dart';
@@ -16,8 +16,8 @@ class DrawerContainer extends HookWidget {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final asyncCurrentUserProfile =
         useProvider(currentUserProfileStreamProvider);
-    final asyncFollowing = useProvider(followingStreamProvider);
-    final asyncFollowers = useProvider(followersStreamProvider);
+    final asyncFollowing = useProvider(followingStreamProvider(currentUserId!));
+    final asyncFollowers = useProvider(followersStreamProvider(currentUserId));
     final _visitedUserIdNotifier = context.read(visitedUserIdProvider.notifier);
     final AuthService _authService = AuthService();
 
@@ -28,8 +28,7 @@ class DrawerContainer extends HookWidget {
             child: asyncCurrentUserProfile.when(
               loading: () => SizedBox.shrink(),
               error: (error, stack) => Center(child: Text('Error: $error')),
-              data: (userProfileQuery) {
-                User user = User.fromDoc(userProfileQuery);
+              data: (User user) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -79,9 +78,7 @@ class DrawerContainer extends HookWidget {
                             loading: () => SizedBox.shrink(),
                             error: (error, stack) =>
                                 Center(child: Text('Error: $error')),
-                            data: (followingQuery) {
-                              List<DocumentSnapshot> followingList =
-                                  followingQuery.docs;
+                            data: (List<ListUser> followingList) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -109,7 +106,6 @@ class DrawerContainer extends HookWidget {
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.grey,
-                                        //fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -124,9 +120,7 @@ class DrawerContainer extends HookWidget {
                             loading: () => SizedBox.shrink(),
                             error: (error, stack) =>
                                 Center(child: Text('Error: $error')),
-                            data: (followersQuery) {
-                              List<DocumentSnapshot> followersUserList =
-                                  followersQuery.docs;
+                            data: (List<ListUser> followersList) {
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -134,7 +128,7 @@ class DrawerContainer extends HookWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ListUserContainer(
                                         title: 'Followers',
-                                        listUserDocumentSnap: followersUserList,
+                                        listUserDocumentSnap: followersList,
                                       ),
                                     ),
                                   );
@@ -142,7 +136,7 @@ class DrawerContainer extends HookWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      followersUserList.length.toString(),
+                                      followersList.length.toString(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
@@ -154,7 +148,6 @@ class DrawerContainer extends HookWidget {
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.grey,
-                                        //fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -175,7 +168,7 @@ class DrawerContainer extends HookWidget {
               /*visitedUserId情報を更新*/
               context
                   .read(visitedUserIdProvider.notifier)
-                  .update(userId: currentUserId!);
+                  .update(userId: currentUserId);
 
               Navigator.push(
                 context,

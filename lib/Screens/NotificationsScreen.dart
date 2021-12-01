@@ -110,8 +110,7 @@ class NotificationsScreen extends HookWidget {
                           loading: () => SizedBox.shrink(),
                           error: (error, stack) =>
                               Center(child: Text('Error: $error')),
-                          data: (userQuery) {
-                            User user = User.fromDoc(userQuery);
+                          data: (User user) {
                             return Column(
                               children: [
                                 GestureDetector(

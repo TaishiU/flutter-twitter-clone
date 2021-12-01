@@ -1,5 +1,4 @@
 import 'package:algolia/algolia.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -102,17 +101,15 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
               return asyncSearchUsers.when(
                 loading: () => Center(child: const CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
-                data: (query) {
-                  List<DocumentSnapshot> userListSnap = query.docs;
+                data: (List<User> userList) {
                   /*ユーザー自身のアバターは削除*/
-                  userListSnap.removeWhere((snapshot) =>
-                      snapshot.get('userId') == widget.currentUserId);
+                  userList.removeWhere(
+                      (user) => user.userId == widget.currentUserId);
                   return ListView(
                     physics: BouncingScrollPhysics(
                       parent: AlwaysScrollableScrollPhysics(),
                     ),
-                    children: userListSnap.map((userSnap) {
-                      User user = User.fromDoc(userSnap);
+                    children: userList.map((user) {
                       return SearchUserTile(user: user);
                     }).toList(),
                   );
