@@ -13,22 +13,8 @@ class TweetRepository {
     // usersコレクション
     DocumentReference tweetReference =
         usersRef.doc(tweet.authorId).collection('tweets').doc();
-    await tweetReference.set({
-      'tweetId': tweetReference.id,
-      'authorName': tweet.authorName,
-      'authorId': tweet.authorId,
-      'authorBio': tweet.authorBio,
-      'authorProfileImage': tweet.authorProfileImage,
-      'text': tweet.text,
-      'imagesUrl': tweet.imagesUrl,
-      'imagesPath': tweet.imagesPath,
-      'hasImage': tweet.hasImage,
-      'timestamp': tweet.timestamp,
-      'likes': tweet.likes,
-      'reTweets': tweet.reTweets,
-    });
-
-    String tweetReferenceId = tweetReference.id;
+    await tweetReference
+        .set(_tweetToMap(tweet: tweet, tweetId: tweetReference.id));
 
     // feedsコレクション
     /*①ユーザー自身のfeedsにツイートを格納*/
@@ -39,21 +25,8 @@ class TweetRepository {
     feedsRef
         .doc(tweet.authorId)
         .collection('followingUserTweets')
-        .doc(tweetReferenceId)
-        .set({
-      'tweetId': tweetReferenceId,
-      'authorName': tweet.authorName,
-      'authorId': tweet.authorId,
-      'authorBio': tweet.authorBio,
-      'authorProfileImage': tweet.authorProfileImage,
-      'text': tweet.text,
-      'imagesUrl': tweet.imagesUrl,
-      'imagesPath': tweet.imagesPath,
-      'hasImage': tweet.hasImage,
-      'timestamp': tweet.timestamp,
-      'likes': tweet.likes,
-      'reTweets': tweet.reTweets,
-    });
+        .doc(tweetReference.id)
+        .set(_tweetToMap(tweet: tweet, tweetId: tweetReference.id));
 
     /*フォロワーのリストを取得*/
     QuerySnapshot followerSnapshot =
@@ -68,27 +41,22 @@ class TweetRepository {
       feedsRef
           .doc(docSnapshot.id)
           .collection('followingUserTweets')
-          .doc(tweetReferenceId)
-          .set({
-        'tweetId': tweetReference.id,
-        'authorName': tweet.authorName,
-        'authorId': tweet.authorId,
-        'authorBio': tweet.authorBio,
-        'authorProfileImage': tweet.authorProfileImage,
-        'text': tweet.text,
-        'imagesUrl': tweet.imagesUrl,
-        'imagesPath': tweet.imagesPath,
-        'hasImage': tweet.hasImage,
-        'timestamp': tweet.timestamp,
-        'likes': tweet.likes,
-        'reTweets': tweet.reTweets,
-      });
+          .doc(tweetReference.id)
+          .set(_tweetToMap(tweet: tweet, tweetId: tweetReference.id));
     }
 
     // allTweetsコレクション
-    DocumentReference allTweetsReference = allTweetsRef.doc(tweetReferenceId);
-    await allTweetsReference.set({
-      'tweetId': tweetReferenceId,
+    DocumentReference allTweetsReference = allTweetsRef.doc(tweetReference.id);
+    await allTweetsReference
+        .set(_tweetToMap(tweet: tweet, tweetId: tweetReference.id));
+  }
+
+  Map<String, dynamic> _tweetToMap({
+    required Tweet tweet,
+    required String tweetId,
+  }) {
+    return {
+      'tweetId': tweetId,
       'authorName': tweet.authorName,
       'authorId': tweet.authorId,
       'authorBio': tweet.authorBio,
@@ -100,7 +68,7 @@ class TweetRepository {
       'timestamp': tweet.timestamp,
       'likes': tweet.likes,
       'reTweets': tweet.reTweets,
-    });
+    };
   }
 
   Future<DocumentSnapshot> getTweet(
@@ -159,13 +127,7 @@ class TweetRepository {
   }) async {
     DocumentReference likestReferenceInAllTweets =
         allTweetsRef.doc(tweetId).collection('likes').doc(likes.likesUserId);
-    await likestReferenceInAllTweets.set({
-      'likesUserId': likes.likesUserId,
-      'likesUserName': likes.likesUserName,
-      'likesUserProfileImage': likes.likesUserProfileImage,
-      'likesUserBio': likes.likesUserBio,
-      'timestamp': likes.timestamp,
-    });
+    await likestReferenceInAllTweets.set(_likesToMap(likes));
 
     DocumentReference likestReferenceInUser = usersRef
         .doc(tweetAuthorId)
@@ -173,13 +135,7 @@ class TweetRepository {
         .doc(tweetId)
         .collection('likes')
         .doc(likes.likesUserId);
-    await likestReferenceInUser.set({
-      'likesUserId': likes.likesUserId,
-      'likesUserName': likes.likesUserName,
-      'likesUserProfileImage': likes.likesUserProfileImage,
-      'likesUserBio': likes.likesUserBio,
-      'timestamp': likes.timestamp,
-    });
+    await likestReferenceInUser.set(_likesToMap(likes));
 
     _activityRepository.addActivity(
       currentUserId: likes.likesUserId,
@@ -190,6 +146,16 @@ class TweetRepository {
       comment: false,
       tweetId: tweetId,
     );
+  }
+
+  Map<String, dynamic> _likesToMap(Likes likes) {
+    return {
+      'likesUserId': likes.likesUserId,
+      'likesUserName': likes.likesUserName,
+      'likesUserProfileImage': likes.likesUserProfileImage,
+      'likesUserBio': likes.likesUserBio,
+      'timestamp': likes.timestamp,
+    };
   }
 
   Future<void> unLikesForTweet({
@@ -235,7 +201,6 @@ class TweetRepository {
       'imagesUrl': tweet.imagesUrl,
       'imagesPath': tweet.imagesPath,
       'hasImage': tweet.hasImage,
-      //'timestamp': tweet.timestamp,
       'timestamp': Timestamp.fromDate(DateTime.now()),
       /*ユーザー自身がいいねを押した瞬間のタイムスタンプ*/
       'likes': tweet.likes,
@@ -265,33 +230,17 @@ class TweetRepository {
   }) async {
     DocumentReference commentReferenceInAllTweets =
         allTweetsRef.doc(tweetId).collection('comments').doc();
-    await commentReferenceInAllTweets.set({
-      'commentId': commentReferenceInAllTweets.id,
-      'commentUserId': comment.commentUserId,
-      'commentUserName': comment.commentUserName,
-      'commentUserProfileImage': comment.commentUserProfileImage,
-      'commentUserBio': comment.commentUserBio,
-      'commentText': comment.commentText,
-      'timestamp': comment.timestamp,
-    });
-
-    String commentReferenceId = commentReferenceInAllTweets.id;
+    await commentReferenceInAllTweets
+        .set(_commentToMap(comment, commentReferenceInAllTweets.id));
 
     DocumentReference commentReferenceInUser = usersRef
         .doc(tweetAuthorId)
         .collection('tweets')
         .doc(tweetId)
         .collection('comments')
-        .doc(commentReferenceId);
-    await commentReferenceInUser.set({
-      'commentId': commentReferenceId,
-      'commentUserId': comment.commentUserId,
-      'commentUserName': comment.commentUserName,
-      'commentUserProfileImage': comment.commentUserProfileImage,
-      'commentUserBio': comment.commentUserBio,
-      'commentText': comment.commentText,
-      'timestamp': comment.timestamp,
-    });
+        .doc(commentReferenceInAllTweets.id);
+    await commentReferenceInUser
+        .set(_commentToMap(comment, commentReferenceInAllTweets.id));
 
     _activityRepository.addActivity(
       currentUserId: comment.commentUserId,
@@ -302,6 +251,18 @@ class TweetRepository {
       comment: true,
       tweetId: tweetId,
     );
+  }
+
+  Map<String, dynamic> _commentToMap(Comment comment, String commentId) {
+    return {
+      'commentId': commentId,
+      'commentUserId': comment.commentUserId,
+      'commentUserName': comment.commentUserName,
+      'commentUserProfileImage': comment.commentUserProfileImage,
+      'commentUserBio': comment.commentUserBio,
+      'commentText': comment.commentText,
+      'timestamp': comment.timestamp,
+    };
   }
 
   Future<void> deleteOwnCommentForTweet({
