@@ -23,6 +23,8 @@ class ProfileScreen extends HookWidget {
   Widget build(BuildContext context) {
     final String? currentUserId = useProvider(currentUserIdProvider);
     final String visitedUserId = useProvider(visitedUserIdProvider);
+    final asyncUserProfile =
+        useProvider(userProfileStreamProvider(visitedUserId));
     final asyncFollowing = useProvider(followingStreamProvider(visitedUserId));
     final asyncFollowers = useProvider(followersStreamProvider(visitedUserId));
     final isFollowingState = useProvider(isFollowingProvider);
@@ -88,15 +90,10 @@ class ProfileScreen extends HookWidget {
           height: 45,
         ),
       ),
-      body: StreamBuilder(
-        stream: usersRef.doc(visitedUserId).snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          User user = User.fromDoc(snapshot.data);
+      body: asyncUserProfile.when(
+        loading: () => CircularProgressIndicator(),
+        error: (error, stack) => Center(child: Text('Error: $error')),
+        data: (User user) {
           return ListView(
             physics: BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),

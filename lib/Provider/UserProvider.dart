@@ -53,6 +53,11 @@ final currentUserProfileStreamProvider =
   return usersRef.doc(currentUserId).snapshots().map(_snapshotToUser);
 });
 
+final userProfileStreamProvider = StreamProvider.autoDispose
+    .family<UserModel.User, String>((ref, visitedUserId) {
+  return usersRef.doc(visitedUserId).snapshots().map(_snapshotToUser);
+});
+
 final activityUserProvider =
     StreamProvider.family<UserModel.User, String>((ref, fromUserId) {
   return usersRef.doc(fromUserId).snapshots().map(_snapshotToUser);
