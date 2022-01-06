@@ -88,23 +88,28 @@ class ChatContainer extends HookWidget {
                 /*テキストのみの場合*/
                 ? Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 3),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: TwitterColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                        ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.7,
                       ),
-                      child: Text(
-                        message.content!,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 3),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: TwitterColor,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          message.content!,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -148,21 +153,26 @@ class ChatContainer extends HookWidget {
                 message.content != null && message.hasImage == false
                     ? Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              topLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.6,
                           ),
-                          child: Text(
-                            message.content!,
-                            style: TextStyle(
-                              fontSize: 15,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 9),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              message.content!,
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                         ),
