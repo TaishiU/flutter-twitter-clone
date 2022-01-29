@@ -51,6 +51,8 @@ ios/Runner/GoogleService-Info.plist
 functions/
 .firebaserc
 firebase.json
+firestore.indexes.json
+firestore.rules
 
 # Algolia related
 .env
