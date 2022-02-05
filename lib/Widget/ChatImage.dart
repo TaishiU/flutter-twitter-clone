@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:twitter_clone/Model/Message.dart';
@@ -41,7 +42,7 @@ class ChatImage extends HookWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-          image: NetworkImage(
+          image: CachedNetworkImageProvider(
             message.imagesUrl['0']!,
           ),
           fit: BoxFit.cover,
@@ -64,7 +65,7 @@ class ChatImage extends HookWidget {
                 topRight: Radius.circular(20),
               ),
               image: DecorationImage(
-                image: NetworkImage(
+                image: CachedNetworkImageProvider(
                   message.imagesUrl['0']!,
                 ),
                 fit: BoxFit.cover,
@@ -80,7 +81,7 @@ class ChatImage extends HookWidget {
                 bottomLeft: Radius.circular(20),
               ),
               image: DecorationImage(
-                image: NetworkImage(
+                image: CachedNetworkImageProvider(
                   message.imagesUrl['1']!,
                 ),
                 fit: BoxFit.cover,
@@ -106,7 +107,7 @@ class ChatImage extends HookWidget {
                 topRight: Radius.circular(20),
               ),
               image: DecorationImage(
-                image: NetworkImage(
+                image: CachedNetworkImageProvider(
                   message.imagesUrl['0']!,
                 ),
                 fit: BoxFit.cover,
@@ -124,7 +125,7 @@ class ChatImage extends HookWidget {
                     bottomLeft: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['1']!,
                     ),
                     fit: BoxFit.cover,
@@ -140,7 +141,7 @@ class ChatImage extends HookWidget {
                     bottomRight: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['2']!,
                     ),
                     fit: BoxFit.cover,
@@ -170,7 +171,7 @@ class ChatImage extends HookWidget {
                     topLeft: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['0']!,
                     ),
                     fit: BoxFit.cover,
@@ -186,7 +187,7 @@ class ChatImage extends HookWidget {
                     bottomLeft: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['2']!,
                     ),
                     fit: BoxFit.cover,
@@ -206,7 +207,7 @@ class ChatImage extends HookWidget {
                     topRight: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['1']!,
                     ),
                     fit: BoxFit.cover,
@@ -222,7 +223,7 @@ class ChatImage extends HookWidget {
                     bottomRight: Radius.circular(20),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       message.imagesUrl['3']!,
                     ),
                     fit: BoxFit.cover,

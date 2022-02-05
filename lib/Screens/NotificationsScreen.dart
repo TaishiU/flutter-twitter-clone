@@ -1,4 +1,5 @@
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -195,7 +196,7 @@ class NotificationsScreen extends HookWidget {
                                                                 .profileImageUrl
                                                                 .isEmpty
                                                             ? null
-                                                            : NetworkImage(
+                                                            : CachedNetworkImageProvider(
                                                                 user.profileImageUrl,
                                                               ),
                                                       ),

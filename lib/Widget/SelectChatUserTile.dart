@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -30,7 +31,7 @@ class SelectChatUserTile extends HookWidget {
             : Colors.transparent,
         backgroundImage: peerUser.profileImageUrl.isEmpty
             ? null
-            : NetworkImage(peerUser.profileImageUrl),
+            : CachedNetworkImageProvider(peerUser.profileImageUrl),
       ),
       title: Text(peerUser.name),
       subtitle: Text('@${peerUser.bio}'),
