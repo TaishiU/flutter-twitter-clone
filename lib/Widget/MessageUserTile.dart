@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -34,8 +35,8 @@ class MessageUserTile extends HookWidget {
         radius: 23,
         backgroundColor: Colors.transparent,
         backgroundImage: _isOwner
-            ? NetworkImage(lastMessage.user2ProfileImage)
-            : NetworkImage(lastMessage.user1ProfileImage),
+            ? CachedNetworkImageProvider(lastMessage.user2ProfileImage)
+            : CachedNetworkImageProvider(lastMessage.user1ProfileImage),
       ),
       title: Text(
         _isOwner ? lastMessage.user2Name : lastMessage.user1Name,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -63,7 +64,7 @@ class ProfileImageView extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.9,
               child: PhotoView(
-                imageProvider: NetworkImage(
+                imageProvider: CachedNetworkImageProvider(
                   image,
                 ),
               ),

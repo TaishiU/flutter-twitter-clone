@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/Constants/Constants.dart';
@@ -37,7 +38,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   displayCoverImage() {
     if (_coverImage == null) {
       if (widget.user.coverImageUrl.isNotEmpty) {
-        return NetworkImage(widget.user.coverImageUrl);
+        return CachedNetworkImageProvider(widget.user.coverImageUrl);
       }
     } else {
       return FileImage(_coverImage!);
@@ -47,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   displayProfileImage() {
     if (_profileImage == null) {
       if (widget.user.profileImageUrl.isNotEmpty) {
-        return NetworkImage(widget.user.profileImageUrl);
+        return CachedNetworkImageProvider(widget.user.profileImageUrl);
       }
     } else {
       return FileImage(_profileImage!);

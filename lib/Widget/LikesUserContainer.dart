@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -72,10 +73,11 @@ class LikesUserContainer extends HookWidget {
                                   likes.likesUserProfileImage.isEmpty
                                       ? TwitterColor
                                       : Colors.transparent,
-                              backgroundImage: likes
-                                      .likesUserProfileImage.isEmpty
-                                  ? null
-                                  : NetworkImage(likes.likesUserProfileImage),
+                              backgroundImage:
+                                  likes.likesUserProfileImage.isEmpty
+                                      ? null
+                                      : CachedNetworkImageProvider(
+                                          likes.likesUserProfileImage),
                             ),
                             SizedBox(width: 15),
                             Column(

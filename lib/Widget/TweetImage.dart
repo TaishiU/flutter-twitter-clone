@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/Model/Tweet.dart';
 import 'package:twitter_clone/Widget/TweetImageView.dart';
@@ -89,7 +90,7 @@ class TweetImage extends StatelessWidget {
                   bottomLeft: Radius.circular(20),
                 ),
                 image: DecorationImage(
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     tweet.imagesUrl['0']!,
                   ),
                   fit: BoxFit.cover,
@@ -118,7 +119,7 @@ class TweetImage extends StatelessWidget {
                   bottomRight: Radius.circular(20),
                 ),
                 image: DecorationImage(
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     tweet.imagesUrl['1']!,
                   ),
                   fit: BoxFit.cover,
@@ -157,7 +158,7 @@ class TweetImage extends StatelessWidget {
                   bottomLeft: Radius.circular(20),
                 ),
                 image: DecorationImage(
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     tweet.imagesUrl['0']!,
                   ),
                   fit: BoxFit.cover,
@@ -188,7 +189,7 @@ class TweetImage extends StatelessWidget {
                       topRight: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['1']!,
                       ),
                       fit: BoxFit.cover,
@@ -217,7 +218,7 @@ class TweetImage extends StatelessWidget {
                       bottomRight: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['2']!,
                       ),
                       fit: BoxFit.cover,
@@ -260,7 +261,7 @@ class TweetImage extends StatelessWidget {
                       topLeft: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['0']!,
                       ),
                       fit: BoxFit.cover,
@@ -289,7 +290,7 @@ class TweetImage extends StatelessWidget {
                       bottomLeft: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['2']!,
                       ),
                       fit: BoxFit.cover,
@@ -322,7 +323,7 @@ class TweetImage extends StatelessWidget {
                       topRight: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['1']!,
                       ),
                       fit: BoxFit.cover,
@@ -336,10 +337,6 @@ class TweetImage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-//                       builder: (context) => TweetImageView(
-// 4                       tappedImageIndex: 3,
-//                         tweet: tweet,
-//                       ),
                       builder: (context) => TweetImageView(
                         tappedImageIndex: 3,
                         tweet: tweet,
@@ -355,7 +352,7 @@ class TweetImage extends StatelessWidget {
                       bottomRight: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
+                      image: CachedNetworkImageProvider(
                         tweet.imagesUrl['3']!,
                       ),
                       fit: BoxFit.cover,

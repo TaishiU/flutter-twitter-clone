@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -106,7 +107,7 @@ class SearchScreen extends HookWidget {
                     ? Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(
+                            image: CachedNetworkImageProvider(
                               tweet.imagesUrl['0']!,
                             ),
                             fit: BoxFit.cover,
@@ -119,7 +120,7 @@ class SearchScreen extends HookWidget {
                           Container(
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(
+                                image: CachedNetworkImageProvider(
                                   tweet.imagesUrl['0']!,
                                 ),
                                 fit: BoxFit.cover,

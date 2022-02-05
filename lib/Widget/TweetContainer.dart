@@ -1,4 +1,5 @@
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/src/provider.dart';
@@ -153,10 +154,12 @@ class _TweetContainerState extends State<TweetContainer> {
                               widget.tweet.authorProfileImage.isEmpty
                                   ? TwitterColor
                                   : Colors.transparent,
-                          backgroundImage: widget
-                                  .tweet.authorProfileImage.isEmpty
-                              ? null
-                              : NetworkImage(widget.tweet.authorProfileImage),
+                          backgroundImage:
+                              widget.tweet.authorProfileImage.isEmpty
+                                  ? null
+                                  : CachedNetworkImageProvider(
+                                      widget.tweet.authorProfileImage,
+                                    ),
                         ),
                       ),
                     ],
